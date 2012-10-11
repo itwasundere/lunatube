@@ -1,3 +1,4 @@
+/*
 load_login = function(){
 	window.me = new User(globals.user);
 	var next = function(){};
@@ -13,7 +14,8 @@ load_login = function(){
 
 load_server = function(){
 	window.api = new ConnectionApi({
-		ip: 'ws://localhost:8080/'
+		ip: 'ws://localhost:8080/',
+		room: models.Room();
 	});
 }
 
@@ -62,12 +64,20 @@ load_chat = function() {
 		model: chat
 	});
 	cv.render();
-}
+}*/
 
 $(document).ready(function(){
-	load_login();
-	load_server();
-	load_queue();
-	load_player();
-	load_chat();
+	window.room = new models.Room();
+	for (idx in globals.room) {
+		var attr = globals.room[idx];
+		if (typeof(attr) == 'object') {
+			var obj = room.get(idx);
+			if (obj.set) obj.set(attr);
+			else if (obj.reset) obj.reset(attr);
+		}
+	}
+	window.api = new ConnectionApi({
+		ip: 'ws://localhost:8080/',
+		room: window.room
+	});
 });

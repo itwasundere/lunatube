@@ -11,6 +11,8 @@ var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
 http.listen(8080);
 
+var crypto = require('crypto');
+
 var session_store = new express.session.MemoryStore();
 
 // express setup
@@ -34,10 +36,15 @@ userlist.fetch();
 
 app.get('/', function(req, res){
 	var room = roomlist.at(0);
+	var md5 = crypto.createHash('md5');
+	md5.update(req.connection.remoteAddress+room.get('owner').get('username'));
+	var md5hash = md5.digest('hex');
 	req.session.room_id = room.id;
+	// todo: consider multiple rooms
 	if (!req.session.user)
-		req.session.user = new models.User({
-			username: names.gen_name() });
+		req.session.user = {
+			hash: md5hash,
+			username: names.gen_name() };
 	res.render('room.jade', {
 		room: JSON.stringify(room.toJSON()),
 		user: JSON.stringify(req.session.user)
