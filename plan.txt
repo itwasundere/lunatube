@@ -1,0 +1,159 @@
+playlist vs queue
+
+a couple of options
+
+playback
+1. play it now
+2. play it later
+3. don't play it
+
+playlist
+1. don't add to playlist
+2. add to playlist in the queue
+3. add to playlist at a cusom location
+
+what if you had two things, a playlist and a queue
+queue loads from playlist
+
+usecase 1
+we're playing episodes of samurai jack
+it's a 1-time go deal
+but we wanna save the playlist later
+have a current playlist full of music
+load in jack #1
+queue jack #2-10
+want to play music after 10
+save the jack queue as a pl later
+
+have video
+be able to add to playlist or to queue
+
+----------------------------------------------
+ItWasunderE:
+----------------------------------------------
++-----------+
+|           |  Sunshine and Celery Stalks
+|           |  PinkiePieSwear
+|           |  2:50
++-----------+
++------+-----------+--------------+----------+
+| play | play next | add to queue | bookmark |
++------+-----------+--------------+----------+
+----------------------------------------------
+
+----------------------------------------------
+ManFace: [nfsw]                         [show]
+----------------------------------------------
+
+ +---+
+ |   |
+-+-v-+-----------------------------------------
+ManFace: Message #1
+   Message #2
+   Message #3
+----------------------------------------------
+
+vote to skip
+	% of votes required to skip = upvotes / totalvotes
+
+
+				owner	mod 	user			guest
+mod/unmod		yes		no		no				no
+load videos		yes		yes		no				no
+lock/unlock 	yes		yes		no				no
+edit playlist	yes		yes		when unlocked	no
+mute			yes		yes		30-minute vote	no
+skip			yes		yes		vote			no
+
+leader determines playback
+
+playlists
+	room-specific
+		modified by mods
+	user-specific
+		private
+	modified by users
+
+server -- user.getclass(room) returns owner, mod, user, guest
+receive commands with these data
+server must have internal clock running
+leader overrides clock
+output these data to clients depending on clock
+
+
+/*
+TODOS:
+
+implement playlist editing
+finish implementing chat
+implement permissions
+implement rest of database editing
+implement logging in a bit more carefully
+playlist saving
+work on user profile page, playlist editing page
+
+implement viewing room members
+implement leader functions
+implement logging in functions
+implement user classes
+implement playlist saving and autosave
+implement playlist loading
+implement add to playlist while playing
+implement local history
+implement rooms
+implement chat enhancements -- tags and drop to down
+implement compact chat with avatars
+implement hiding the playlist
+implement widescreen and fullscreen
+implement bpm flashing
+implement cams
+implement chat history and permanence
+
+*/
+
+synchtube / plug.dj clone for season 3 premiere
+here's to high hopes i can finish this project... on time
+
+features tree
+
+welcome page
+	showing how synchronization works
+	set preferences and username
+main video
+	synchronized across people
+	playlist and history
+	vote to skip
+	user feedback
+	full screen, free volume
+	centered, main
+	optional chat that's hidable
+	support for unlisted videos
+broadcasting area for admin messages
+singalong feature
+chatroom
+	custom private rooms
+	permissions
+	main room
+	pinned messages
+	kid friendliness
+	tagging nsfw
+	drunk + trees room
+mobile support
+
+looping and annotations turn off
+
+issues to address
+	when video is not available in country
+
+technology used
+	html5 websockets
+	webrtc, maybe
+	youtube api
+
+one webserver file to handle them all...
+	which calls functions defined in other files
+
+midnight ideas
+	singalong feaure needed
+	next episode plays in 15 minutes -- episode 15: pinkie keen
+	flashy background that syncs with the audio

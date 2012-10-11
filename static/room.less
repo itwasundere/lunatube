@@ -1,0 +1,314 @@
+div {
+	overflow: auto;
+}
+
+@main_width: 1024px;
+@vid_width: 640px;
+@cols_margin: 24px;
+@avatar_size: 32px;
+@chat_height: 400px;
+@font_size: 12px;
+@col_right_width: @main_width - @vid_width - @cols_margin * 2;
+@num_vids: 3;
+@playlist_vid_width: (@main_width - @cols_margin * 2 - @cols_margin/2 * (@num_vids+1)) / @num_vids; 
+
+#main {
+	width: @main_width;
+	margin: 0 auto;
+	background-color: #aaa;
+	font-family: arial;
+	padding: @cols_margin / 2;
+	font-size: @font_size;
+	cursor: default;
+}
+
+#login {
+	text-align: right;
+}
+
+#col_left {
+	width: @vid_width;
+	margin: 0px @cols_margin / 2;
+	float: left;
+}
+
+#vid_title {
+	font-size: 24px;
+	min-height: 12px;
+	margin: @cols_margin / 2;
+}
+
+#vid_player {
+	background-color: #eee;
+	width: @vid_width;
+	height: @vid_width / 16 * 9;
+	margin: @cols_margin / 2 0px;
+	#video {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+#vid_controls {
+	background-color: #eee;
+	margin: @cols_margin / 2 0px;
+	div { float: left; }
+	img {
+		margin-top: 6px;
+		margin-left: 12px;
+		width: 18px;
+		height: 18px;
+		cursor: pointer;
+	}
+	#vol_controls, #play_controls {
+		margin: @cols_margin / 2;
+		input {
+			margin-top: 8px;
+			margin-left: 8px;
+			width: 100px;
+		}
+	}
+	#disp_controls {
+		margin: @cols_margin / 2;
+		float: right;
+	}
+	#scrobbler {
+		background-color: #999;
+		width: 250px;
+		height: 16px;
+		margin: 6px;
+		margin-left: 10px;
+		#playhead {
+			width: 6px;
+			height: 100%;
+			background-color: #000;
+			pointer-events: none;
+		}
+		cursor: pointer;
+	}
+}
+
+#vid_actions {
+	background-color: #eee;
+	margin: @cols_margin / 2 0px;
+}
+
+#rating {
+	float: right;
+	margin: @cols_margin / 2;
+}
+
+#rating div {
+	float: left;
+}
+
+#queue {
+	margin: @cols_margin / 2 0px;
+	background-color: #eee;
+	#queue_prev {
+		width: 50%;
+		float: left;
+	}
+	#queue_vids {
+		margin: @cols_margin/2;
+	}
+	#queue_next {
+		width: 50%;
+		float: left;
+	}
+	#queued_video {
+		cursor: pointer;
+		background-color: #ddd;
+		float: left;
+		width: 100%;
+		#thumbnail {
+			float: left;
+			margin: @cols_margin/2;
+			width: 40%;
+			img {width: 100%}
+		}
+		#info {
+			width: 45%;
+			float: left;
+			margin: @cols_margin/2;
+			margin-left: 0px;
+		}
+	}
+}
+
+.title_small {
+	margin: @cols_margin/2;
+	font-size: 18px;
+}
+
+#col_right {
+	width: @col_right_width;
+	margin: 0px @cols_margin / 2;
+	float: left;
+}
+
+#chat {
+	margin: @cols_margin/2 0px;
+	background-color: #eee;
+}
+
+#rooms {
+	background-color: #ddd;
+}
+
+#rooms_pub {
+	float: left;
+	margin: @cols_margin / 4;
+}
+
+#rooms_priv {
+	float: right;
+	margin: @cols_margin / 4;
+}
+
+#leaderboard {
+	background-color: #ccc;
+	padding: 0px @cols_margin / 8;
+}
+
+.avatar {
+	float: left;
+	width: @avatar_size;
+	height: @avatar_size;
+	margin: @cols_margin / 4 @cols_margin / 8;
+	background-color: #aaa;
+	img {
+		width: @avatar_size;
+		height: @avatar_size;
+	}
+}
+
+#leader {
+	float: left;
+	#name {
+		float: left; 
+		margin: @cols_margin / 4;
+	}
+}
+
+#mods {
+	float: right;
+}
+
+#chatlog {
+	height: @chat_height;
+	position: relative;
+	#buttons {
+		position: absolute;
+		right: 0px;
+		div { float: left;}
+	}
+}
+
+#chatinput_area {
+	background-color: #ddd;
+}
+
+#chatinput_top {
+	padding: 0px @cols_margin / 8;
+}
+
+#chatinput, #chatinput:focus {
+	border: 1px solid #bbb;
+	height: @avatar_size;
+	width: @col_right_width - @avatar_size - @cols_margin * 0.75;
+	margin: @cols_margin / 4 @cols_margin / 8;
+	font-size: @font_size;
+	outline: none;
+	padding: 0px @cols_margin / 4;
+}
+
+#chatinput_tags {
+	background-color: #ccc;
+	.tag {
+		float: left;
+		margin: @cols_margin / 4;
+		padding: @cols_margin / 8 @cols_margin / 4;
+		background-color: #aaa;
+	}
+}
+
+#rules {
+	margin: @cols_margin/2 0px;
+	background-color: #eee;	
+	#rules_title {
+		margin: @cols_margin / 4;
+		font-size: 18px;
+	}
+	#rules_text {
+		margin: @cols_margin / 4;
+	}
+}
+
+#playlist {
+	margin: @cols_margin/2;
+	width: @main_width - @cols_margin;
+	float: left;
+	background-color: #ddd;
+	#videos {
+		margin: @cols_margin/2;
+		min-height: 20px;
+		background-color: #aaa;
+		padding: @cols_margin/4;
+	}
+	#queued_video {
+		cursor: pointer;
+		background-color: #ddd;
+		margin: @cols_margin/4;
+		float: left;
+		width: @playlist_vid_width;
+		#thumbnail {
+			float: left;
+			margin: @cols_margin/2;
+		}
+		#info {
+			width: @playlist_vid_width - 120 - @cols_margin*1.5;
+			float: left;
+			margin: @cols_margin/2;
+			margin-left: 0px;
+		}
+	}
+}
+
+#message {
+	width: @col_right_width;
+	#avatar {
+		float: left;
+		img { width: 32px; height: 32px }
+		margin: @cols_margin / 4;
+	}
+	#right {
+		margin: @cols_margin / 4;
+		margin-left: 0px;
+	}
+	#name, #content {
+		width: @col_right_width - 50;
+		float: left;
+		word-wrap:break-word;
+	}
+	#vid {
+		#thumb {
+			float: left;
+		}
+		#info {
+			float: left;
+		}
+	}
+	#content {
+		img {
+			max-width: 100%;
+			max-height: (@col_right_width - 50)/16*9;
+		}
+		.button {
+			float: left;
+			padding: 2px 5px;
+			background-color: #aaa
+		}
+	}
+	border-bottom: 1px solid #ddd;
+}

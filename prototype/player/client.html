@@ -1,0 +1,159 @@
+<html>
+	<head>
+		<title>testing player</title>
+		<script src="../lib/jquery.js" type="text/javascript"></script>
+		<script src="../lib/underscore.js" type="text/javascript"></script>
+		<script src="../lib/backbone.js" type="text/javascript"></script>
+		<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+		<script type="text/javascript">google.load("swfobject", "2.1");</script>
+		
+		<script type="text/javascript">
+			
+			var _constants = {
+				chromeless: 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=player1',
+				debug_server: 'ws://localhost:8080/',
+				pub_server: 'ws://67.164.89.50/'
+			}
+
+			var onYouTubePlayerReady = function() {
+				if (window.player)
+					window.player.ready(); };
+
+			var Server = Backbone.Model.extend({
+				defaults: {
+					debug: true,
+					ip: _constants.debug_server,
+					state: 'disconnected'
+				},
+				connect: function() {
+					var self = this;
+					window.WebSocket = window.WebSocket || window.MozWebSocket;
+					this.disconnect();
+					this.socket = new WebSocket(this.get('ip'));
+					this.socket.onopen = function(){
+						self.set('state', 'connected');
+						if (self.get('debug'))
+							console.log('connected to '+self.get('server')); };
+					this.socket.onerror = function(error){
+						console.log('network error: '+error); };
+					this.socket.onmessage = function(message){
+						if (self.get('debug'))
+							console.log('received: '+message.data);
+						if (self.get('receive'))
+							self.get('receive')(message.data);
+					};
+				},
+				send: function(message) {
+					if (typeof(message) != 'string')
+						message = JSON.stringify(message);
+					this.socket.send(message);
+				},
+				receive: function(message) {},
+				disconnect: function() {
+					if (this.socket)
+						this.socket.close();
+				}
+			});
+
+			var Player = Backbone.Model.extend({
+				initialize: function(){
+					if (!this.verify_vidid()) return;
+					var self = this;
+					this.set('apiplayer_url', _constants.chromeless);
+					this.set('dimensions', { width: 640, height: 360 });
+					if (window.server)
+						server.set('receive', function(message){
+							self.update(JSON.parse(message));
+						});
+				},
+				verify_vidid: function(){
+					var vidid = this.get('vidid');
+					if (vidid && vidid.length == 11)
+						return true;
+					return false;
+				},
+				ready: function(){
+					var self = this;
+					// todo: fix this
+					this.player = document.getElementById('apiplayer');
+					setInterval(function(){ 
+						if (window.player)
+							window.player.time();
+					}, 1000);
+					this.player.addEventListener('onStateChange', function(){ 
+						if (window.player)
+							window.player.time();
+					});
+					this.player.addEventListener('onError', function(){
+						console.log('player error: '+error); });
+					this.player.cueVideoById(this.get('vidid'));
+					this.player.playVideo();
+					this.player.pauseVideo();
+					self.changed();
+				},
+				update: function(status){
+					if (this.get('leader')) return;
+					var my_time = this.player.getCurrentTime();
+					var leader_time = parseFloat(status.time);
+					if (Math.abs(leader_time - my_time) > 2)
+						this.player.seekTo(leader_time, false);
+					if (status.state == 1)
+						this.player.playVideo();
+					else {
+						this.player.pauseVideo();
+						this.player.seekTo(leader_time, true);
+					}
+				},
+				time: function(){
+					if (!this.get('leader')) return;
+					if (!window.server) return;
+					window.server.send(JSON.stringify({
+						time: this.player.getCurrentTime(),
+						state: this.player.getPlayerState()
+					}));
+				},
+				play: function(){
+					if (this.player)
+						this.player.playVideo();
+				},
+				pause: function(){
+					if (this.player)
+						this.player.pauseVideo();
+				}
+			});
+
+			var PlayerView = Backbone.View.extend({
+				render: function() {
+					if (!this.model) return;
+					var el = $(this.el), self = this, player = this.model;
+					swfobject.embedSWF(
+						player.get('apiplayer_url'),
+						el.attr('id'),
+						String(player.get('dimensions').width),
+						String(player.get('dimensions').height),
+						'9', null, null,
+						{allowScriptAccess: 'always'},
+						{id: 'apiplayer'}
+					);
+				}
+			});
+
+			$(document).ready(function(){
+				window.server = new Server();
+				server.connect();
+				window.player = new Player({vidid: 'eqHsrBsKtjA', leader: true});
+				window.view = new PlayerView({model: player, el: $('#player')});
+				view.render();
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="player_area">
+			<div id="player"></div>
+		</div>
+		<div id="pause">pause</div>
+		<div id="play">play</div>
+	</body>
+</html>
+​

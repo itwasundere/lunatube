@@ -1,0 +1,182 @@
+doctype 5
+html
+	head
+		title dummy.html
+		link(rel='stylesheet/less', type='text/css', href='static/room.less')
+		script(src='static/lib/less.js')
+		script(src='static/lib/jquery.js')
+		script(src='static/lib/underscore.js')
+		script(src='static/lib/backbone.js')
+		script(src='/socket.io/socket.io.js')
+		
+		script(src='http://www.google.com/jsapi')
+		script(type='text/javascript')
+			if (window.google)
+				google.load("swfobject", "2.1");
+		
+		script(src='static/utils.js')
+		script(type='text/javascript')
+			add_globals({
+				room: !{room},
+				user: !{user}
+			});
+		script(src='static/user.js')
+		script(src='static/api.js')
+		script(src='static/video.js')
+		script(src='static/player.js')
+		script(src='static/chat.js')
+		script(src='static/room.js')
+
+	templates
+		script#avatar(type='template')
+		script#video(type='template')
+			#queued_video
+				#thumbnail
+					img#thumb(src='[[thumb]]')
+				#info
+					#title [[title]]
+					#uploader [[uploader]]
+					#time [[time]]
+		script#message_text(type='template')
+			#message
+				#avatar
+					img(src='[[avatar]]')
+				#right
+					#name [[username]]
+					#content [[content]]
+		script#message_img(type='template')
+			#message
+				#avatar
+					img(src='[[avatar]]')
+				#right
+					#name [[username]]
+					#content
+						a(href='[[url]]', target='_blank')
+							img(src='[[thumb]]')
+		script#message_yt(type='template')
+			#message
+				#avatar
+					img(src='[[avatar]]')
+				#right
+					#name [[username]]
+					#content
+						#vid
+							#thumb
+								a(href='[[url]]', target='_blank')
+									img(src='[[thumb]]')
+							#info
+								#title [[title]]
+								#artist [[artist]]
+								#time [[time]]
+						#actions
+							#play.button play now
+							#play_next.button play next
+							#add_queue.button play last
+							#bookmark.button bookmark
+		script#message(type='template')
+			#message
+				b#username [[username]]
+				#content [[content]]
+		script#message_image(type='template')
+			#message
+				#username [[username]]
+				#image
+					a(href='[[url]]', target='_blank')
+						img(src='[[url]]')
+		script#message_video(type='template')
+			#message
+				#username [[username]]
+				#video
+					#thumbnail
+						a(href='[[url]]', target='_blank')
+							img(src='[[thumb]]')
+					#info
+						#title [[title]]
+						#uploader [[uploader]]
+						#time [[time]]
+				#actions
+					#queue_next.button queue next
+					#queue_last.button queue last
+					#pl_next.button playlist next
+					#pl_last.button playlist last
+		script#user(type='template')
+			#user
+				#avatar
+					img(src='[[avatar]]')
+				#name [[username]]
+				#buttons
+					#mod.button mod
+					#mute.button mute
+
+	body
+		#main
+			#login
+				input#username
+				input#password
+				input#login(type='button', value='login')
+			#vid_title
+			#col_left
+				#vid_player
+					#vid_player2 No video selected.
+				#vid_controls
+					#vol_controls
+						input(type='range',id='vol',min='1',max='100')
+					#play_controls
+						#play
+							img(src='/static/img/play.png')
+						#scrobbler
+							#playhead
+					#disp_controls(style='display:none')
+						#disp_pop
+							img(src='/static/img/popout.png')
+						#disp_chat
+							img(src='/static/img/comment.png')
+						#disp_wide
+							img(src='/static/img/widescreen.png')
+						#disp_full
+							img(src='/static/img/fullscreen.png')
+				#vid_actions(style='display: none')
+					#bookmark [bm]
+					#rating
+						#rate_bar [ratebar]
+						#rate_up [rateup]
+						#rate_down [ratedown]
+				#queue
+					#queue_prev
+						.title_small Preivous on queue
+						#queue_vids [vids]
+					#queue_next
+						.title_small Up next
+						#queue_vids [vids]
+			#col_right
+				#chat
+					#rooms
+						#rooms_pub pub rooms
+						#rooms_priv priv rooms
+					#leaderboard
+						#leader
+							.avatar
+								img(src='')
+							#name Room leader:
+								br
+								#username
+						#mods
+					#chatlog
+						#buttons
+							#popout
+							#filters
+						#chatlog_text
+					#chatinput_area
+						#chatinput_top
+							.avatar avatar
+							#chatinput_text
+								input(type='text',id='chatinput')
+						#chatinput_tags
+							.tag#none none
+							.tag#spoil spoilers
+							.tag#nfsw nsfw
+							.tag#intox intoxicated
+				#userlist
+			#playlist
+				.title_small Playlist
+				#videos

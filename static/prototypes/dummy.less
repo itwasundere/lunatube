@@ -1,0 +1,204 @@
+div {
+	overflow: auto;
+}
+
+@main_width: 1024px;
+@vid_width: 640px;
+@cols_margin: 24px;
+@avatar_size: 32px;
+@chat_height: 400px;
+@font_size: 12px;
+@col_right_width: @main_width - @vid_width - @cols_margin * 2;
+
+#main {
+	width: @main_width;
+	margin: 0 auto;
+	background-color: #aaa;
+	font-family: arial;
+	padding: @cols_margin / 2;
+	font-size: @font_size;
+}
+
+#col_left {
+	width: @vid_width;
+	margin: 0px @cols_margin / 2;
+	float: left;
+}
+
+#vid_title {
+	font-size: 24px;
+	margin: @cols_margin / 2 0px;
+}
+
+#vid_player {
+	background-color: #eee;
+	width: @vid_width;
+	height: @vid_width / 16 * 9;
+	margin: @cols_margin / 2 0px;
+}
+
+#vid_controls {
+	background-color: #eee;
+	margin: @cols_margin / 2 0px;
+}
+
+#vol_controls {
+	margin: @cols_margin / 2;
+	float: left;
+}
+
+#disp_controls {
+	margin: @cols_margin / 2;
+	float: right;
+}
+
+#disp_controls div {
+	float: left;
+}
+
+#vid_actions {
+	background-color: #eee;
+	margin: @cols_margin / 2 0px;
+}
+
+#bookmark {
+	float: left;
+	margin: @cols_margin / 2;
+}
+
+#rating {
+	float: right;
+	margin: @cols_margin / 2;
+}
+
+#rating div {
+	float: left;
+}
+
+#queue {
+	margin: @cols_margin / 2 0px;
+	background-color: #eee;
+}
+
+#queue_prev {
+	width: 50%;
+	float: left;
+}
+
+#queue_next {
+	width: 50%;
+	float: left;
+}
+
+#queue_title {
+	margin: @cols_margin/2;
+	font-size: 18px;
+}
+
+#queue_vids {
+	margin: @cols_margin/2;
+}
+
+#col_right {
+	width: @col_right_width;
+	margin: 0px @cols_margin / 2;
+	float: left;
+}
+
+#chat {
+	margin: @cols_margin/2 0px;
+	background-color: #eee;
+}
+
+#rooms {
+	background-color: #ddd;
+}
+
+#rooms_pub {
+	float: left;
+	margin: @cols_margin / 4;
+}
+
+#rooms_priv {
+	float: right;
+	margin: @cols_margin / 4;
+}
+
+#leaderboard {
+	background-color: #ccc;
+	padding: 0px @cols_margin / 8;
+}
+
+.avatar {
+	float: left;
+	width: @avatar_size;
+	height: @avatar_size;
+	margin: @cols_margin / 4 @cols_margin / 8;
+	background-color: #aaa;
+	img {
+		width: @avatar_size;
+		height: @avatar_size;
+	}
+}
+
+#leader {
+	float: left;
+	#name {
+		float: left; 
+		margin: @cols_margin / 4;
+	}
+}
+
+#mods {
+	float: right;
+}
+
+#chatlog {
+	height: @chat_height;
+	position: relative;
+	#buttons {
+		position: absolute;
+		right: 0px;
+		div { float: left;}
+	}
+}
+
+#chatinput_area {
+	background-color: #ddd;
+}
+
+#chatinput_top {
+	padding: 0px @cols_margin / 8;
+}
+
+#chatinput, #chatinput:focus {
+	border: 1px solid #bbb;
+	height: @avatar_size;
+	width: @col_right_width - @avatar_size - @cols_margin * 0.75;
+	margin: @cols_margin / 4 @cols_margin / 8;
+	font-size: @font_size;
+	outline: none;
+	padding: 0px @cols_margin / 4;
+}
+
+#chatinput_tags {
+	background-color: #ccc;
+	.tag {
+		float: left;
+		margin: @cols_margin / 4;
+		padding: @cols_margin / 8 @cols_margin / 4;
+		background-color: #aaa;
+	}
+}
+
+#rules {
+	margin: @cols_margin/2 0px;
+	background-color: #eee;	
+	#rules_title {
+		margin: @cols_margin / 4;
+		font-size: 18px;
+	}
+	#rules_text {
+		margin: @cols_margin / 4;
+	}
+}

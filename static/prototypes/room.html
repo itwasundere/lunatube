@@ -1,0 +1,93 @@
+<html>
+<head>
+	<title>dummy.html</title>
+	<link rel="stylesheet/less" type="text/css" href="dummy.less">
+	<script type="text/javascript" src="lib/less.js"></script>
+	<script type="text/javascript">
+		var _room = {
+			id: {{room.id}}
+		}
+	</script>
+</head>
+<body>
+
+<script type="text/template" id="avatar">
+	<div class="avatar"><img src={{avatar_url}} /></div>
+</script>
+
+<div id="main">
+	<div id="col_left">
+		<div id="vid_title">[video_title]</div>
+		<div id="vid_player"></div>
+		<div id="vid_controls">
+			<div id="vol_controls">volume controls</div>
+			<div id="disp_controls">
+				<div id="disp_chat">[chat]</div>
+				<div id="disp_wide">[wide]</div>
+				<div id="disp_full">[full]</div>
+			</div>
+		</div>
+		<div id="vid_actions">
+			<div id="bookmark">[bm]</div>
+			<div id="rating">
+				<div id="rate_bar">[ratebar]</div>
+				<div id="rate_up">[rateup]</div>
+				<div id="rate_down">[ratedown]</div>
+			</div>
+		</div>
+		<div id="queue">
+			<div id="queue_prev">
+				<div id="queue_title">Recently played</div>
+				<div id="queue_vids">[vids]</div>
+			</div>
+			<div id="queue_next">
+				<div id="queue_title">Up next</div>
+				<div id="queue_vids">[vids]</div>
+			</div>
+		</div>
+	</div>
+	<div id="col_right">
+		<div id="chat">
+			<div id="rooms">
+				<div id="rooms_pub">pub rooms</div>
+				<div id="rooms_priv">priv rooms</div>
+			</div>
+			<div id="leaderboard">
+				<div id="leader">
+					<div class="avatar"><img src='' /></div>
+					<div id="name">
+						Room leader: <br />
+						<div id="username">username</div>
+					</div>
+				</div>
+				<div id="mods">mods</div>
+			</div>
+			<div id="chatlog">
+				<div id="buttons">
+					<div id="popout">popout</div>
+					<div id="filters">filters</div>
+				</div>
+				<div id="chatlog_text">chatlog</div>
+			</div>
+			<div id="chatinput_area">
+				<div id="chatinput_top">
+					<div class="avatar">avatar</div>
+					<div id="chatinput_text"><input type="text" id="chatinput"/></div>
+				</div>
+				<div id="chatinput_tags">
+					<div class="tag" id="none">none</div>
+					<div class="tag" id="spoilers">#spoilers</div>
+					<div class="tag" id="nsfw">#nsfw</div>
+					<div class="tag" id="drunk">#drunk</div>
+					<div class="tag" id="trees">#trees</div>
+				</div>
+			</div>
+		</div>
+		<div id="rules">
+			<div id="rules_title">Rules</div>
+			<div id="rules_text">{{room.rules}}</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
