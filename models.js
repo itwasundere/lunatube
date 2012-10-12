@@ -33,6 +33,23 @@ models.Video = Backbone.Model.extend({
 	},
 	initialize: function() {
 		this.classname = 'video';
+		if (!serverside && this.get('url') != '00000000000') {
+			var url = this.get('url');
+			var infourl = 'http://gdata.youtube.com/feeds/api/videos/'+url+'?v=2&alt=json';
+			var self = this;
+			$.get(infourl, function(data){
+				var seconds = parseInt(data.entry.media$group.yt$duration.seconds);
+				var minutes = Math.floor(seconds/60);
+				var seconds = seconds%60;
+				self.set({
+					title: data.entry.title.$t,
+					uploader: data.entry.author[0].name.$t,
+					seconds: seconds,
+					thumb: data.entry.media$group.media$thumbnail[0].url,
+					time_text: minutes+':'+seconds
+				});
+			});
+		}
 	}
 });
 

@@ -1,51 +1,20 @@
+var chromeless = 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=player1';
 
-add_globals({
-	chromeless: 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=player1',
-	debug_server: 'ws://localhost:8080/',
-	pub_server: 'ws://67.164.89.50/'
-});
-
-var onYouTubePlayerReady = function() {
-	if (window.player)
-		window.player.ready(); };
-
-var Player = Backbone.Model.extend({
-	defaults: {
-		server: window.server,
-		playlist: window.playlist,
-		interval: 1000,
-		video: new Video(),
-		tolerance: 2 // seconds max diff before update
-	},
+var PlayerView = Backbone.View.extend({
 	initialize: function(){
 		var self = this;
-		this.set('apiplayer_url', globals.chromeless);
-		this.set('dimensions', { width: 640, height: 360 });
-		var playlist = this.get('playlist');
-		playlist.bind('selected', function(){
-			self.set_video(playlist.get_current());
-		});
-		/*
-		var serv = this.get('server');
-		serv.on('video', function(data){ self.update(data.playback) });
-		*/
+		if (!this.options.dimensions)
+			this.options.dimensions = { width: 640, height: 360 };
+		window.onYouTubePlayerReady = function() {
+			self.ready() }
+	},
+	ready: function() {
+		this.player = document.getElementById('apiplayer');
+		this.trigger('ready');
 	},
 	set_video: function(video){
-		if (video)
-			this.set('video', video);
 		if (!player) return;
-		this.player.cueVideoById(this.get('video').get('url'));
-	},
-	load: function(video) {
-		/*
-		this.get('server').emit('video', function(){
-			current: video.toJSON()
-		});
-*/
-	},
-	ready: function(){
-		this.player = document.getElementById('apiplayer');
-		this.set_video();
+		this.player.cueVideoById(video.get('url'));
 	},
 	update: function(playback){
 		if (!this.player) return;

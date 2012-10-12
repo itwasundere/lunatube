@@ -21,12 +21,13 @@ html
 				user: !{user}
 			});
 		script(src='static/models.js')
-		script(src='static/user.js')
+		//script(src='static/user.js')
 		script(src='static/api.js')
-		script(src='static/video.js')
-		script(src='static/player.js')
-		script(src='static/chat.js')
+		//script(src='static/video.js')
+		//script(src='static/chat.js')
 		script(src='static/room.js')
+		script(src='static/playlist.js')
+		script(src='static/player.js')
 
 	templates
 		script#avatar(type='template')
@@ -34,6 +35,12 @@ html
 			#queued_video
 				#thumbnail
 					img#thumb(src='[[thumb]]')
+				#info
+					#title [[title]]
+					#uploader [[uploader]]
+					#time [[time]]
+		script#video_list(type='template')
+			#video_list
 				#info
 					#title [[title]]
 					#uploader [[uploader]]
@@ -178,6 +185,10 @@ html
 							.tag#nfsw nsfw
 							.tag#intox intoxicated
 				#userlist
-			#playlist
-				.title_small Playlist
-				#videos
+			#videos
+				#queue
+					.title_small Queue
+					#queue_vids
+				#playlist
+					.title_small Playlist
+					#playlist_vids

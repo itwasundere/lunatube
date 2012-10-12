@@ -80,4 +80,9 @@ $(document).ready(function(){
 		ip: 'ws://localhost:8080/',
 		room: window.room
 	});
+	window.pv = new PlaylistView({
+		model: room.get('playlist'), 
+		el: $('#playlist_vids')
+	});
+	pv.render();
 });
