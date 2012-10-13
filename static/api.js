@@ -2,17 +2,19 @@ var ConnectionApi = Backbone.Model.extend({
 	initialize: function() {
 		var socket = io.connect(this.get('ip'));
 		this.set('socket', socket);
-		this.bind_events();
-	},
-	bind_events: function() {
-		var sock = this.get('socket');
-		var room = this.get('room');
-		sock.on('connect', function(data){
+		socket.on('connect', function(data){
 			console.log('connected');
-			sock.emit('chat',{
+			socket.emit('chat',{
 				action: 'join'
 			});
 		});
+		this.init_messages();
+		this.init_player();
+	},
+	init_messages: function() {
+		var sock = this.get('socket');
+		var room = this.get('room');
+		// receiving messages
 		sock.on('chat', function(data){
 			console.log('received '+JSON.stringify(data));
 			switch(data.action) {
@@ -31,6 +33,7 @@ var ConnectionApi = Backbone.Model.extend({
 			}
 		});
 
+		// sending messages
 		var messages = room.get('messages');
 		messages.bind('add', function(){
 			var unsent = messages.filter(function(msg){
@@ -48,6 +51,25 @@ var ConnectionApi = Backbone.Model.extend({
 				action: 'message',
 				message: unsent
 			});
+		});
+
+	},
+	init_player: function() {
+		var self = this;
+		var sock = this.get('socket');
+		var player = this.get('room').get('player');
+		setInterval(function(){ 
+			sock.emit('player', { action: 'state' });
+		}, 1000);
+		sock.on('player', function(data){
+			player.set({
+				state: data.state,
+				time: data.time,
+				current: new models.Video(data.current)
+			});
+			var playlist = player.get('playlist');
+			if (data.playlist.id != playlist.id)
+				playlist.reset(data.playlist);
 		});
 	}
 });

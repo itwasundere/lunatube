@@ -37,7 +37,7 @@ var ConnectionApi = Backbone.Model.extend({
 			room.leave(user_left);
 		});
 		sock.on('chat', function(data){ self.chat(data) });
-		sock.on('playback', function(data){ self.playback(data) });
+		sock.on('player', function(data){ self.player(data) });
 		sock.on('playlist', function(data){ self.playlist(data) });
 
 		var userlist = room.get('userlist');
@@ -95,17 +95,12 @@ var ConnectionApi = Backbone.Model.extend({
 			default: break;
 		}
 	},
-	playback: function(data) {
+	player: function(data) {
 		if (!data || !data.action) return;
-		var room = rooms[socket.room.id];
+		var player = this.get('room').get('player');
+		var sock = this.get('socket');
 		switch(data.action) {
-			case 'play': room.play(); break;
-			case 'pause': room.pause(); break;
-			case 'seek': room.seek(data.param); break;
-			case 'next': room.next(); break;
-			case 'prev': room.prev(); break;
-			case 'switch': room.switch(param); break;
-			case 'skip': room.skip(data.param); break;
+			case 'state': sock.emit('player', player.toJSON()); break;
 			default: break;
 		}
 	},

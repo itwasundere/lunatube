@@ -30,7 +30,7 @@ var PlaylistItemView = Backbone.View.extend({
 		}, function(){
 			el.css('background-color','');
 		});
-		if (model.get('selected'))
+		if (this.model.get('selected'))
 			el.css('background-color','yellow');
 		el.click(function(){
 			self.model.trigger('selected');

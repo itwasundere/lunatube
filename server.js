@@ -30,7 +30,9 @@ app.use(express.session({
 // main room
 var roomlist = new models.RoomList();
 roomlist.fetch();
-roomlist.each(function(room){ room.initialize(); });
+roomlist.each(function(room){ 
+	room.initialize();
+});
 var userlist = new models.UserList();
 userlist.fetch();
 

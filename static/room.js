@@ -72,8 +72,17 @@ $(document).ready(function(){
 		var attr = globals.room[idx];
 		if (typeof(attr) == 'object') {
 			var obj = room.get(idx);
-			if (obj.set) obj.set(attr);
-			else if (obj.reset) obj.reset(attr);
+			if (obj.reset) obj.reset(attr);
+			else if (obj.set) {
+				for (idx2 in attr) {
+					var val = attr[idx2];
+					var attr2 = obj.get(idx2);
+					if (typeof(val) != 'object')
+						obj.set(idx2, val);
+					else if (attr2.set) attr2.set(val);
+					else if (attr2.reset) attr2.reset(val);
+				}
+			}
 		}
 	}
 	window.api = new ConnectionApi({
@@ -85,4 +94,9 @@ $(document).ready(function(){
 		el: $('#playlist_vids')
 	});
 	pv.render();
+	window.plv = new PlayerView({
+		el: $('#col_left'),
+		model: room.get('player')
+	});
+	plv.render();
 });

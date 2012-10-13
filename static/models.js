@@ -56,14 +56,17 @@ models.Video = Backbone.Model.extend({
 models.VideoList = Backbone.Collection.extend({
 	model: models.Video,
 	initialize: function() {
+		var self = this;
 		this.classname = 'video';
-		this.first();
+		this.bind('reset', function(){
+			self.goto_first();
+		})
 	},
-	first: function() {
+	goto_first: function() {
 		var noprev = this.filter(function(vid){
 			return !vid.get('prev'); });
 		if (noprev.length > 0) {
-			this.playhead = noprev.first(),
+			this.playhead = noprev[0],
 			this.place = 0;
 		}
 	},
@@ -71,13 +74,13 @@ models.VideoList = Backbone.Collection.extend({
 		var nextid = this.playhead.get('next');
 		if (nextid)
 			this.playhead = this.get(nextid)
-		else this.first();
+		else this.goto_first();
 	},
 	back: function() {
 		var previd = this.playhead.get('prev');
 		if (previd)
 			this.playhead = this.get(previd)
-		else this.first();
+		else this.goto_first();
 	},
 	skip: function(video) {
 		video = this.get(video.id);
@@ -97,21 +100,30 @@ models.Player = Backbone.Model.extend({
 		time: 0
 	},
 	play: function(){
-		this.get('state', 'playing');
+		this.set('state', 'playing');
 	},
 	pause: function(){
-		this.get('state', 'paused');
+		this.set('state', 'paused');
+	},
+	initialize: function() {
+		var self = this;
+		this.start_ticker();
+		var pl = this.get('playlist')
+		pl.bind('reset', function(){
+			self.set('current', self.get('playlist').playhead);
+		});
 	},
 	start_ticker: function() {
 		var self = this;
 		setInterval(function(){ self.tick(); }, 1000);
 	},
 	tick: function() {
-		var time = this.get('time')
+		var time = this.get('time');
+		if (!this.get('current')) return;
 		if (this.get('state') == 'playing')
 			time += 1;
 		if (time <= this.get('current').get('time')) {
-			this.set('time', time);
+			this.set({'time': time}, {silent: true});
 			return;
 		} else this.next();
 	},
@@ -186,13 +198,15 @@ models.Room = Backbone.Model.extend({
 		userlist: new models.UserList(),
 		queue: new models.VideoList(),
 		playlist: new models.VideoList(),
-		player: new models.Player(),
+		player: null,
 		mutelist: new models.UserList(),
 		modlist: new models.UserList(),
 		owner: new models.User,
 		messages: new models.MessageList()
 	},
 	initialize: function() {
+		this.set('player', new models.Player({
+			playlist: this.get('playlist') }));
 		this.classname = 'room';
 		var self = this;
 		var count = 0;

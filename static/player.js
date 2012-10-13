@@ -2,11 +2,81 @@ var chromeless = 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playe
 
 var PlayerView = Backbone.View.extend({
 	initialize: function(){
-		var self = this;
+		var self = this, el = this.$el, playhead = this.$el.find('#scrobbler');
 		if (!this.options.dimensions)
 			this.options.dimensions = { width: 640, height: 360 };
+		if (!this.options.tolerance)
+			this.options.tolerance = 2; // 2 seconds max lag
 		window.onYouTubePlayerReady = function() {
 			self.ready() }
+		this.model.bind('change', this.render, this);
+		this.$el.find('#play').click(function(){
+			if (self.model.get('state') == 'playing')
+				self.model.pause();
+			else self.model.play();
+		});
+		this.$el.find('#scrobbler').click(function(event){
+			var current = self.model.get('current');
+			if (!current) return;
+			var percentage = event.offsetX / (el.width() - playhead.width());
+			var seek = Math.floor(percentage * current.get('time'));
+			self.model.seek(seek);
+		});
+	},
+	render: function() {
+		var el = this.$el, self = this;
+		if (!this.player && window.swfobject) {
+			swfobject.embedSWF(
+				chromeless,
+				'vid_player2',
+				String(this.options.dimensions.width),
+				String(this.options.dimensions.height),
+				'9', null, null,
+				{allowScriptAccess: 'always'},
+				{id: 'apiplayer'}
+			);
+		}
+		
+		if (this.player) {
+			// time
+			var mtime = this.model.get('time');
+			var ptime = this.player.getCurrentTime();
+			if (Math.abs(ptime - mtime) > this.options.tolerance)
+				this.player.seekTo(mtime, true);
+			// current
+			var murl = this.model.get('current').get('url');
+			var purl = get_yt_vidid(this.player.getVideoUrl());
+			if (murl != purl)
+				this.player.cueVideoById(murl);
+			// state
+			var mstate = this.model.get('state');
+			var pstate = this.player.getPlayerState();
+			// 1 = playing, 2 paused, 3 buffering
+			if (mstate == 'playing' && (pstate != 1 && pstate != 3))
+				this.player.playVideo();
+			else if (mstate == 'paused' && (pstate == 1))
+				this.player.pauseVideo();
+		}
+
+		// play button
+		if (this.model.get('state') == 'playing' && !this.show_pause) {
+			el.find('#play').html('<img src="/static/img/pause.png">');
+			this.show_pause = true;
+			this.show_play = false;
+		}
+		else if(this.model.get('state') == 'paused' && !this.show_play){
+			el.find('#play').html('<img src="/static/img/play.png">');
+			this.show_play = true;
+			this.show_pause = false;
+		}
+
+		// scrobbler
+		var playhead = el.find('#playhead');
+		var scrobbler = el.find('#scrobbler');
+		var percentage = this.model.get('time') / this.model.get('current').get('time');
+		var margin = (scrobbler.width() - playhead.width()) * percentage;
+		playhead.css('visibility','');
+		playhead.css('margin-left', margin);
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');
@@ -16,93 +86,35 @@ var PlayerView = Backbone.View.extend({
 		if (!player) return;
 		this.player.cueVideoById(video.get('url'));
 	},
-	update: function(playback){
-		if (!this.player) return;
-		var my_time = this.player.getCurrentTime();
-		var leader_time = playback.time;
-		if (this.state == 3) // buffering
-			return;
-		if (Math.abs(leader_time - my_time) > this.get('tolerance'))
-			this.player.seekTo(leader_time, true);
-		if (playback.video.id != this.get('video').id)
-			this.set_video(new Video(playback.video));
-		if (playback.state != this.player.getPlayerState())
-			if (playback.state == 1)
-				this.player.playVideo();
-			else {
-				this.player.pauseVideo();
-				this.player.seekTo(leader_time, true);
+	update: function(state){
+		if (this.player) {
+			// pause / play
+			switch(this.model.get('state')){
+				case 'playing': this.player.playVideo();
+				case 'paused': this.player.pauseVideo();
 			}
-		this.trigger('state');
+			// current time
+			var my_time = this.player.getCurrentTime();
+			if (state.time - this.player.get('time') > this.options.tolerance) {
+				this.set('time', state.time);
+			}
+		}
 	},
 	play: function(){
-		if (!globals.leader) return;
 		if (!this.player) return;
 		this.player.playVideo();
-		/*this.get('server').emit('video', {
-			playback: {
-				seek: this.player.getCurrentTime(),
-				state: this.player.getPlayerState()
-			}
-		});*/
-		this.trigger('state');
 	},
 	pause: function(){
-		if (!globals.leader) return;
 		if (!this.player) return;
 		this.player.pauseVideo();
-		/*this.get('server').emit('video', {
-			playback: {
-				seek: this.player.getCurrentTime(),
-				state: this.player.getPlayerState()
-			}
-		});*/
-		this.trigger('state');
 	},
 	volume: function(vol){
 		if (!this.player) return;
 		this.player.setVolume(vol);
-	},
-	playing: function() {
-		if(!this.player) return false;
-		return this.player.getPlayerState() == 1;
-	},
-	duration: function() {
-		if (!this.player) return 1;
-		return this.player.getDuration();
-	},
-	percentage: function() {
-		if (!this.player) return 0;
-		return this.player.getCurrentTime() / this.player.getDuration();
-	},
-	seek: function(seconds) {
-		if (!globals.leader) return;
-		/*this.get('server').emit('video', {
-			playback: {
-				seek: seconds - 2,
-				state: this.player.getPlayerState()
-			}
-		});*/
 	}
 });
 
-var PlayerView = Backbone.View.extend({
-	render: function() {
-		if (!this.model) return;
-		var el = $(this.el), self = this, player = this.model;
-		if (window.swfobject)
-		swfobject.embedSWF(
-			player.get('apiplayer_url'),
-			el.attr('id'),
-			String(player.get('dimensions').width),
-			String(player.get('dimensions').height),
-			'9', null, null,
-			{allowScriptAccess: 'always'},
-			{id: 'apiplayer'}
-		);
-	}
-});
-
+/*
 var ControlsView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('state', this.render, this);
@@ -114,6 +126,7 @@ var ControlsView = Backbone.View.extend({
 				self.model.play();
 			}
 		});
+		getDuration
 	},
 	render: function() {
 		var el = $(this.el), self = this;
@@ -143,14 +156,7 @@ var ScrobblerView = Backbone.View.extend({
 		});
 	},
 	render: function() {
-		var el = this.$el, self = this;
-		var playhead = el.find('#playhead');
-		var percentage = this.model.percentage();
-		var margin = (el.width() - playhead.width()) * percentage;
-		if (!margin) playhead.css('visibility','hidden');
-		else {
-			playhead.css('visibility','');
-			playhead.css('margin-left', margin);
-		}
+		
 	}
 })
+*/
