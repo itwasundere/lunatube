@@ -57,6 +57,7 @@ var ConnectionApi = Backbone.Model.extend({
 	init_player: function() {
 		var self = this;
 		var sock = this.get('socket');
+		var room = this.get('room');
 		var player = this.get('room').get('player');
 		setInterval(function(){ 
 			sock.emit('player', { action: 'state' });
@@ -67,9 +68,13 @@ var ConnectionApi = Backbone.Model.extend({
 				time: data.time,
 				current: new models.Video(data.current)
 			});
-			var playlist = player.get('playlist');
-			if (data.playlist.id != playlist.id)
-				playlist.reset(data.playlist);
+		});
+		player.on('change', function(){
+			if (!room.get('modlist').get(window.user.id)) return;
+			sock.emit('player', {
+				action: 'update',
+				player: player.toJSON
+			});
 		});
 	}
 });

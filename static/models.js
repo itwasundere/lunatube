@@ -60,7 +60,7 @@ models.VideoList = Backbone.Collection.extend({
 		this.classname = 'video';
 		this.bind('reset', function(){
 			self.goto_first();
-		})
+		});
 	},
 	goto_first: function() {
 		var noprev = this.filter(function(vid){
@@ -94,9 +94,8 @@ models.VideoList = Backbone.Collection.extend({
 
 models.Player = Backbone.Model.extend({
 	defaults: {
-		state: 'playing',
+		state: 'paused',
 		current: new models.Video(),
-		playlist: new models.VideoList(),
 		time: 0
 	},
 	play: function(){
@@ -108,50 +107,28 @@ models.Player = Backbone.Model.extend({
 	initialize: function() {
 		var self = this;
 		this.start_ticker();
-		var pl = this.get('playlist')
-		pl.bind('reset', function(){
-			self.set('current', self.get('playlist').playhead);
-		});
 	},
 	start_ticker: function() {
 		var self = this;
 		setInterval(function(){ self.tick(); }, 1000);
 	},
 	tick: function() {
-		var time = this.get('time');
 		if (!this.get('current')) return;
+		var time = this.get('time');
 		if (this.get('state') == 'playing')
 			time += 1;
 		if (time <= this.get('current').get('time')) {
 			this.set({'time': time}, {silent: true});
 			return;
-		} else this.next();
-	},
-	switch: function(playlist) {
-		this.set('playlist', playlist);
-	},
-	skip: function(video) {
-		var playlist = this.get('playlist');
-		playlist.skip(video);
-		if (playlist.playhead) {
-			this.set('current', playlist.playhead);
-			this.set('time',0)
+		} else {
+			this.pause();
+			this.trigger('end');
 		}
 	},
-	prev: function() {
-		var playlist = this.get('playlist');
-		playlist.back();
-		if (playlist.playhead) {
-			this.set('current', playlist.playhead);
-			this.set('time', 0);
-		}
-	},
-	next: function() {
-		var playlist = this.get('playlist');
-		playlist.advance();
-		if (playlist.playhead)
-			this.set('current', playlist.playhead);
-		this.set('time', 0);
+	set_vid: function(video) {
+		this.set('current', video);
+		this.set('time',0);
+		this.play();
 	},
 	seek: function(time) {
 		var vidlength = this.get('current').get('time');
@@ -198,20 +175,28 @@ models.Room = Backbone.Model.extend({
 		userlist: new models.UserList(),
 		queue: new models.VideoList(),
 		playlist: new models.VideoList(),
-		player: null,
+		player: new models.Player(),
 		mutelist: new models.UserList(),
 		modlist: new models.UserList(),
 		owner: new models.User,
 		messages: new models.MessageList()
 	},
 	initialize: function() {
-		this.set('player', new models.Player({
-			playlist: this.get('playlist') }));
 		this.classname = 'room';
 		var self = this;
 		var count = 0;
 		this.bind('change', function(){
 			self.update();
+		});
+
+		var player = this.get('player');
+		var playlist = this.get('playlist');
+		playlist.on('reset', function(){
+			player.set_vid(playlist.playhead);
+		});
+		player.on('end', function(){
+			playlist.advance();
+			player.set_vid(playlist.playhead);
 		});
 		this.update();
 	},

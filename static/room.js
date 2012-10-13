@@ -98,5 +98,6 @@ $(document).ready(function(){
 		el: $('#col_left'),
 		model: room.get('player')
 	});
+	window.user = new models.User(globals.user);
 	plv.render();
 });
