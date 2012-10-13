@@ -2,7 +2,7 @@ var chromeless = 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playe
 
 var PlayerView = Backbone.View.extend({
 	initialize: function(){
-		var self = this, el = this.$el, playhead = this.$el.find('#scrobbler');
+		var self = this, el = this.$el;
 		if (!this.options.dimensions)
 			this.options.dimensions = { width: 640, height: 360 };
 		if (!this.options.tolerance)
@@ -15,10 +15,14 @@ var PlayerView = Backbone.View.extend({
 				self.model.pause();
 			else self.model.play();
 		});
-		this.$el.find('#scrobbler').click(function(event){
+
+		var scrobbler = this.$el.find('#scrobbler');
+		var playhead = this.$el.find('#playhead');
+		scrobbler.click(function(event){
 			var current = self.model.get('current');
 			if (!current) return;
-			var percentage = event.offsetX / (el.width() - playhead.width());
+			var percentage = event.offsetX / (scrobbler.width() - playhead.width());
+			console.log(percentage);
 			var seek = Math.floor(percentage * current.get('time'));
 			self.model.seek(seek);
 		});

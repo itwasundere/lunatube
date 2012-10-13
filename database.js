@@ -100,7 +100,8 @@ var db = {
 		if (!model.id) return;
 		var statement = sql.get(model.classname, model.id);
 		this.sqlite.get(statement, function(err, row){
-			if (row.password) delete row.password
+			if (row && row.password) 
+				delete row.password;
 			options.success(row);
 		});
 	},

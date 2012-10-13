@@ -74,24 +74,6 @@ var ConnectionApi = Backbone.Model.extend({
 			case 'message': 
 				room.message(user, data.message); 
 				break;
-			/*
-			case 'mute': 
-				var target = new User({id: data.target});
-				room.mute(user, target, true);
-				break;
-			case 'unmute': 
-				var target = new User({id: data.target});
-				room.mute(user, target, false);
-				break;
-			case 'mod': 
-				var target = new User({id: data.target});
-				room.mod(user, target, true);
-				break;
-			case 'unmod': 
-				var target = new User({id: data.target});
-				room.unmod(user, target, true);
-				break;
-			*/
 			default: break;
 		}
 	},
@@ -101,6 +83,15 @@ var ConnectionApi = Backbone.Model.extend({
 		var sock = this.get('socket');
 		switch(data.action) {
 			case 'state': sock.emit('player', player.toJSON()); break;
+			case 'update':
+				console.log(data.player);
+				// todo -- check mod permissions
+				player.set({
+					state: data.player.state,
+					current: new models.Video(data.player.current),
+					time: data.player.time
+				});
+				break;
 			default: break;
 		}
 	},

@@ -100,9 +100,11 @@ models.Player = Backbone.Model.extend({
 	},
 	play: function(){
 		this.set('state', 'playing');
+		this.trigger('action');
 	},
 	pause: function(){
 		this.set('state', 'paused');
+		this.trigger('action');
 	},
 	initialize: function() {
 		var self = this;
@@ -121,20 +123,21 @@ models.Player = Backbone.Model.extend({
 			this.set({'time': time}, {silent: true});
 			return;
 		} else {
-			this.pause();
+			this.set('state', 'paused');
 			this.trigger('end');
 		}
 	},
 	set_vid: function(video) {
 		this.set('current', video);
 		this.set('time',0);
-		this.play();
+		this.set('state', 'playing');
 	},
 	seek: function(time) {
 		var vidlength = this.get('current').get('time');
 		if (time < vidlength)
 			this.set('time', time);
 		else this.set('time', vidlength);
+		this.trigger('action');
 	}
 });
 
@@ -189,15 +192,33 @@ models.Room = Backbone.Model.extend({
 			self.update();
 		});
 
+		// userlists
+		if (serverside) {
+			var modlist = new Backbone.Collection();
+			modlist.classname = 'mod';
+			modlist.query = 'room_id='+this.id;
+			modlist.fetch();
+			modlist.bind('reset', function(){
+				modlist.each(function(modlink){
+					var user = new models.User({
+						id: modlink.get('user_id')
+					});
+					user.fetch();
+					self.get('modlist').add(user);
+				});
+			});
+		}
+
+		// player
 		var player = this.get('player');
 		var playlist = this.get('playlist');
 		playlist.on('reset', function(){
-			player.set_vid(playlist.playhead);
-		});
+			player.set_vid(playlist.playhead); });
 		player.on('end', function(){
 			playlist.advance();
 			player.set_vid(playlist.playhead);
 		});
+
 		this.update();
 	},
 	update: function() {

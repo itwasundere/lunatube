@@ -69,11 +69,13 @@ var ConnectionApi = Backbone.Model.extend({
 				current: new models.Video(data.current)
 			});
 		});
-		player.on('change', function(){
-			if (!room.get('modlist').get(window.user.id)) return;
+		player.on('action', function(){
+			// todo -- re-enable security
+			// if (!room.get('modlist').get(window.user.id)) return;
+			console.log(player.toJSON())
 			sock.emit('player', {
 				action: 'update',
-				player: player.toJSON
+				player: player.toJSON()
 			});
 		});
 	}
