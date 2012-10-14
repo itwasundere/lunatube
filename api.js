@@ -36,6 +36,7 @@ var ConnectionApi = Backbone.Model.extend({
 			var user_left = userlist.where({hash: user.get('hash')});
 			room.leave(user_left);
 		});
+		sock.on('room', function(data){ self.room(data) });
 		sock.on('chat', function(data){ self.chat(data) });
 		sock.on('player', function(data){ self.player(data) });
 		sock.on('playlist', function(data){ self.playlist(data) });
@@ -62,6 +63,25 @@ var ConnectionApi = Backbone.Model.extend({
 				messages: unrelayed
 			});
 		});
+
+		room.bind('change:current', function(){
+			sock.emit('room', {
+				current: room.get('current').toJSON() 
+			});
+		});
+
+	},
+	room: function(data) {
+		// check mod and security
+		if (!data || !data.action) return;
+		var room = this.get('room');
+		var user = this.get('user');
+		switch(data.action) {
+			case 'state': 
+				room.set({ current: new models.Video(data.room.current) });
+				break;
+			default: break;
+		}
 	},
 	chat: function(data) {
 		if (!data || !data.action) return;
@@ -84,7 +104,6 @@ var ConnectionApi = Backbone.Model.extend({
 		switch(data.action) {
 			case 'state': sock.emit('player', player.toJSON()); break;
 			case 'update':
-				console.log(data.player);
 				// todo -- check mod permissions
 				player.set({
 					state: data.player.state,

@@ -58,38 +58,57 @@ models.VideoList = Backbone.Collection.extend({
 	initialize: function() {
 		var self = this;
 		this.classname = 'video';
+		/*
 		this.bind('reset', function(){
-			self.goto_first();
+			if (!self.playhead)
+				self.goto_first();
+			self.bind_select();
+		});
+		this.bind_select();
+		*/
+	},
+	after: function(video) {
+		var nextid = video.get('next');
+		if (nextid) return this.get(nextid);
+		else return this.at(0);
+	}
+	/*,
+	bind_select: function(){
+		var self = this;
+		this.each(function(video){
+			video.bind('selected', function(){
+				self.playhead = video; 
+				self.trigger('select_video');
+			});
 		});
 	},
 	goto_first: function() {
 		var noprev = this.filter(function(vid){
 			return !vid.get('prev'); });
 		if (noprev.length > 0) {
-			this.playhead = noprev[0],
-			this.place = 0;
+			this.playhead = noprev[0];
+			this.trigger('select_video');
 		}
 	},
 	advance: function() {
 		var nextid = this.playhead.get('next');
-		if (nextid)
-			this.playhead = this.get(nextid)
+		if (nextid) {
+			this.playhead = this.get(nextid);
+			this.trigger('select_video');
+		}
 		else this.goto_first();
 	},
 	back: function() {
 		var previd = this.playhead.get('prev');
-		if (previd)
+		if (previd) {
 			this.playhead = this.get(previd)
+			this.trigger('select_video');
+		}
 		else this.goto_first();
-	},
-	skip: function(video) {
-		video = this.get(video.id);
-		if (!video) return;
-		this.playhead = video;
 	},
 	move: function(video, before, after) {
 
-	}
+	}*/
 });
 
 models.Player = Backbone.Model.extend({
@@ -182,7 +201,8 @@ models.Room = Backbone.Model.extend({
 		mutelist: new models.UserList(),
 		modlist: new models.UserList(),
 		owner: new models.User,
-		messages: new models.MessageList()
+		messages: new models.MessageList(),
+		current: new models.Video()
 	},
 	initialize: function() {
 		this.classname = 'room';
@@ -212,12 +232,31 @@ models.Room = Backbone.Model.extend({
 		// player
 		var player = this.get('player');
 		var playlist = this.get('playlist');
+
 		playlist.on('reset', function(){
-			player.set_vid(playlist.playhead); });
-		player.on('end', function(){
-			playlist.advance();
-			player.set_vid(playlist.playhead);
+			if (self.get('current').get('time')) return;
+			self.set('current', playlist.at(0));
 		});
+		player.on('end', function(){
+			var curr = self.get('current');
+			self.set('current', playlist.after(curr));
+		});
+
+		playlist.on('selected', function(video){
+			self.set('current', video);
+			self.trigger('action');
+		});
+
+		this.on('change:current', function(){
+			player.set_vid(self.get('current'));
+		});
+
+/*
+		playlist.on('select_video', function(){
+			player.set_vid(playlist.playhead);
+			player.trigger('action');
+		});
+*/
 
 		this.update();
 	},

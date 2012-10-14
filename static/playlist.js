@@ -1,6 +1,7 @@
 var PlaylistView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('add remove', this.render, this);
+		this.model.bind('selected', this.render, this);
 		this.subviews = {};
 	},
 	render: function() {
@@ -12,6 +13,11 @@ var PlaylistView = Backbone.View.extend({
 				piv = new PlaylistItemView({model: item});
 				self.subviews[item.cid] = piv;
 			}
+			/*
+			if (item.get('url') == self.model.playhead.get('url'))
+				piv.options.selected = true;
+			*/
+			else piv.options.selected = false;
 			piv.render();
 			el.append(piv.el);
 		});
@@ -30,10 +36,11 @@ var PlaylistItemView = Backbone.View.extend({
 		}, function(){
 			el.css('background-color','');
 		});
-		if (this.model.get('selected'))
+		if (this.options.selected)
 			el.css('background-color','yellow');
+		else el.css('background-color','');
 		el.click(function(){
-			self.model.trigger('selected');
+			self.model.trigger('selected', self.model);
 		});
 		el.html(this.template({
 			title: this.model.get('title'),

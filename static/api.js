@@ -1,22 +1,37 @@
 var ConnectionApi = Backbone.Model.extend({
 	initialize: function() {
-		var socket = io.connect(this.get('ip'));
-		this.set('socket', socket);
-		socket.on('connect', function(data){
+		var sock = io.connect(this.get('ip'));
+		this.set('socket', sock);
+		sock.on('connect', function(data){
 			console.log('connected');
-			socket.emit('chat',{
+			sock.emit('chat',{
 				action: 'join'
 			});
 		});
+		this.init_room();
 		this.init_messages();
 		this.init_player();
+	},
+	init_room: function() {
+		var sock = this.get('socket');
+		var room = this.get('room')
+		room.bind('action', function(){
+			sock.emit('room', {
+				action: 'state',
+				room: {
+					current: room.get('current').toJSON()
+				}
+			});
+		});
+		sock.on('room', function(data){
+			room.set({ current: new models.Video(data.current) });
+		});
 	},
 	init_messages: function() {
 		var sock = this.get('socket');
 		var room = this.get('room');
 		// receiving messages
 		sock.on('chat', function(data){
-			console.log('received '+JSON.stringify(data));
 			switch(data.action) {
 				case 'userlist': 
 					room.get('userlist').reset(data.userlist); 
@@ -46,7 +61,6 @@ var ConnectionApi = Backbone.Model.extend({
 				message.set('hash', hash);
 				unsent[idx] = message.toJSON()
 			}
-			console.log('sending '+JSON.stringify(unsent));
 			sock.emit('chat', {
 				action: 'message',
 				message: unsent
@@ -72,11 +86,20 @@ var ConnectionApi = Backbone.Model.extend({
 		player.on('action', function(){
 			// todo -- re-enable security
 			// if (!room.get('modlist').get(window.user.id)) return;
-			console.log(player.toJSON())
 			sock.emit('player', {
 				action: 'update',
 				player: player.toJSON()
 			});
 		});
+	},
+	init_playlist: function() {
+		var self = this; 
+		var sock = this.get('socket');
+		var room = this.get('room');
+		var playlist = room.get('playlist');
+		/*
+		sock.on('playlist', function(data){
+			playlist.playhead = new Video(data.playhead);
+		});*/
 	}
 });
