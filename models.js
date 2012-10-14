@@ -58,57 +58,12 @@ models.VideoList = Backbone.Collection.extend({
 	initialize: function() {
 		var self = this;
 		this.classname = 'video';
-		/*
-		this.bind('reset', function(){
-			if (!self.playhead)
-				self.goto_first();
-			self.bind_select();
-		});
-		this.bind_select();
-		*/
 	},
 	after: function(video) {
 		var nextid = video.get('next');
 		if (nextid) return this.get(nextid);
 		else return this.at(0);
 	}
-	/*,
-	bind_select: function(){
-		var self = this;
-		this.each(function(video){
-			video.bind('selected', function(){
-				self.playhead = video; 
-				self.trigger('select_video');
-			});
-		});
-	},
-	goto_first: function() {
-		var noprev = this.filter(function(vid){
-			return !vid.get('prev'); });
-		if (noprev.length > 0) {
-			this.playhead = noprev[0];
-			this.trigger('select_video');
-		}
-	},
-	advance: function() {
-		var nextid = this.playhead.get('next');
-		if (nextid) {
-			this.playhead = this.get(nextid);
-			this.trigger('select_video');
-		}
-		else this.goto_first();
-	},
-	back: function() {
-		var previd = this.playhead.get('prev');
-		if (previd) {
-			this.playhead = this.get(previd)
-			this.trigger('select_video');
-		}
-		else this.goto_first();
-	},
-	move: function(video, before, after) {
-
-	}*/
 });
 
 models.Player = Backbone.Model.extend({
@@ -250,14 +205,6 @@ models.Room = Backbone.Model.extend({
 		this.on('change:current', function(){
 			player.set_vid(self.get('current'));
 		});
-
-/*
-		playlist.on('select_video', function(){
-			player.set_vid(playlist.playhead);
-			player.trigger('action');
-		});
-*/
-
 		this.update();
 	},
 	update: function() {

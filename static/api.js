@@ -91,15 +91,5 @@ var ConnectionApi = Backbone.Model.extend({
 				player: player.toJSON()
 			});
 		});
-	},
-	init_playlist: function() {
-		var self = this; 
-		var sock = this.get('socket');
-		var room = this.get('room');
-		var playlist = room.get('playlist');
-		/*
-		sock.on('playlist', function(data){
-			playlist.playhead = new Video(data.playhead);
-		});*/
 	}
 });

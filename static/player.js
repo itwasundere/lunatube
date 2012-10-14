@@ -22,7 +22,6 @@ var PlayerView = Backbone.View.extend({
 			var current = self.model.get('current');
 			if (!current) return;
 			var percentage = event.offsetX / (scrobbler.width() - playhead.width());
-			console.log(percentage);
 			var seek = Math.floor(percentage * current.get('time'));
 			self.model.seek(seek);
 		});
@@ -117,50 +116,3 @@ var PlayerView = Backbone.View.extend({
 		this.player.setVolume(vol);
 	}
 });
-
-/*
-var ControlsView = Backbone.View.extend({
-	initialize: function() {
-		this.model.bind('state', this.render, this);
-		var self = this;
-		this.$el.find('#play').click(function(){
-			if (self.model.playing()){
-				self.model.pause();
-			} else {
-				self.model.play();
-			}
-		});
-		getDuration
-	},
-	render: function() {
-		var el = $(this.el), self = this;
-		if (this.model.playing()){
-			if (this.display == 'pausebtn') return;
-			el.find('#play').html('<img src="/static/img/pause.png">');
-			this.display = 'pausebtn';
-		} else {
-			if (this.display == 'playbtn') return;
-			el.find('#play').html('<img src="/static/img/play.png">');
-			this.display = 'playbtn';
-		}
-	}
-});
-
-var ScrobblerView = Backbone.View.extend({
-	initialize: function() {
-		var el = this.$el, self = this;
-		var playhead = el.find('#playhead');
-		setInterval(function(){ 
-			self.render();
-		}, 250);
-		el.click(function(event){
-			var percentage = event.offsetX / (el.width() - playhead.width());
-			var seek = percentage * self.model.duration();
-			self.model.seek(seek);
-		});
-	},
-	render: function() {
-		
-	}
-})
-*/

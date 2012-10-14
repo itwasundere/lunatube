@@ -13,10 +13,6 @@ var PlaylistView = Backbone.View.extend({
 				piv = new PlaylistItemView({model: item});
 				self.subviews[item.cid] = piv;
 			}
-			/*
-			if (item.get('url') == self.model.playhead.get('url'))
-				piv.options.selected = true;
-			*/
 			else piv.options.selected = false;
 			piv.render();
 			el.append(piv.el);
