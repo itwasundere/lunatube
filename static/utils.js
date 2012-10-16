@@ -46,6 +46,19 @@ function get_after(str, substr, len) {
 	if (loc == -1) return;
 	return str.substring(loc + substr.length, loc + substr.length + len);
 }
+function make_links(str) {
+	var words = str.split(' ');
+	$.each(words, function(idx, str){
+		if (contains(str,'.com') || 
+			contains(str,'.net') || 
+			contains(str,'.org') ||
+			starts_with(str,'http://') ||
+			starts_with(str,'https://') ||
+			starts_with(str,'www.'))
+		words[idx] = '<a href="'+str+'"">' + str + '</a>';
+	});
+	return words.join(' ');
+}
 function is_img_link(str) {
 	if (contains(str, ' '))
 		return false;

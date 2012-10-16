@@ -23,11 +23,11 @@ $(document).ready(function(){
 	});
 	window.pv = new PlaylistView({
 		model: room.get('playlist'), 
-		el: $('#playlist_vids')
+		el: $('#playlist #videos')
 	});
 	pv.render();
 	window.plv = new PlayerView({
-		el: $('#col_left'),
+		el: $('#theater'),
 		model: room.get('player')
 	});
 	window.user = new models.User(globals.user);

@@ -23,25 +23,23 @@ var PlaylistView = Backbone.View.extend({
 var PlaylistItemView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('change', this.render, this);
-		this.template = _.template($('script#video_list').html());
+		this.template = _.template($('script#video').html());
 	},
 	render: function() {
 		var el = this.$el, self = this;
 		el.hover(function(){
-			el.css('background-color','red');
+			el.attr('class','hover');
 		}, function(){
-			el.css('background-color','');
+			el.attr('class','');
 		});
 		if (this.options.selected)
-			el.css('background-color','yellow');
-		else el.css('background-color','');
+			el.attr('class','selected');
+		else el.attr('class','');
 		el.click(function(){
 			self.model.trigger('selected', self.model);
 		});
-		el.html(this.template({
-			title: this.model.get('title'),
-			uploader: this.model.get('uploader'),
-			time: this.model.get('time_text')
-		}));
+		var html = $(this.template(this.model.toJSON()));
+		el.attr('id', html.attr('id'))
+		el.html(html.html());
 	}
 });

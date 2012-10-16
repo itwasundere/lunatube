@@ -31,7 +31,7 @@ var PlayerView = Backbone.View.extend({
 		if (!this.player && window.swfobject) {
 			swfobject.embedSWF(
 				chromeless,
-				'vid_player2',
+				'youtube',
 				String(this.options.dimensions.width),
 				String(this.options.dimensions.height),
 				'9', null, null,
@@ -61,6 +61,7 @@ var PlayerView = Backbone.View.extend({
 				this.player.pauseVideo();
 		}
 
+		/*
 		// play button
 		if (this.model.get('state') == 'playing' && !this.show_pause) {
 			el.find('#play').html('<img src="/static/img/pause.png">');
@@ -72,7 +73,8 @@ var PlayerView = Backbone.View.extend({
 			this.show_play = true;
 			this.show_pause = false;
 		}
-
+		*/
+		
 		// scrobbler
 		var playhead = el.find('#playhead');
 		var scrobbler = el.find('#scrobbler');
@@ -80,9 +82,19 @@ var PlayerView = Backbone.View.extend({
 		var margin = (scrobbler.width() - playhead.width()) * percentage;
 		playhead.css('visibility','');
 		playhead.css('margin-left', margin);
+
+		// volume contorls
+		var volume = el.find('#volume input');
+		volume.change(function(){
+			self.volume(parseInt(volume.val()));
+		});
+
+		// prevnext
+		
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');
+		this.volume(50);
 		this.trigger('ready');
 	},
 	set_video: function(video){

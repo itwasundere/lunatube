@@ -112,7 +112,7 @@ window.VideoView = Backbone.View.extend({
 	},
 	render: function() {
 		if(!this.model) return;
-		var html = $(_.template(this.html, this.model.attributes));
+		var html = $(_.template(this.html, this.model.toJSON()));
 		var self = this;
 		this.$el.attr('id',html.attr('id'));
 		this.$el.attr('class',html.attr('class'));

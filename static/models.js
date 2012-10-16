@@ -29,7 +29,11 @@ models.Video = Backbone.Model.extend({
 		prev: 0,
 		next: 0,
 		url: '00000000000',
-		time: 0
+		time: 0,
+		thumb: '',
+		title: '',
+		uploader: '',
+		time_text: '0:00'
 	},
 	initialize: function() {
 		this.classname = 'video';
@@ -133,7 +137,7 @@ models.MessageList = Backbone.Collection.extend({
 models.User = Backbone.Model.extend({
 	defaults: {
 		username: '', 
-		avatar_url: ''
+		avatar_url: '/static/avatars/newfoal.png'
 	},
 	initialize: function(){
 		this.classname = 'user';
