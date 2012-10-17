@@ -1,4 +1,7 @@
 var ConnectionApi = Backbone.Model.extend({
+	defaults: {
+		refresh: 1000
+	},
 	initialize: function() {
 		var sock = io.connect(this.get('ip'));
 		this.set('socket', sock);
@@ -30,6 +33,11 @@ var ConnectionApi = Backbone.Model.extend({
 	init_messages: function() {
 		var sock = this.get('socket');
 		var room = this.get('room');
+		room.bind('message', function(data){
+			if (!data || !data.msg) return;
+			sock.emit('message', data.msg.toJSON());
+		});
+
 		// receiving messages
 		sock.on('chat', function(data){
 			switch(data.action) {
@@ -40,33 +48,20 @@ var ConnectionApi = Backbone.Model.extend({
 					var messages = room.get('messages');
 					for (idx in data.messages) {
 						var msg = data.messages[idx];
-						var existing = messages.where({hash: msg.hash});
-						if (!existing) room.get('messages').add(msg);
-						else existing[0].set(msg);
+						room.get('messages').add(msg);
 					}
 				default: break;
 			}
 		});
 
 		// sending messages
-		var messages = room.get('messages');
-		messages.bind('add', function(){
-			var unsent = messages.filter(function(msg){
-				return msg.get('sent') == false; });
-			for (idx in unsent) {
-				var message = unsent[idx];
-				message.set('sent', true);
-				// todo -- change this to user
-				var hash = md5(''+now());
-				message.set('hash', hash);
-				unsent[idx] = message.toJSON()
-			}
+		room.bind('message', function(data){
+			var msg = data.msg;
 			sock.emit('chat', {
 				action: 'message',
-				message: unsent
+				message: data.msg
 			});
 		});
-
 	},
 	init_player: function() {
 		var self = this;
@@ -75,7 +70,7 @@ var ConnectionApi = Backbone.Model.extend({
 		var player = this.get('room').get('player');
 		setInterval(function(){ 
 			sock.emit('player', { action: 'state' });
-		}, 1000);
+		}, this.get('refresh'));
 		sock.on('player', function(data){
 			player.set({
 				state: data.state,

@@ -126,7 +126,7 @@ models.Message = Backbone.Model.extend({
 		time: 0,
 		sent: false,
 		relayed: false,
-		hash: ''
+		rendered: false
 	}
 });
 
@@ -226,9 +226,16 @@ models.Room = Backbone.Model.extend({
 	leave: function(user) {
 		this.get('userlist').remove(user);
 	},
-	message: function(user, messages) {
+	message: function(user, new_message) {
 		if (this.get('mutelist').get(user.id)) return;
-		else this.get('messages').add(messages);
+		else {
+			var messages = this.get('messages');
+			if (messages.length >= 100)
+				messages.reset();
+			var msg = new models.Message(new_message);
+			messages.add(msg);
+			msg.set('relayed', true);
+		}
 	},
 	mute: function(mod, user, mute) {
 		if (!this.get('modlist').get(mod.id)) return;
@@ -243,6 +250,11 @@ models.Room = Backbone.Model.extend({
 		if (mod)
 			this.get('modlist').add(user);
 		else this.get('modlist').remove(user);
+	},
+	json: function() {
+		var json = this.toJSON();
+		json['messages'] = [];
+		return json;
 	}
 });
 

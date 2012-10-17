@@ -17,9 +17,11 @@ $(document).ready(function(){
 			}
 		}
 	}
+	window.user = new models.User(globals.user);
 	window.api = new ConnectionApi({
 		ip: 'ws://localhost:8080/',
-		room: window.room
+		room: window.room,
+		refresh: 1000
 	});
 	window.pv = new PlaylistView({
 		model: room.get('playlist'), 
@@ -30,6 +32,11 @@ $(document).ready(function(){
 		el: $('#theater'),
 		model: room.get('player')
 	});
-	window.user = new models.User(globals.user);
 	plv.render();
+	window.cv = new ChatView({
+		el: $('#chatroom'),
+		model: room
+	});
+	cv.render();
+	
 });

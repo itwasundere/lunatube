@@ -89,6 +89,9 @@ var PlayerView = Backbone.View.extend({
 			self.volume(parseInt(volume.val()));
 		});
 
+		if (this.model.get('current') && this.model.get('current').get('title'))
+			$('#banner').html(this.model.get('current').get('title'));
+
 		// prevnext
 		
 	},

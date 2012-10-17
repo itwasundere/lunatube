@@ -1,6 +1,9 @@
 var models = require('./models.js');
 var utils = require('./sutils');
 var Backbone = require('backbone');
+var Underscore = require('underscore');
+
+var crypto = require('crypto');
 
 var ConnectionApi = Backbone.Model.extend({
 	initialize: function() {
@@ -10,18 +13,24 @@ var ConnectionApi = Backbone.Model.extend({
 			function(socket){ self.connect(socket); });
 	},
 	connect: function(socket) {
+		console.log('connection from '+socket.handshake.address.address);
 		var self = this;
-		var cookie = socket.handshake.headers.cookie;
+		var cookie = socket.handshake.headers.cookie || '';
 		utils.get_session(this.get('store'), cookie, function(session){
 			if (!session) {
 				socket.disconnect();
 				return;
 			}
+			console.log('cookie found, user '+session.user.hash);
 			self.set({
-				user: new models.User(session.user),
+				user: new models.User({
+					id: session.user.hash,
+					username: session.user.username
+				}),
 				room: self.get('roomlist').get(session.room_id)
 			});
 			self.set('socket', socket);
+			// todo -- only bind once, unbind on disconnect
 			self.bind_events();
 		});
 	},
@@ -33,7 +42,7 @@ var ConnectionApi = Backbone.Model.extend({
 		var user = this.get('user');
 		var userlist = this.get('room').get('userlist');
 		sock.on('disconnect', function(){
-			var user_left = userlist.where({hash: user.get('hash')});
+			var user_left = userlist.get(user.id);
 			room.leave(user_left);
 		});
 		sock.on('room', function(data){ self.room(data) });
@@ -49,13 +58,12 @@ var ConnectionApi = Backbone.Model.extend({
 			});
 		});
 
+		// outgoing messages
 		var messages = room.get('messages');
 		messages.bind('add', function(){
-			var unrelayed = messages.filter(function(msg){
-				return msg.get('relayed') == false; });
+			var unrelayed = messages.where({relayed: false});
 			for (idx in unrelayed) {
 				var msg = unrelayed[idx];
-				msg.set('relayed', true);
 				unrelayed[idx] = msg.toJSON()
 			}
 			sock.emit('chat', {
@@ -63,7 +71,7 @@ var ConnectionApi = Backbone.Model.extend({
 				messages: unrelayed
 			});
 		});
-
+		
 		room.bind('change:current', function(){
 			sock.emit('room', {
 				current: room.get('current').toJSON() 
@@ -87,12 +95,19 @@ var ConnectionApi = Backbone.Model.extend({
 		if (!data || !data.action) return;
 		var room = this.get('room');
 		var user = this.get('user');
+
+		console.log('chat action from user '+user.id);
+		console.log(data);
+		
 		switch(data.action) {
 			case 'join': 
 				room.join(user); 
 				break;
-			case 'message': 
-				room.message(user, data.message); 
+			case 'message':
+				var md5 = crypto.createHash('md5');
+				md5.update(''+(new Date).getTime());
+				data.message.id = md5.digest('hex');
+				room.message(user, data.message);
 				break;
 			default: break;
 		}

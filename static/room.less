@@ -83,6 +83,7 @@ body {
 			font-size: 18px;
 		}
 	}
+	overflow: hidden;
 }
 
 #controls {
@@ -129,6 +130,7 @@ body {
 	margin: @margin 0px;
 	width: @chat_width;
 	.avatar { 
+		overflow: hidden;
 		margin: @small_margin;
 		float: left;
 		width: @avatar_size;
@@ -142,6 +144,10 @@ body {
 	#messages {
 		height: @chat_height;
 		background-color: @luna_white;
+		#text {
+			margin: @small_margin;
+			margin-left: 0;
+		}
 	}
 	#mouth {
 		background-color: @luna_dark;

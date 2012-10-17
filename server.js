@@ -9,6 +9,7 @@ var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
+io.set('log level', 1);
 http.listen(8080);
 
 var crypto = require('crypto');
@@ -39,16 +40,18 @@ userlist.fetch();
 app.get('/', function(req, res){
 	var room = roomlist.at(0);
 	var md5 = crypto.createHash('md5');
-	md5.update(req.connection.remoteAddress+room.get('owner').get('username'));
+	// md5.update(req.connection.remoteAddress+room.get('owner').get('username'));
+	md5.update(''+(new Date).getTime());
 	var md5hash = md5.digest('hex');
 	req.session.room_id = room.id;
 	// todo: consider multiple rooms
 	if (!req.session.user)
 		req.session.user = {
+			id: md5hash,
 			hash: md5hash,
 			username: names.gen_name() };
 	res.render('room.jade', {
-		room: JSON.stringify(room.toJSON()),
+		room: JSON.stringify(room.json()),
 		user: JSON.stringify(req.session.user)
 	});
 	room.fetch();
