@@ -4,87 +4,56 @@ var ConnectionApi = Backbone.Model.extend({
 	},
 	initialize: function() {
 		var sock = io.connect(this.get('ip'));
-		this.set('socket', sock);
+		this.set('sock', sock);
 		sock.on('connect', function(data){
 			console.log('connected');
-			sock.emit('chat',{
-				action: 'join'
-			});
+			sock.emit('join', window.room.id);
 		});
-		this.init_room();
-		this.init_messages();
-		this.init_player();
+		this.start_player_loop();
+		this.bind_room_events();
+		this.bind_sock_events();
 	},
-	init_room: function() {
-		var sock = this.get('socket');
-		var room = this.get('room')
-		room.bind('action', function(){
-			sock.emit('room', {
-				action: 'state',
-				room: {
-					current: room.get('current').toJSON()
-				}
-			});
-		});
-		sock.on('room', function(data){
-			room.set({ current: new models.Video(data.current) });
-		});
-	},
-	init_messages: function() {
-		var sock = this.get('socket');
-		var room = this.get('room');
-		room.bind('message', function(data){
-			if (!data || !data.msg) return;
-			sock.emit('message', data.msg.toJSON());
-		});
-
-		// receiving messages
-		sock.on('chat', function(data){
-			switch(data.action) {
-				case 'userlist': 
-					room.get('userlist').reset(data.userlist); 
-					break;
-				case 'message':
-					var messages = room.get('messages');
-					for (idx in data.messages) {
-						var msg = data.messages[idx];
-						room.get('messages').add(msg);
-					}
-				default: break;
-			}
-		});
-
-		// sending messages
-		room.bind('message', function(data){
-			var msg = data.msg;
-			sock.emit('chat', {
-				action: 'message',
-				message: data.msg
-			});
-		});
-	},
-	init_player: function() {
-		var self = this;
-		var sock = this.get('socket');
-		var room = this.get('room');
-		var player = this.get('room').get('player');
+	start_player_loop: function() {
+		var sock = this.get('sock');
 		setInterval(function(){ 
-			sock.emit('player', { action: 'state' });
+			sock.emit('player_prompt');
 		}, this.get('refresh'));
+	},
+	bind_room_events: function() {
+		var self = this;
+		var room = this.get('room');
+		var user = this.get('user');
+		var sock = this.get('sock');
+		room.bind('message', function(content){
+			sock.emit('message', content);
+			console.log('outputting message '+content);
+		});
+		var player = room.get('player');
+		player.bind('action', function(){
+			sock.emit('player_action', player.toJSON());
+			console.log('outputting player state');
+		});
+	},
+	bind_sock_events: function() {
+		var self = this;
+		var room = this.get('room');
+		var user = this.get('user');
+		var sock = this.get('sock');
+		// todo -- on current
 		sock.on('player', function(data){
+			var player = room.get('player');
 			player.set({
 				state: data.state,
-				time: data.time,
-				current: new models.Video(data.current)
+				time: data.time
 			});
+			if (player.get('current').get('url') != data.current.url)
+				player.set('current', new models.Video(data.current));
 		});
-		player.on('action', function(){
-			// todo -- re-enable security
-			// if (!room.get('modlist').get(window.user.id)) return;
-			sock.emit('player', {
-				action: 'update',
-				player: player.toJSON()
-			});
+		sock.on('userlist', function(userlist){
+			room.get('userlist').reset(userlist);
+		});
+		sock.on('message', function(message){
+			room.get('messages').add(message);
 		});
 	}
 });

@@ -17,6 +17,7 @@ $(document).ready(function(){
 			}
 		}
 	}
+	window.room.id = globals.room.id;
 	window.user = new models.User(globals.user);
 	window.api = new ConnectionApi({
 		ip: 'ws://localhost:8080/',

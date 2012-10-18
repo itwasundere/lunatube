@@ -7,6 +7,8 @@ if (serverside) {
 	var db = require('./database.js');
 	var now = require('./sutils').now;
 	var Backbone = require('backbone');
+	var crypto = require('crypto');
+	var names = require('./names.js');
 	Backbone.sync = function(method, model, options){
 		switch(method) {
 			case 'create': db.create(model, options); break;
@@ -101,14 +103,15 @@ models.Player = Backbone.Model.extend({
 			this.set({'time': time}, {silent: true});
 			return;
 		} else {
-			this.set('state', 'paused');
 			this.trigger('end');
 		}
 	},
 	set_vid: function(video) {
-		this.set('current', video);
-		this.set('time',0);
-		this.set('state', 'playing');
+		this.set({
+			time: 0,
+			current: video,
+			state: 'playing'
+		});
 	},
 	seek: function(time) {
 		var vidlength = this.get('current').get('time');
@@ -124,9 +127,14 @@ models.Message = Backbone.Model.extend({
 		author: 0,
 		content: '',
 		time: 0,
-		sent: false,
-		relayed: false,
 		rendered: false
+	},
+	initialize: function() {
+		if (!this.id) {
+			var md5 = crypto.createHash('md5');
+			md5.update(''+Math.random());
+			this.set('id',md5.digest('hex'));
+		}
 	}
 });
 
@@ -141,6 +149,13 @@ models.User = Backbone.Model.extend({
 	},
 	initialize: function(){
 		this.classname = 'user';
+		if (!this.id && serverside) {
+			var md5 = crypto.createHash('md5');
+			md5.update(''+Math.random());
+			this.set('id',md5.digest('hex'));
+		}
+		if (!this.get('username') && serverside)
+			this.set('username',names.gen_name());
 	}
 });
 
@@ -203,7 +218,6 @@ models.Room = Backbone.Model.extend({
 
 		playlist.on('selected', function(video){
 			self.set('current', video);
-			self.trigger('action');
 		});
 
 		this.on('change:current', function(){
@@ -224,17 +238,16 @@ models.Room = Backbone.Model.extend({
 		this.get('userlist').add(user);
 	},
 	leave: function(user) {
-		this.get('userlist').remove(user);
+		this.get('userlist').remove(user.id);
 	},
 	message: function(user, new_message) {
+		if (!this.get('userlist').get(user.id)) return;
 		if (this.get('mutelist').get(user.id)) return;
 		else {
 			var messages = this.get('messages');
 			if (messages.length >= 100)
 				messages.reset();
-			var msg = new models.Message(new_message);
-			messages.add(msg);
-			msg.set('relayed', true);
+			messages.add(new_message);
 		}
 	},
 	mute: function(mod, user, mute) {

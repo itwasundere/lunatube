@@ -12,8 +12,6 @@ var io = require('socket.io').listen(http);
 io.set('log level', 1);
 http.listen(8080);
 
-var crypto = require('crypto');
-
 var session_store = new express.session.MemoryStore();
 
 // express setup
@@ -37,27 +35,24 @@ roomlist.each(function(room){
 var userlist = new models.UserList();
 userlist.fetch();
 
+// todo -- any more than 20 requests per second is prob ddos
+
 app.get('/', function(req, res){
 	var room = roomlist.at(0);
-	var md5 = crypto.createHash('md5');
-	// md5.update(req.connection.remoteAddress+room.get('owner').get('username'));
-	md5.update(''+(new Date).getTime());
-	var md5hash = md5.digest('hex');
-	req.session.room_id = room.id;
-	// todo: consider multiple rooms
-	if (!req.session.user)
-		req.session.user = {
-			id: md5hash,
-			hash: md5hash,
-			username: names.gen_name() };
+	var user = new models.User();
+	if (req.session.user_id)
+		user = new models.User({id: user.id});
+	else req.session.user_id = user.id;
+	userlist.add(user);
 	res.render('room.jade', {
 		room: JSON.stringify(room.json()),
-		user: JSON.stringify(req.session.user)
+		user: JSON.stringify(user.toJSON())
 	});
-	room.fetch();
 });
 
 var api = new api.ConnectionApi({
-	io: io, store: session_store,
-	userlist: userlist, roomlist: roomlist
+	io: io, 
+	store: session_store,
+	userlist: userlist, 
+	roomlist: roomlist
 });

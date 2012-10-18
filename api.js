@@ -3,145 +3,126 @@ var utils = require('./sutils');
 var Backbone = require('backbone');
 var Underscore = require('underscore');
 
-var crypto = require('crypto');
+var SocketWrapper = Backbone.Model.extend({
+	initialize: function() {
+		if (!this.get('room') || 
+			!this.get('user') ||
+			!this.get('sock')) return;
+		console.log('user '+this.get('user').id+' joined room'+this.get('room').id);
+		this.bind_sock_events();
+		this.bind_room_events();
+		this.get('sock').emit('userlist', 
+			this.get('room').get('userlist').toJSON());
+	},
+	bind_sock_events: function() {
+		var self = this;
+		var room = this.get('room');
+		var user = this.get('user');
+		var sock = this.get('sock');
+		
+		// todo -- making sure room isn't null
+		// set current video
+		// wanting to join --> goes to connection api
+		sock.on('disconnect', function(){
+			self.disconnected = true;
+			console.log('user '+user.id+' disconnected');
+			room.leave(user);
+		});
+		sock.on('message', function(content){
+			if (!content || !typeof(content)=='string') return;
+			console.log('incoming '+user.id+' message '+content);
+			var message = new models.Message({
+				author: user.id,
+				content: content,
+				time: (new Date()).getTime()
+			});
+			room.message(user, message);
+		});
+		sock.on('player_prompt', function(){
+			console.log('outputting player state to '+user.id);
+			sock.emit('player', room.get('player').toJSON());
+		});
+		sock.on('player_action', function(data){
+			console.log('player action by '+user.id);
+			console.log(data);
+			var player = room.get('player');
+			if (!data) return;
+			var time = parseInt(data.time);
+			if (time && time <= player.get('current').get('time'))
+				player.seek(time);
+			if (data.state == 'playing' || data.state == 'paused')
+				if (data.state != player.get('state'))
+					player.set('state', data.state)
+		});
+	},
+	bind_room_events: function() {
+		var self = this;
+		var room = this.get('room');
+		var user = this.get('user');
+		var sock = this.get('sock');
+		
+		// outgoing room userlist
+		var userlist = room.get('userlist');
+		userlist.bind('add remove', function(){
+			if (self.disconnected) return;
+			console.log('outputting userlist '+userlist.length);
+			sock.emit('userlist', userlist.toJSON()); });
+
+		// outgoing messages
+		room.get('messages').bind('add', function(message){
+			if (self.disconnected) return;
+			console.log('outputting message '+message.id);
+			sock.emit('message', message.toJSON()); });
+		
+		// on vid switch
+		room.bind('change:current', function(){
+			if (self.disconnected) return;
+			sock.emit('current', room.get('current').toJSON()); });
+
+		// playback changes
+		room.get('player').bind('change', function(){
+			if (self.disconnected) return;
+			sock.emit('player', room.get('player').toJSON()); });
+	}
+});
+
+var SocketList = Backbone.Collection.extend({
+	model: SocketWrapper
+});
 
 var ConnectionApi = Backbone.Model.extend({
+	defaults: { 
+		connections: new SocketList()
+	},
 	initialize: function() {
 		if (!this.get('io') || !this.get('store')) return;
 		var self = this;
 		this.get('io').sockets.on('connection', 
-			function(socket){ self.connect(socket); });
+			function(sock){ self.connect(sock); });
 	},
-	connect: function(socket) {
-		console.log('connection from '+socket.handshake.address.address);
+	connect: function(sock) {
+		console.log('connection from '+sock.handshake.address.address);
 		var self = this;
-		var cookie = socket.handshake.headers.cookie || '';
+		var cookie = sock.handshake.headers.cookie || '';
 		utils.get_session(this.get('store'), cookie, function(session){
-			if (!session) {
-				socket.disconnect();
-				return;
+			var user;
+			if (session)
+				user = self.get('userlist').get(session.user_id);
+			if (!user) {
+				user = new models.User();
+				self.get('userlist').add(user);
 			}
-			console.log('cookie found, user '+session.user.hash);
-			self.set({
-				user: new models.User({
-					id: session.user.hash,
-					username: session.user.username
-				}),
-				room: self.get('roomlist').get(session.room_id)
-			});
-			self.set('socket', socket);
-			// todo -- only bind once, unbind on disconnect
-			self.bind_events();
-		});
-	},
-	bind_events: function() {
-		var self = this;
-		var sock = self.get('socket');
-		var io = this.get('io');
-		var room = this.get('room');
-		var user = this.get('user');
-		var userlist = this.get('room').get('userlist');
-		sock.on('disconnect', function(){
-			var user_left = userlist.get(user.id);
-			room.leave(user_left);
-		});
-		sock.on('room', function(data){ self.room(data) });
-		sock.on('chat', function(data){ self.chat(data) });
-		sock.on('player', function(data){ self.player(data) });
-		sock.on('playlist', function(data){ self.playlist(data) });
-
-		var userlist = room.get('userlist');
-		userlist.bind('add remove', function(){
-			sock.emit('chat', {
-				action: 'userlist',
-				userlist: userlist.toJSON()
+			sock.on('join', function(room_id){
+				if (!room_id) return;
+				var room = self.get('roomlist').get(room_id);
+				if (!room) return;
+				room.join(user);
+				self.get('connections').add(new SocketWrapper({
+					room: room, user: user, sock: sock
+				}));
 			});
 		});
-
-		// outgoing messages
-		var messages = room.get('messages');
-		messages.bind('add', function(){
-			var unrelayed = messages.where({relayed: false});
-			for (idx in unrelayed) {
-				var msg = unrelayed[idx];
-				unrelayed[idx] = msg.toJSON()
-			}
-			sock.emit('chat', {
-				action: 'message',
-				messages: unrelayed
-			});
-		});
-		
-		room.bind('change:current', function(){
-			sock.emit('room', {
-				current: room.get('current').toJSON() 
-			});
-		});
-
 	},
-	room: function(data) {
-		// check mod and security
-		if (!data || !data.action) return;
-		var room = this.get('room');
-		var user = this.get('user');
-		switch(data.action) {
-			case 'state': 
-				room.set({ current: new models.Video(data.room.current) });
-				break;
-			default: break;
-		}
-	},
-	chat: function(data) {
-		if (!data || !data.action) return;
-		var room = this.get('room');
-		var user = this.get('user');
-
-		console.log('chat action from user '+user.id);
-		console.log(data);
-		
-		switch(data.action) {
-			case 'join': 
-				room.join(user); 
-				break;
-			case 'message':
-				var md5 = crypto.createHash('md5');
-				md5.update(''+(new Date).getTime());
-				data.message.id = md5.digest('hex');
-				room.message(user, data.message);
-				break;
-			default: break;
-		}
-	},
-	player: function(data) {
-		if (!data || !data.action) return;
-		var player = this.get('room').get('player');
-		var sock = this.get('socket');
-		switch(data.action) {
-			case 'state': sock.emit('player', player.toJSON()); break;
-			case 'update':
-				// todo -- check mod permissions
-				player.set({
-					state: data.player.state,
-					current: new models.Video(data.player.current),
-					time: data.player.time
-				});
-				break;
-			default: break;
-		}
-	},
-	playlist: function(data) {
-		if (!data || !data.action) return;
-		var room = rooms[socket.room.id];
-		var queue = room.queue;
-		switch(data.action) {
-			case 'append': queue.append(data.param); break;
-			case 'insert': queue.insert(data.param); break;
-			case 'delete': queue.delete(data.param); break;
-			case 'move': queue.move(data.param); break;
-			case 'save': queue.save(data.param); break;
-			default: break;
-		}
-	}
 });
 
 module.exports = { ConnectionApi: ConnectionApi };

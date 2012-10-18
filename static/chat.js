@@ -28,12 +28,7 @@ var ChatView = Backbone.View.extend({
 		var input = el.find('#mouth #input input');
 		input.keydown(function(event){
 			if (event.keyCode != 13) return;
-			var msg = new models.Message({
-				author: window.user.id,
-				content: input.val()
-			});
-			room.trigger('message', {
-				msg: msg });
+			room.trigger('message', input.val());
 			input.val('');
 		})
 	}
@@ -46,19 +41,23 @@ var MessageView = Backbone.View.extend({
 		if (is_img_link(content)) {
 			this.options.url = content;
 			this.options.thumbnail = content;
-			this.media = true;
 		}
 		else if (is_yt_link(content)) {
 			var vidid = get_yt_vidid(content);
-			this.options.video = new Video({
+			this.options.video = new models.Video({
 				url: vidid });
 			this.options.url = 'http://youtube.com/watch?v='+vidid;
 			this.options.thumbnail = get_yt_thumbnail(vidid);
-			this.media = true;
 		}
 	},
+	media: function(message) {
+		var content = message.get('content');
+		return is_img_link(content) || 
+			is_yt_link(content);
+	},
 	append: function(message){
-		if (message.media) return false;
+		if (this.options.thumbnail) return false;
+		if (this.media(message)) return false;
 		if (message.get('author') != this.model.get('author'))
 			return false;
 		if (!this.options.appendum) this.options.appendum = [];

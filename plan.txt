@@ -1,3 +1,18 @@
+1. two things to consider:
+	room
+	user
+user is associated with logged in status, associated with session cookie
+room is associated with the page they're visiting
+
+a user should be able to be in two rooms at the same time, on two different weboscket connections
+
+a user should be able to join the same room twice, under two different logged-in accounts
+
+a user should be able to join the same room twice under the same name and receive messages on both
+
+user id and login status stored in session
+give them te room id, during join, join with a room id
+
 +---+ ItWasUnderE:
 |   | So how do you plan on handling it?
 +---+ I mean, you seriously can't just go and...
