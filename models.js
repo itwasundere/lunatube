@@ -26,6 +26,7 @@ if (serverside) {
 var models = {};
 
 models.Video = Backbone.Model.extend({
+	db_fields: ['queue_id', 'prev', 'next', 'url', 'time'],
 	defaults: {
 		queue_id: 0,
 		prev: 0,
@@ -39,6 +40,11 @@ models.Video = Backbone.Model.extend({
 	},
 	initialize: function() {
 		this.classname = 'video';
+		if (serverside && !this.id && this.get('hash')) {
+			var md5 = crypto.createHash('md5');
+			md5.update(''+Math.random());
+			this.set('id',md5.digest('hex'));
+		}
 		if (!serverside && this.get('url') != '00000000000') {
 			var url = this.get('url');
 			var infourl = 'http://gdata.youtube.com/feeds/api/videos/'+url+'?v=2&alt=json';
@@ -46,16 +52,23 @@ models.Video = Backbone.Model.extend({
 			$.get(infourl, function(data){
 				var seconds = parseInt(data.entry.media$group.yt$duration.seconds);
 				var minutes = Math.floor(seconds/60);
-				var seconds = seconds%60;
+				var mod_seconds = seconds%60;
 				self.set({
 					title: data.entry.title.$t,
 					uploader: data.entry.author[0].name.$t,
-					seconds: seconds,
+					time: seconds,
 					thumb: data.entry.media$group.media$thumbnail[0].url,
-					time_text: minutes+':'+seconds
+					time_text: minutes+':'+mod_seconds
 				});
 			});
 		}
+	},
+	verify: function() {
+		var url = this.get('url');
+		// todo -- santify the url charset
+		if (typeof(url) != 'string' || url.length != 11)
+			return false;
+		return true;
 	}
 });
 
@@ -219,6 +232,15 @@ models.Room = Backbone.Model.extend({
 		playlist.on('selected', function(video){
 			self.set('current', video);
 		});
+		this.on('play', function(video){
+
+		});
+		this.on('play', function(video){
+			
+		});
+		this.on('play', function(video){
+			
+		});
 
 		this.on('change:current', function(){
 			player.set_vid(self.get('current'));
@@ -230,6 +252,7 @@ models.Room = Backbone.Model.extend({
 		if (serverside) {
 			self.get('playlist').query = 'queue_id='+this.get('queue_id');
 			self.get('playlist').fetch();
+			self.get('playlist').id = this.get('queue_id');
 			self.get('owner').id = this.get('owner_id');
 			self.get('owner').fetch();
 		}

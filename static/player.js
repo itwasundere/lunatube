@@ -1,5 +1,7 @@
 var chromeless = 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=player1';
 
+// todo -- make slider move on state change, not server change
+
 var PlayerView = Backbone.View.extend({
 	initialize: function(){
 		var self = this, el = this.$el;

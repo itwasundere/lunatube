@@ -2,6 +2,7 @@ var PlaylistView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('add remove', this.render, this);
 		this.model.bind('selected', this.render, this);
+		this.model.bind('reset', this.render, this);
 		this.subviews = {};
 	},
 	render: function() {

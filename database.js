@@ -1,3 +1,4 @@
+var Underscore = require('underscore');
 var sqlite3 = require('sqlite3').verbose();
 
 var sql = {
@@ -40,6 +41,15 @@ var sql = {
 	},
 	delete: function(name, id) {
 		return 'delete from '+name+' where id='+id;
+	},
+	trim: function(model) {
+		var attrs = model.toJSON();
+		if (!model.db_fields) return attrs;
+		for (key in attrs) {
+			if (!Underscore.contains(model.db_fields, key))
+				delete attrs[key]
+		}
+		return attrs;
 	}
 }
 
@@ -90,7 +100,8 @@ var db = {
 		}));
 	},
 	create: function(model, options){
-		var statement = this.sqlite.prepare(sql.insert(model.classname, model.toJSON()));
+		var attrs = sql.trim(model);
+		var statement = this.sqlite.prepare(sql.insert(model.classname, attrs));
 		var self = this;
 		var insert = statement.run(function(){
 			model.id = this.lastID;
@@ -115,7 +126,8 @@ var db = {
 		});
 	},
 	update: function(model, options){
-		var statement = sql.update(model.classname, model.id, model.toJSON());
+		var attrs = sql.trim(model);
+		var statement = sql.update(model.classname, model.id, attrs);
 		this.sqlite.run(statement, function(){
 			options.success(model.toJSON()) });
 	},

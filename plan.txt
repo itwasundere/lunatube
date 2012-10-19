@@ -1,3 +1,12 @@
+playlist
+
+two buttons
+add to queue
+add to playlist
+
+clone a playlist
+save a queue as a playlist
+
 1. two things to consider:
 	room
 	user

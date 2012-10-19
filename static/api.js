@@ -55,5 +55,11 @@ var ConnectionApi = Backbone.Model.extend({
 		sock.on('message', function(message){
 			room.get('messages').add(message);
 		});
+		sock.on('playlist', function(pl){
+			room.get('playlist').reset(pl);
+		});
+		sock.on('queue', function(q){
+			room.get('queue').reset(q);
+		});
 	}
 });

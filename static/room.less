@@ -16,7 +16,7 @@
 
 @chat_width: @main_width - @vid_width - @total_margin * 1.5;
 
-div { overflow: auto; }
+div { overflow: auto; word-wrap: break-word;}
 .header { font-size: 18px; }
 input[type=text] {
 	margin: 0;
@@ -122,7 +122,7 @@ body {
 	}
 }
 
-@input_width: @chat_width - @avatar_size - 3*@small_margin;
+@input_width: @chat_width - @avatar_size - 3*@small_margin - 20;
 @input_margin: (@avatar_size - 18px)/2;
 
 #chatroom {
@@ -144,9 +144,40 @@ body {
 	#messages {
 		height: @chat_height;
 		background-color: @luna_white;
+		padding-top: @small_margin;
+		#message {
+			padding-top: -@small_margin;
+			width: @chat_width - 20;
+		}
 		#text {
 			margin: @small_margin;
 			margin-left: 0;
+		}
+		#image_thumb {
+			width: @input_width;
+			margin-top: @small_margin;
+			max-height: @input_width;
+		}
+		#video_thumb {
+			float: left;
+			margin: @small_margin;
+			margin-left: 0px;
+			width: @input_width * 0.40 - @margin*1.5;
+			img { width: @input_width * 0.40- @margin*1.5 }
+		}
+		#info {
+			float: left;
+			margin: @small_margin;
+			margin-left: 0px;
+			width: @input_width * 0.60 - @margin;
+		}
+		.button {
+			background-color: #DDD;
+			padding: 4px 10px;
+			float: left;
+			border: 1px solid #CCC;
+			margin-right: @small_margin;
+			cursor: pointer;
 		}
 	}
 	#mouth {

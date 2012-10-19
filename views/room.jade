@@ -29,6 +29,34 @@ html
 
 	templates
 		script#avatar(type='template')
+		script#image_msg(type='template')
+			#message
+				#avatar.avatar
+					img(src='[[avatar]]')
+				#text
+					b#username [[username]]
+					#content
+						a(href="[[url]]")
+							img#image_thumb(src='[[thumb]]')
+		script#video_msg(type='template')
+			#message
+				#avatar.avatar
+					img(src='[[avatar]]')
+				#text
+					b#username [[username]]
+					#content
+						#video_thumb
+							a(href="[[url]]")
+								img#thumb(src='[[thumb]]')
+						#info
+							#title
+								b [[title]]
+							#uploader [[uploader]]
+							#time [[time_text]]
+					#actions
+						#play.button > play
+						#queue.button + queue
+						#playlist.button + playlist
 		script#video(type='template')
 			#video
 				#thumbnail

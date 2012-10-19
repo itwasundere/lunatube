@@ -1,3 +1,5 @@
+// todo -- this is really bad code, refactor
+
 var ChatView = Backbone.View.extend({
 	initialize: function() {
 		var self = this;
@@ -21,6 +23,8 @@ var ChatView = Backbone.View.extend({
 			log.append(mv.el);
 			this.last_message_view = mv;
 		}
+		var log = $('#messages');
+		log.scrollTop(log[0].scrollHeight);
 	},
 	render: function() {
 		var room = this.model, el = this.$el, self = this;
@@ -28,7 +32,11 @@ var ChatView = Backbone.View.extend({
 		var input = el.find('#mouth #input input');
 		input.keydown(function(event){
 			if (event.keyCode != 13) return;
-			room.trigger('message', input.val());
+			if (input.val() == '/clear') {
+				self.last_message_view = null;
+				el.find('#messages').html('');
+			}
+			else room.trigger('message', input.val());
 			input.val('');
 		})
 	}
@@ -46,6 +54,7 @@ var MessageView = Backbone.View.extend({
 			var vidid = get_yt_vidid(content);
 			this.options.video = new models.Video({
 				url: vidid });
+			this.options.video.bind('change', this.render, this);
 			this.options.url = 'http://youtube.com/watch?v='+vidid;
 			this.options.thumbnail = get_yt_thumbnail(vidid);
 		}
@@ -67,14 +76,7 @@ var MessageView = Backbone.View.extend({
 	},
 	render: function(){
 		var content = make_links(this.model.get('content'));
-		if (this.options.thumbnail)
-			content = '<img src="'+this.options.thumbnail+'" />';
-		if (this.options.url)
-			content = '<a href="'+this.options.url+'">'+content+'</a>';
-		if (this.options.appendum)
-			$.each(this.options.appendum, function(idx, msg){
-				content += '<br/>'+msg.get('content');
-			});
+
 		var el = this.$el, self = this;
 		var avatar = '', username = '';
 		if (window.room) {
@@ -84,10 +86,60 @@ var MessageView = Backbone.View.extend({
 				username = user.get('username');
 			}
 		}
-		el.html(_.template($('script#message').html(),{
-			avatar: avatar,
-			username: username,
-			content: content
-		}));
+
+		if (this.options.appendum)
+			$.each(this.options.appendum, function(idx, msg){
+				content += '<br/>';
+				content += make_links(msg.get('content'));
+			});
+
+		if (this.options.thumbnail && this.options.url) {
+			if (this.options.video) {
+				el.html(_.template($('script#video_msg').html(),{
+					avatar: avatar,
+					username: username,
+					content: content,
+					url: this.options.url,
+					thumb: this.options.thumbnail,
+					title: this.options.video.get('title'),
+					uploader: this.options.video.get('uploader'),
+					time_text: this.options.video.get('time_text')
+				}));
+				el.find('#play').click(function(){
+					window.room.trigger('play', self.model);
+				});
+				el.find('#queue').click(function(){
+					window.room.trigger('queue', self.model);
+				});
+				el.find('#playlist').click(function(){
+					window.room.trigger('playlist', self.model);
+				});
+			}
+			else {
+				el.html(_.template($('script#image_msg').html(),{
+					avatar: avatar,
+					username: username,
+					content: content,
+					url: this.options.url,
+					thumb: this.options.thumbnail
+				}));	
+			}
+		} else {
+			el.html(_.template($('script#message').html(),{
+				avatar: avatar,
+				username: username,
+				content: content
+			}));
+		}
+
+		var img = el.find('img');
+		var log = $('#messages');
+		if (img){
+			$.each(img, function(idx, img){
+				$(img).load(function(){
+					log.scrollTop(log[0].scrollHeight);
+				})
+			})
+		}
 	}
 })
