@@ -8,3 +8,4 @@ $ npm list
 * jade@0.27.5
 * socket.io@0.9.10
 * sqlite3@2.1.5
+* underscore@1.4.2

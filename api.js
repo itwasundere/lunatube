@@ -55,6 +55,7 @@ var SocketWrapper = Backbone.Model.extend({
 		var pl = room.get('playlist');
 		var queue = room.get('queue');
 		var player = room.get('player');
+		var playlist = room.get('playlist');
 		queue.on('add remove', function(){
 			sock.emit('queue', queue.toJSON());
 		});
