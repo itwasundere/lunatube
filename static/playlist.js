@@ -37,7 +37,7 @@ var PlaylistItemView = Backbone.View.extend({
 			el.attr('class','selected');
 		else el.attr('class','');
 		el.click(function(){
-			self.model.trigger('selected', self.model);
+			room.trigger('play', self.model);
 		});
 		var html = $(this.template(this.model.toJSON()));
 		el.attr('id', html.attr('id'))

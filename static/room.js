@@ -20,8 +20,8 @@ $(document).ready(function(){
 	window.room.id = globals.room.id;
 	window.user = new models.User(globals.user);
 	window.api = new ConnectionApi({
-		// ip: 'ws://67.164.89.50:8080/',
-		ip: 'ws://localhost:8080/',
+		ip: 'ws://67.164.89.50:8080/',
+		// ip: 'ws://localhost:8080/',
 		room: window.room,
 		refresh: 1000
 	});
@@ -30,9 +30,15 @@ $(document).ready(function(){
 		el: $('#playlist #videos')
 	});
 	pv.render();
+	window.qv = new PlaylistView({
+		model: room.get('queue'), 
+		el: $('#queue #videos')
+	});
+	qv.render();
 	window.plv = new PlayerView({
 		el: $('#theater'),
-		model: room.get('player')
+		model: room.get('player'),
+		tolerance: 5
 	});
 	plv.render();
 	window.cv = new ChatView({

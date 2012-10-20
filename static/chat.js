@@ -106,13 +106,13 @@ var MessageView = Backbone.View.extend({
 					time_text: this.options.video.get('time_text')
 				}));
 				el.find('#play').click(function(){
-					window.room.trigger('play', self.model);
+					window.room.trigger('play_new', self.options.video);
 				});
 				el.find('#queue').click(function(){
-					window.room.trigger('queue', self.model);
+					window.room.trigger('queue', self.options.video);
 				});
 				el.find('#playlist').click(function(){
-					window.room.trigger('playlist', self.model);
+					window.room.trigger('playlist', self.options.video);
 				});
 			}
 			else {

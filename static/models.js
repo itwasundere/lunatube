@@ -36,7 +36,8 @@ models.Video = Backbone.Model.extend({
 		thumb: '',
 		title: '',
 		uploader: '',
-		time_text: '0:00'
+		time_text: '0:00',
+		watched: false
 	},
 	initialize: function() {
 		this.classname = 'video';
@@ -52,7 +53,9 @@ models.Video = Backbone.Model.extend({
 			$.get(infourl, function(data){
 				var seconds = parseInt(data.entry.media$group.yt$duration.seconds);
 				var minutes = Math.floor(seconds/60);
-				var mod_seconds = seconds%60;
+				var mod_seconds = seconds%60+'';
+				if (mod_seconds.length != 2) mod_seconds = '0'+mod_seconds;
+				
 				self.set({
 					title: data.entry.title.$t,
 					uploader: data.entry.author[0].name.$t,
@@ -120,6 +123,7 @@ models.Player = Backbone.Model.extend({
 		}
 	},
 	set_vid: function(video) {
+		video.set({ watched: true });
 		this.set({
 			time: 0,
 			current: video,
@@ -219,32 +223,22 @@ models.Room = Backbone.Model.extend({
 		// player
 		var player = this.get('player');
 		var playlist = this.get('playlist');
+		var queue = this.get('queue');
 
 		playlist.on('reset', function(){
-			if (self.get('current').get('time')) return;
-			self.set('current', playlist.at(0));
+			if (self.get('player').get('current').get('time')) return;
+			self.get('player').set_vid(playlist.at(0));
 		});
 		player.on('end', function(){
-			var curr = self.get('current');
-			self.set('current', playlist.after(curr));
+			var curr = player.get('current');
+			var newv = playlist.after(curr);
+			var unwatched = queue.where({watched: false});
+			if (unwatched.length)
+				newv = unwatched[0];
+			console.log('end current '+curr.id+' new vid: '+newv.id);
+			player.set_vid(newv);
 		});
 
-		playlist.on('selected', function(video){
-			self.set('current', video);
-		});
-		this.on('play', function(video){
-
-		});
-		this.on('play', function(video){
-			
-		});
-		this.on('play', function(video){
-			
-		});
-
-		this.on('change:current', function(){
-			player.set_vid(self.get('current'));
-		});
 		this.update();
 	},
 	update: function() {

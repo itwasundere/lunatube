@@ -36,7 +36,7 @@ var SocketWrapper = Backbone.Model.extend({
 			room.message(user, message);
 		});
 		sock.on('player_prompt', function(){
-			console.log('outputting player state to '+user.id);
+			console.log('state->'+user.id+' '+room.get('player').get('time')+' '+room.get('player').get('current').get('url')+' '+room.get('player').get('current').get('time'));
 			sock.emit('player', room.get('player').toJSON());
 		});
 		sock.on('player_action', function(data){
@@ -54,6 +54,13 @@ var SocketWrapper = Backbone.Model.extend({
 
 		var pl = room.get('playlist');
 		var queue = room.get('queue');
+		var player = room.get('player');
+		queue.on('add remove', function(){
+			sock.emit('queue', queue.toJSON());
+		});
+		playlist.on('add remove', function(){
+			sock.emit('playlist', playlist.toJSON());
+		});
 		sock.on('add_queue', function(video){
 			if (!video) return;
 			video = new models.Video({
@@ -106,9 +113,19 @@ var SocketWrapper = Backbone.Model.extend({
 			if (!video) return;
 			var id = video.id;
 			if (queue.get(id)) {
-
+				player.set_vid(queue.get(id));
 			} else if (pl.get(id)) {
-
+				player.set_vid(pl.get(id));
+			} else {
+				video = new models.Video({
+					prev: 0, next: 0, queue_id: 0, hash: true,
+					url: video.url, time: video.time
+				});
+				if (!video.verify()) return;
+				var pos = queue.indexOf(queue.get(player.get('current').id));
+				queue.add(video, {at: pos});
+				sock.emit('queue', queue.toJSON());
+				player.trigger('end');
 			}
 		});
 	},
@@ -131,15 +148,11 @@ var SocketWrapper = Backbone.Model.extend({
 			console.log('outputting message '+message.id);
 			sock.emit('message', message.toJSON()); });
 		
-		// on vid switch
-		room.bind('change:current', function(){
-			if (self.disconnected) return;
-			sock.emit('current', room.get('current').toJSON()); });
-
 		// playback changes
 		room.get('player').bind('change', function(){
 			if (self.disconnected) return;
 			sock.emit('player', room.get('player').toJSON()); });
+
 	}
 });
 

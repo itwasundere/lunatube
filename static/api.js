@@ -1,6 +1,6 @@
 var ConnectionApi = Backbone.Model.extend({
 	defaults: {
-		refresh: 1000
+		refresh: 2000
 	},
 	initialize: function() {
 		var sock = io.connect(this.get('ip'));
@@ -33,6 +33,18 @@ var ConnectionApi = Backbone.Model.extend({
 			sock.emit('player_action', player.toJSON());
 			console.log('outputting player state');
 		});
+		room.on('play', function(video){
+			sock.emit('play_video', video.toJSON());
+		});
+		room.on('play_new', function(video){
+			sock.emit('play_video', video.toJSON());
+		});
+		room.on('queue', function(video){
+			sock.emit('add_queue', video.toJSON())
+		});
+		room.on('playlist', function(video){
+			sock.emit('add_playlist', video.toJSON());
+		});
 	},
 	bind_sock_events: function() {
 		var self = this;
@@ -48,6 +60,7 @@ var ConnectionApi = Backbone.Model.extend({
 			});
 			if (player.get('current').get('url') != data.current.url)
 				player.set('current', new models.Video(data.current));
+			else player.set('current', new models.Video(data.current), {silent: true});
 		});
 		sock.on('userlist', function(userlist){
 			room.get('userlist').reset(userlist);
