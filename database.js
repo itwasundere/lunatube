@@ -104,7 +104,7 @@ var db = {
 		var statement = this.sqlite.prepare(sql.insert(model.classname, attrs));
 		var self = this;
 		var insert = statement.run(function(){
-			model.id = this.lastID;
+			model.set('id', this.lastID);
 			options.success(model.toJSON()); });
 	},
 	read: function(model, options){

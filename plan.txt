@@ -1,3 +1,26 @@
+turn off wifi and refresh page. why is it doing that
+
+join
+->state to requester
+->userlist to everyone
+->global message
+
+-message
+-player action
+-queue action
+
+-constantly buffering? set your tolerance!
+
+-incoming message
+-player change
+->global message
+-queue change
+->global message
+
+disconnect
+
+change title on new message
+
 playlist
 
 two buttons

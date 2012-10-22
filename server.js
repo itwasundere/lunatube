@@ -4,6 +4,7 @@ var api = require('./api.js');
 var utils = require('./sutils.js');
 var names = require('./names.js');
 var models = require('./models.js');
+var Logger = require('./logger.js');
 
 var express = require('express');
 var app = express();
@@ -28,10 +29,10 @@ app.use(express.session({
 
 // main room
 var roomlist = new models.RoomList();
-roomlist.fetch();
-roomlist.each(function(room){ 
-	room.initialize();
-});
+roomlist.fetch({success: function(){
+	var logger = new Logger({
+		room: roomlist.at(0) });
+}});
 var userlist = new models.UserList();
 userlist.fetch();
 
@@ -56,3 +57,5 @@ var api = new api.ConnectionApi({
 	userlist: userlist, 
 	roomlist: roomlist
 });
+
+

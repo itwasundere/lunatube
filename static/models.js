@@ -46,31 +46,35 @@ models.Video = Backbone.Model.extend({
 			md5.update(''+Math.random());
 			this.set('id',md5.digest('hex'));
 		}
-		if (!serverside && this.get('url') != '00000000000') {
-			var url = this.get('url');
-			var infourl = 'http://gdata.youtube.com/feeds/api/videos/'+url+'?v=2&alt=json';
-			var self = this;
-			$.get(infourl, function(data){
-				var seconds = parseInt(data.entry.media$group.yt$duration.seconds);
-				var minutes = Math.floor(seconds/60);
-				var mod_seconds = seconds%60+'';
-				if (mod_seconds.length != 2) mod_seconds = '0'+mod_seconds;
-				
-				self.set({
-					title: data.entry.title.$t,
-					uploader: data.entry.author[0].name.$t,
-					time: seconds,
-					thumb: data.entry.media$group.media$thumbnail[0].url,
-					time_text: minutes+':'+mod_seconds
-				});
-			});
+		if (!serverside && this.verify()) {
+			this.fetch_yt();
 		}
+	},
+	fetch_yt: function() {
+		var url = this.get('url');
+		var infourl = 'http://gdata.youtube.com/feeds/api/videos/'+url+'?v=2&alt=json';
+		var self = this;
+		$.get(infourl, function(data){
+			var seconds = parseInt(data.entry.media$group.yt$duration.seconds);
+			var minutes = Math.floor(seconds/60);
+			var mod_seconds = seconds%60+'';
+			if (mod_seconds.length != 2) mod_seconds = '0'+mod_seconds;
+			
+			self.set({
+				title: data.entry.title.$t,
+				uploader: data.entry.author[0].name.$t,
+				time: seconds,
+				thumb: data.entry.media$group.media$thumbnail[0].url,
+				time_text: minutes+':'+mod_seconds
+			});
+		});
 	},
 	verify: function() {
 		var url = this.get('url');
 		// todo -- santify the url charset
 		if (typeof(url) != 'string' || url.length != 11)
 			return false;
+		if (url == '00000000000') return false;
 		return true;
 	}
 });
@@ -85,6 +89,43 @@ models.VideoList = Backbone.Collection.extend({
 		var nextid = video.get('next');
 		if (nextid) return this.get(nextid);
 		else return this.at(0);
+	},
+	append: function(video_info) {
+		var self = this;
+		video_info = {
+			url: video_info.url,
+			time: video_info.time
+		};
+		if (this.id) {
+			var prev = this.last();
+			if (prev.id)
+				video_info.prev = prev.id;
+			video_info.queue_id = this.id;
+			var video = new models.Video(video_info);
+			video.save({},{success:function(){
+				prev.save({next:video.id},{success:function(){
+					self.add(video);
+				}});
+			}});
+		}
+		else {
+			video_info.hash = true;
+			var video = new models.Video(video_info);
+			if (video.verify())
+				this.add(video);
+		}
+	},
+	insert: function(video_info, after) {
+		video = new models.Video({ 
+			hash: true, 
+			url: video_info.url, 
+			time: video_info.time 
+		});
+		if (!video.verify()) return;
+		var after_id;
+		if (after) after_id = after.id;
+		var pos = this.indexOf(this.get(after_id));
+		this.add(video, {at: pos+1});
 	}
 });
 
@@ -113,6 +154,7 @@ models.Player = Backbone.Model.extend({
 	tick: function() {
 		if (!this.get('current')) return;
 		var time = this.get('time');
+		var self = this;
 		if (this.get('state') == 'playing')
 			time += 1;
 		if (time <= this.get('current').get('time')) {
@@ -151,6 +193,9 @@ models.Message = Backbone.Model.extend({
 			var md5 = crypto.createHash('md5');
 			md5.update(''+Math.random());
 			this.set('id',md5.digest('hex'));
+		}
+		if (!this.get('time')) {
+			this.set('time', (new Date()).getTime());
 		}
 	}
 });
@@ -192,63 +237,72 @@ models.Room = Backbone.Model.extend({
 		mutelist: new models.UserList(),
 		modlist: new models.UserList(),
 		owner: new models.User,
-		messages: new models.MessageList(),
-		current: new models.Video()
+		messages: new models.MessageList()
 	},
 	initialize: function() {
 		this.classname = 'room';
+		if (serverside)
+			this.db_fetch();
 		var self = this;
-		var count = 0;
-		this.bind('change', function(){
-			self.update();
-		});
-
-		// userlists
-		if (serverside) {
-			var modlist = new Backbone.Collection();
-			modlist.classname = 'mod';
-			modlist.query = 'room_id='+this.id;
-			modlist.fetch();
-			modlist.bind('reset', function(){
-				modlist.each(function(modlink){
-					var user = new models.User({
-						id: modlink.get('user_id')
-					});
-					user.fetch();
-					self.get('modlist').add(user);
-				});
-			});
-		}
-
-		// player
 		var player = this.get('player');
-		var playlist = this.get('playlist');
-		var queue = this.get('queue');
-
-		playlist.on('reset', function(){
-			if (self.get('player').get('current').get('time')) return;
-			self.get('player').set_vid(playlist.at(0));
-		});
 		player.on('end', function(){
-			var curr = player.get('current');
-			var newv = playlist.after(curr);
-			var unwatched = queue.where({watched: false});
-			if (unwatched.length)
-				newv = unwatched[0];
-			console.log('end current '+curr.id+' new vid: '+newv.id);
-			player.set_vid(newv);
+			player.set_vid(self.next_video());
+		});
+	},
+	db_fetch: function() {
+		var self = this;
+		
+		// modlist
+		var modlist = new Backbone.Collection();
+		modlist.classname = 'mod';
+		modlist.query = 'room_id='+this.id;
+		modlist.fetch();
+		modlist.bind('reset', function(){
+			modlist.each(function(modlink){
+				// todo -- should i use userlist or make new user
+				var user = new models.User({
+					id: modlink.get('user_id')
+				});
+				user.fetch();
+				self.get('modlist').add(user);
+			});
 		});
 
-		this.update();
+		// playlist
+		var playlist = this.get('playlist');
+		var player = this.get('player');
+		playlist.on('reset', function(){
+			if (player.get('current').get('time')) return;
+			player.set_vid(playlist.at(0));
+		});
+		playlist.id = this.get('queue_id');
+		playlist.query = 'queue_id='+playlist.id;
+		playlist.fetch();
+
+		// owner
+		var owner = this.get('owner');
+		owner.id = this.get('owner_id');
+		owner.fetch();
 	},
-	update: function() {
-		var self = this;
-		if (serverside) {
-			self.get('playlist').query = 'queue_id='+this.get('queue_id');
-			self.get('playlist').fetch();
-			self.get('playlist').id = this.get('queue_id');
-			self.get('owner').id = this.get('owner_id');
-			self.get('owner').fetch();
+	next_video: function() {
+		var curr = this.get('player').get('current');
+		var newv = this.get('playlist').after(curr);
+		var unwatched = this.get('queue').where({watched: false});
+		if (unwatched.length)
+			newv = unwatched[0];
+		return newv;
+	},
+	message: function(user, content) {
+		if (!this.get('userlist').get(user.id)) return;
+		if (this.get('mutelist').get(user.id)) return;
+		else {
+			var messages = this.get('messages');
+			if (messages.length >= 100)
+				messages.reset();
+			messages.add({
+				author: user.id,
+				content: content
+			});
 		}
 	},
 	join: function(user){
@@ -256,30 +310,6 @@ models.Room = Backbone.Model.extend({
 	},
 	leave: function(user) {
 		this.get('userlist').remove(user.id);
-	},
-	message: function(user, new_message) {
-		if (!this.get('userlist').get(user.id)) return;
-		if (this.get('mutelist').get(user.id)) return;
-		else {
-			var messages = this.get('messages');
-			if (messages.length >= 100)
-				messages.reset();
-			messages.add(new_message);
-		}
-	},
-	mute: function(mod, user, mute) {
-		if (!this.get('modlist').get(mod.id)) return;
-		if (!this.get('userlist').get(user.id)) return;
-		if (mute)
-			this.get('mutelist').add(user);
-		else this.get('mutelist').remove(user);
-	},
-	mod: function(admin, user, mod) {
-		if (this.get('owner').id != admin.id) return;
-		if (!this.get('userlist').get(user.id)) return;
-		if (mod)
-			this.get('modlist').add(user);
-		else this.get('modlist').remove(user);
 	},
 	json: function() {
 		var json = this.toJSON();

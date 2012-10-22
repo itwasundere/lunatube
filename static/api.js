@@ -33,10 +33,7 @@ var ConnectionApi = Backbone.Model.extend({
 			sock.emit('player_action', player.toJSON());
 			console.log('outputting player state');
 		});
-		room.on('play', function(video){
-			sock.emit('play_video', video.toJSON());
-		});
-		room.on('play_new', function(video){
+		room.on('play play_new', function(video){
 			sock.emit('play_video', video.toJSON());
 		});
 		room.on('queue', function(video){
