@@ -57,7 +57,6 @@ var ConnectionApi = Backbone.Model.extend({
 			});
 			if (player.get('current').get('url') != data.current.url)
 				player.set('current', new models.Video(data.current));
-			else player.set('current', new models.Video(data.current), {silent: true});
 		});
 		sock.on('userlist', function(userlist){
 			room.get('userlist').reset(userlist);
