@@ -16,6 +16,15 @@
 
 @chat_width: @main_width - @vid_width - @total_margin * 1.5;
 
+.no-select {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 div { overflow: auto; word-wrap: break-word;}
 .header { font-size: 18px; }
 input[type=text] {
@@ -54,26 +63,34 @@ body {
 	border-radius: @rounding @rounding 0 0;
 }
 
-#banner {
-	background-color: @luna_white;
-	font-size: 24px;
-	min-height: 12px;
-	margin: @margin;
-	margin-bottom: 0;
-	padding: @margin;
-}
-
 #theater {
+	.no-select;
 	width: @vid_width;
 	margin: 0 @margin;
 	float: left;
+}
+
+#banner {
+	background-color: @luna_white;
+	border-radius: @rounding @rounding 0 0;
+	font-size: 24px;
+	min-height: 12px;
+	margin: @margin 0;
+	margin-bottom: 0;
+	padding: @margin;
 }
 
 #player {
 	background-color: @luna_white;
 	width: @vid_width;
 	height: @vid_width / 16 * 9;
-	margin: @margin 0px;
+	overflow: hidden;
+	#overlay {
+		width: @vid_width;
+		height: @vid_width / 16 * 9;
+		opacity: 0;
+		position: absolute;
+	}
 	#youtube {
 		width: 100%;
 		height: 100%;
@@ -83,19 +100,24 @@ body {
 			font-size: 18px;
 		}
 	}
-	overflow: hidden;
 }
 
 #controls {
 	background-color: @luna_white;
 	margin: @margin 0px;
+	padding-left: 20px;
+	margin-top: 0px;
+	border-radius: 0 0 @rounding @rounding;
 	#volume, #play, #scrobbler {
 		float: left;
-		margin: @margin;
+		margin: 17px;
 		height: 18px;
 		overflow: hidden;
 		input { width: 100px; margin: 3px 0px 0px 0px; }
 		img { height: 18px; }
+	}
+	#play, #scrobbler {
+		cursor: pointer;
 	}
 	#scrobbler {
 		background-color: @luna_black;
@@ -108,8 +130,14 @@ body {
 			background-color: @luna_white;
 			pointer-events: none;
 		}
-		cursor: pointer;
 	}
+}
+
+@prevnext_video_width: 280px;
+img { border-radius: 5px; }
+
+#video {
+	border-radius: 5px;
 }
 
 #prevnext {
@@ -119,6 +147,25 @@ body {
 	#prev, #next {
 		float: left;
 		width: 50%;
+	}
+	#video {
+		float: left;
+		width: @prevnext_video_width - @margin / 2;
+		height: @video_height - @margin / 22;
+		overflow: hidden;
+		margin: @margin / 2;
+		#thumbnail {
+			float: left;
+			width: @thumb_width;
+			margin: @margin;
+			img { width: 100%; }
+		}
+		#info {
+			float: left;
+			margin: @margin;
+			margin-left: 0;
+			width: @prevnext_video_width - @thumb_width - @margin * 6;
+		}
 	}
 }
 
@@ -154,7 +201,7 @@ body {
 			margin-left: 0;
 		}
 		#image_thumb {
-			width: @input_width;
+			max-width: @input_width;
 			margin-top: @small_margin;
 			max-height: @input_width;
 		}
@@ -194,8 +241,8 @@ body {
 	}
 }
 
-@video_width: 244px;
-@thumb_width: 100px;
+@video_width: 318px;
+@thumb_width: 80px;
 @video_height: @thumb_width * 3 / 4 + @margin * 2;
 
 #catalog {
@@ -204,6 +251,7 @@ body {
 	margin-top: 0px;
 	padding: @margin;
 	float: default;
+	.no-select;
 	#queue, #playlist {
 		margin-bottom: @margin;
 	}
@@ -211,9 +259,10 @@ body {
 	.hover { background-color: @luna_clear; }
 	#video {
 		float: left;
-		width: @video_width;
-		height: @video_height;
+		width: @video_width - @margin / 2;
+		height: @video_height - @margin / 22;
 		overflow: hidden;
+		margin: @margin / 2;
 		#thumbnail {
 			float: left;
 			width: @thumb_width;
@@ -224,7 +273,18 @@ body {
 			float: left;
 			margin: @margin;
 			margin-left: 0;
-			width: @video_width - @thumb_width - @margin * 3;
+			width: @video_width - @thumb_width - @margin * 6;
 		}
+	}
+}
+
+#menu {
+	border: 1px solid #ccc;
+	background-color: white;
+	.menuitem {
+		width: 150px;
+		border: 1px solid #ccc;
+		padding: 5px 2px;
+		margin: -1;
 	}
 }

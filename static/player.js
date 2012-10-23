@@ -17,6 +17,11 @@ var PlayerView = Backbone.View.extend({
 				self.model.pause();
 			else self.model.play();
 		});
+		this.$el.find('#overlay').click(function(){
+			if (self.model.get('state') == 'playing')
+				self.model.pause();
+			else self.model.play();
+		});
 
 		var scrobbler = this.$el.find('#scrobbler');
 		var playhead = this.$el.find('#playhead');
@@ -94,8 +99,6 @@ var PlayerView = Backbone.View.extend({
 		if (this.model.get('current') && this.model.get('current').get('title'))
 			$('#banner').html(this.model.get('current').get('title'));
 
-		// prevnext
-		
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');

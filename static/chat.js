@@ -120,9 +120,9 @@ var MessageView = Backbone.View.extend({
 					avatar: avatar,
 					username: username,
 					content: content,
-					url: this.options.url,
-					thumb: this.options.thumbnail
-				}));	
+					url: add_pretext(this.options.url),
+					thumb: add_pretext(this.options.thumbnail)
+				}));
 			}
 		} else {
 			el.html(_.template($('script#message').html(),{

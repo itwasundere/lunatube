@@ -46,6 +46,12 @@ function get_after(str, substr, len) {
 	if (loc == -1) return;
 	return str.substring(loc + substr.length, loc + substr.length + len);
 }
+function add_pretext(str) {
+	if (!starts_with(str,'http://')&&
+		!starts_with(str,'https://'))
+		str = 'http://'+str;
+	return str;
+}
 function make_links(str) {
 	var words = str.split(' ');
 	$.each(words, function(idx, str){
@@ -54,8 +60,10 @@ function make_links(str) {
 			contains(str,'.org') ||
 			starts_with(str,'http://') ||
 			starts_with(str,'https://') ||
-			starts_with(str,'www.'))
-		words[idx] = '<a href="'+str+'"">' + str + '</a>';
+			starts_with(str,'www.')) {
+			str = add_pretext(str);
+			words[idx] = '<a href="'+str+'" target="_blank">' + str + '</a>';
+		}
 	});
 	return words.join(' ');
 }

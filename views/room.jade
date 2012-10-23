@@ -8,7 +8,6 @@ html
 		script(src='static/lib/underscore.js')
 		script(src='static/lib/backbone.js')
 		script(src='/socket.io/socket.io.js')
-		
 		script(src='http://www.google.com/jsapi')
 		script(type='text/javascript')
 			if (window.google)
@@ -36,7 +35,7 @@ html
 				#text
 					b#username [[username]]
 					#content
-						a(href="[[url]]")
+						a(href="[[url]]",target="_blank")
 							img#image_thumb(src='[[thumb]]')
 		script#video_msg(type='template')
 			#message
@@ -44,15 +43,15 @@ html
 					img(src='[[avatar]]')
 				#text
 					b#username [[username]]
-					#content
-						#video_thumb
-							a(href="[[url]]")
+					a(href="[[url]]",target="_blank")
+						#content
+							#video_thumb
 								img#thumb(src='[[thumb]]')
-						#info
-							#title
-								b [[title]]
-							#uploader [[uploader]]
-							#time [[time_text]]
+							#info
+								#title
+									b [[title]]
+								#uploader [[uploader]]
+								#time [[time_text]]
 					#actions
 						#play.button > play
 						#queue.button + queue
@@ -81,10 +80,11 @@ html
 			input#login_button(type='button', value='login')
 		
 		#main
-			#banner !{JSON.parse(room).owner.username}'s room
 			#top
 				#theater
+					#banner !{JSON.parse(room).owner.username}'s room
 					#player
+						#overlay
 						#youtube
 							#placeholder No video selected.
 					#controls
@@ -96,12 +96,13 @@ html
 							#playhead
 					#prevnext
 						#prev
-							.header Preivous
+							.header Previously
 							#video
 						#next
 							.header Up next
 							#video
 				#chatroom
+					#userlist
 					#messages
 					#mouth
 						#avatar.avatar

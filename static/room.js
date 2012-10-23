@@ -27,12 +27,12 @@ $(document).ready(function(){
 	});
 	window.pv = new PlaylistView({
 		model: room.get('playlist'), 
-		el: $('#playlist #videos')
+		el: $('#playlist')
 	});
 	pv.render();
 	window.qv = new PlaylistView({
 		model: room.get('queue'), 
-		el: $('#queue #videos')
+		el: $('#queue')
 	});
 	qv.render();
 	window.plv = new PlayerView({
@@ -46,5 +46,6 @@ $(document).ready(function(){
 		model: room
 	});
 	cv.render();
-	
+	$('#theater')[0].onselectstart = function(){ return false; }
+	$('#catalog')[0].onselectstart = function(){ return false; }
 });
