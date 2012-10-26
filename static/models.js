@@ -33,10 +33,10 @@ models.Video = Backbone.Model.extend({
 		next: 0,
 		url: '00000000000',
 		time: 0,
-		thumb: '',
-		title: '',
+		thumb: 'static/img/novid.png',
+		title: 'Loading video...',
 		uploader: '',
-		time_text: '0:00',
+		time_text: '',
 		watched: false
 	},
 	initialize: function() {
@@ -133,6 +133,7 @@ models.Player = Backbone.Model.extend({
 	defaults: {
 		state: 'paused',
 		current: new models.Video(),
+		prev: new models.Video(),
 		time: 0
 	},
 	play: function(){
@@ -165,6 +166,7 @@ models.Player = Backbone.Model.extend({
 		}
 	},
 	set_vid: function(video) {
+		this.set('prev', this.get('current'));
 		video.set({ watched: true });
 		this.set({
 			time: 0,

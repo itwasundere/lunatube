@@ -27,7 +27,8 @@ $(document).ready(function(){
 	});
 	window.pv = new PlaylistView({
 		model: room.get('playlist'), 
-		el: $('#playlist')
+		el: $('#playlist'),
+		hidden: true
 	});
 	pv.render();
 	window.qv = new PlaylistView({
@@ -41,6 +42,8 @@ $(document).ready(function(){
 		tolerance: 5
 	});
 	plv.render();
+	plv.render_prevnext();
+	
 	window.cv = new ChatView({
 		el: $('#chatroom'),
 		model: room

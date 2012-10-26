@@ -4,10 +4,18 @@ var PlaylistView = Backbone.View.extend({
 		room.get('player').bind('change:current', this.render, this);
 		this.model.bind('reset', this.render, this);
 		this.subviews = {};
+		var self = this;
+		var header = this.$el.find('.header');
+		var el = this.$el.find('#videos')
+		header.click(function(){
+			self.options.hidden = !self.options.hidden;
+			self.render();
+		});
 	},
 	render: function() {
 		var self = this, el = this.$el.find('#videos');
 		el.empty();
+		if (!self.options.hidden)
 		this.model.each(function(item){
 			var piv = self.subviews[item.cid];
 			if (!piv) {
@@ -23,11 +31,15 @@ var PlaylistView = Backbone.View.extend({
 				$('#menu').remove();
 			});
 		});
+		
 		var name = this.$el.find('.header').html();
-		if (starts_with(name, 'Playlist'))
+		if (contains(name, 'Playlist'))
 			name = 'Playlist ('+this.model.length+')';
-		else if (starts_with(name, 'Queue'))
+		else if (contains(name, 'Queue'))
 			name = 'Queue ('+this.model.length+')';
+		if (this.options.hidden)
+			name = '> ' + name;
+		else name = 'v ' + name;
 		this.$el.find('.header').html(name);
 	}
 })

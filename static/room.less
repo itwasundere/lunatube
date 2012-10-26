@@ -144,6 +144,7 @@ img { border-radius: 5px; }
 	background-color: @luna_white;
 	margin: @margin 0px;
 	padding: @margin;
+	border-radius: @rounding;
 	#prev, #next {
 		float: left;
 		width: 50%;
@@ -245,36 +246,47 @@ img { border-radius: 5px; }
 @thumb_width: 80px;
 @video_height: @thumb_width * 3 / 4 + @margin * 2;
 
+.selected { background-color: @luna_clear; }
+.hover { background-color: @luna_clear; }
+
+#video {
+	float: left;
+	width: @video_width - @margin / 2;
+	height: @video_height - @margin / 22;
+	overflow: hidden;
+	margin: @margin / 2;
+	#thumbnail {
+		float: left;
+		width: @thumb_width;
+		margin: @margin;
+		img { width: 100%; }
+	}
+	#info {
+		float: left;
+		margin: @margin;
+		margin-left: 0;
+		width: @video_width - @thumb_width - @margin * 6;
+	}
+}
+
 #catalog {
 	background-color: @luna_white;
 	margin: 0 @margin;
 	margin-top: 0px;
 	padding: @margin;
 	float: default;
+	border-radius: @rounding;
 	.no-select;
-	#queue, #playlist {
-		margin-bottom: @margin;
+	.header {
+		padding: 10px;
+		margin-left: 6px;
+		cursor: pointer;
 	}
-	.selected { background-color: @luna_clear; }
-	.hover { background-color: @luna_clear; }
-	#video {
-		float: left;
-		width: @video_width - @margin / 2;
-		height: @video_height - @margin / 22;
-		overflow: hidden;
-		margin: @margin / 2;
-		#thumbnail {
-			float: left;
-			width: @thumb_width;
-			margin: @margin;
-			img { width: 100%; }
-		}
-		#info {
-			float: left;
-			margin: @margin;
-			margin-left: 0;
-			width: @video_width - @thumb_width - @margin * 6;
-		}
+	.header:hover {
+		background-color: @luna_clear;
+	}
+	#videos {
+		margin-top: 10px;
 	}
 }
 
@@ -287,4 +299,10 @@ img { border-radius: 5px; }
 		padding: 5px 2px;
 		margin: -1;
 	}
+}
+
+#bottom {
+	margin: 40px auto;
+	float: none;
+	text-align: center;
 }

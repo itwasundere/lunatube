@@ -12,6 +12,11 @@ var PlayerView = Backbone.View.extend({
 		window.onYouTubePlayerReady = function() {
 			self.ready() }
 		this.model.bind('change', this.render, this);
+
+		room.get('playlist').bind('reset', this.render_prevnext, this);
+		room.get('queue').bind('reset', this.render_prevnext, this);
+		room.get('player').bind('change:current', this.render_prevnext, this);
+
 		this.$el.find('#play').click(function(){
 			if (self.model.get('state') == 'playing')
 				self.model.pause();
@@ -99,6 +104,20 @@ var PlayerView = Backbone.View.extend({
 		if (this.model.get('current') && this.model.get('current').get('title'))
 			$('#banner').html(this.model.get('current').get('title'));
 
+	},
+	render_prevnext: function() {
+		// prevnext
+		var pliv = new PlaylistItemView({
+			model: room.next_video(),
+			el: $('#next #video')
+		});
+		pliv.render();
+		if (!this.model.get('prev')) return;
+		var pliv = new PlaylistItemView({
+			model: this.model.get('prev'),
+			el: $('#prev #video')
+		});
+		pliv.render();
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');
