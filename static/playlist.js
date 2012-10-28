@@ -27,9 +27,6 @@ var PlaylistView = Backbone.View.extend({
 			else piv.options.selected = false;
 			piv.render();
 			el.append(piv.el);
-			$('body').click(function(){
-				$('#menu').remove();
-			});
 		});
 		
 		var name = this.$el.find('.header').html();

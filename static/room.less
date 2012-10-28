@@ -11,7 +11,6 @@
 @small_margin: @margin * 0.75;
 @avatar_size: 32px;
 @font_size: 12px;
-@chat_height: 400px;
 @rounding: 8px;
 
 @chat_width: @main_width - @vid_width - @total_margin * 1.5;
@@ -170,6 +169,7 @@ img { border-radius: 5px; }
 	}
 }
 
+@chat_height: 350px;
 @input_width: @chat_width - @avatar_size - 3*@small_margin - 20;
 @input_margin: (@avatar_size - 18px)/2;
 
@@ -177,6 +177,7 @@ img { border-radius: 5px; }
 	float: left;
 	margin: @margin 0px;
 	width: @chat_width;
+	position: relative;
 	.avatar { 
 		overflow: hidden;
 		margin: @small_margin;
@@ -187,6 +188,51 @@ img { border-radius: 5px; }
 		img {
 			width: @avatar_size;
 			height: @avatar_size;
+		}
+	}
+	#header {
+		background-color: #888;
+		border-radius: 8px 8px 0 0;
+		font-size: 18px;
+		min-height: 16px;
+		#name {
+			padding: 16px;
+			float: left;
+		}
+		#button {
+			padding: 16px;
+			float: right;
+			border-left: 1px solid #eee;
+			cursor: pointer;
+		}
+		#button:hover {
+			background-color: #aaa;
+		}
+	}
+	#users {
+		height: @chat_height - 100px;
+		position: absolute;
+		width: @chat_width;
+		background-color: grey;
+	}
+	#user:hover { background-color: #eee; }
+	#user {
+		#avatar {
+			width: 32px;
+			height: 32px;
+			img { width: 32px; height: 32px; }
+			float: left;
+			overflow: hidden;
+			margin: @margin;
+		}
+		#username {
+			float: left;
+			margin: @margin;
+			margin-left: 0;
+			padding-top: 5px;
+			font-size: 18px;
+			width: @chat_width - 32px - @margin*3;
+			overflow: hidden;
 		}
 	}
 	#messages {

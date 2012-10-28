@@ -43,12 +43,23 @@ $(document).ready(function(){
 	});
 	plv.render();
 	plv.render_prevnext();
-	
 	window.cv = new ChatView({
 		el: $('#chatroom'),
 		model: room
 	});
 	cv.render();
+	window.ulv = new UserListView({
+		el: $('#chatroom'),
+		model: room.get('userlist')
+	});
+
+	$('body').click(function(){
+		$('#menu').remove();
+	});
+
+	// disable text drag select for non-chat elements
 	$('#theater')[0].onselectstart = function(){ return false; }
 	$('#catalog')[0].onselectstart = function(){ return false; }
+	$('#header')[0].onselectstart = function(){ return false; }
+	$('#users')[0].onselectstart = function(){ return false; }
 });

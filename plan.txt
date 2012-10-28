@@ -52,3 +52,6 @@ security + salting
 javascript injection
 ddos attack planning
 mobile support
+nightmare mode
+random episode button
+buttons, buttons everywhere

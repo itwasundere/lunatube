@@ -166,7 +166,6 @@ models.Player = Backbone.Model.extend({
 		}
 	},
 	set_vid: function(video) {
-		this.set('prev', this.get('current'));
 		video.set({ watched: true });
 		this.set({
 			time: 0,

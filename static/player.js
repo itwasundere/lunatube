@@ -112,9 +112,11 @@ var PlayerView = Backbone.View.extend({
 			el: $('#next #video')
 		});
 		pliv.render();
-		if (!this.model.get('prev')) return;
+		var prev = this.model.previous('current');
+		prev.initialize();
+		if (!prev || !prev.id) return;
 		var pliv = new PlaylistItemView({
-			model: this.model.get('prev'),
+			model: prev,
 			el: $('#prev #video')
 		});
 		pliv.render();

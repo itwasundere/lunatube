@@ -25,6 +25,7 @@ html
 		script(src='static/room.js')
 		script(src='static/playlist.js')
 		script(src='static/player.js')
+		script(src='static/userlist.js')
 
 	templates
 		script#avatar(type='template')
@@ -72,6 +73,11 @@ html
 				#text
 					b#username [[username]]
 					#content [[content]]
+		script#user(type='template')
+			#user
+				#avatar
+					img(src="[[avatar]]")
+				#username [[username]]
 
 	body
 		#login
@@ -102,7 +108,10 @@ html
 							.header Up next
 							#video
 				#chatroom
-					#userlist
+					#header
+						#name Chat
+						#button 0 Users
+					#users
 					#messages
 					#mouth
 						#avatar.avatar
