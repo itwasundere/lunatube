@@ -13,8 +13,8 @@ var PlayerView = Backbone.View.extend({
 			self.ready() }
 		this.model.bind('change', this.render, this);
 
-		room.get('playlist').bind('reset', this.render_prevnext, this);
-		room.get('queue').bind('reset', this.render_prevnext, this);
+		room.get('playlist').bind('reset add remove', this.render_prevnext, this);
+		room.get('queue').bind('reset add remove', this.render_prevnext, this);
 		room.get('player').bind('change:current', this.render_prevnext, this);
 
 		this.$el.find('#play').click(function(){

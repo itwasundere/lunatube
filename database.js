@@ -108,10 +108,17 @@ var db = {
 			options.success(model.toJSON()); });
 	},
 	read: function(model, options){
-		if (!model.id) return;
+		if (!model.id) {
+			var statement = sql.select(model.classname, param_statement(model.attributes));
+			this.sqlite.get(statement, function(err, row){
+				if (row) row.password = '';
+				options.success(row);
+			});
+			return;
+		}
 		var statement = sql.get(model.classname, model.id);
 		this.sqlite.get(statement, function(err, row){
-			if (row && row.password) 
+			if (row && row.password)
 				delete row.password;
 			options.success(row);
 		});

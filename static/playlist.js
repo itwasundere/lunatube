@@ -19,7 +19,10 @@ var PlaylistView = Backbone.View.extend({
 		this.model.each(function(item){
 			var piv = self.subviews[item.cid];
 			if (!piv) {
-				piv = new PlaylistItemView({model: item});
+				piv = new PlaylistItemView({
+					model: item,
+					removable: true
+				});
 				self.subviews[item.cid] = piv;
 			}
 			if (room.get('player').get('current').id == item.id)
@@ -59,7 +62,9 @@ var PlaylistItemView = Backbone.View.extend({
 		var html = $(this.template(this.model.toJSON()));
 		el.attr('id', html.attr('id'))
 		el.html(html.html());
+
 		el.click(function(event){
+			if (self.model.get('url') == 'Bq6WULV78Cw') return;
 			if (event.which!=3) {
 				room.trigger('play', self.model);
 				return;
@@ -89,6 +94,14 @@ var PlaylistItemView = Backbone.View.extend({
 				el.removeClass('hover');
 				event.preventDefault();
 			});
+			if (self.options.removable)
+				menu.find('#remove').mousedown(function(event){
+					window.room.trigger('delete', self.model);
+					$('#menu').remove();
+					el.removeClass('hover');
+					event.preventDefault();
+				});
+			else menu.find('#remove').remove();
 			el.append(menu);
 			event.preventDefault();
 		});

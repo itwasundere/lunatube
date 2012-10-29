@@ -23,6 +23,7 @@ $(document).ready(function(){
 		// ip: 'ws://67.164.89.50:8080/',
 		ip: 'ws://localhost:8080/',
 		room: window.room,
+		user: window.user,
 		refresh: 1000
 	});
 	window.pv = new PlaylistView({
@@ -52,6 +53,12 @@ $(document).ready(function(){
 		el: $('#chatroom'),
 		model: room.get('userlist')
 	});
+	ulv.render();
+	window.liv = new LoginView({
+		el: $('#login'),
+		model: window.user
+	});
+	liv.render();
 
 	$('body').click(function(){
 		$('#menu').remove();

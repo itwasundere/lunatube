@@ -49,6 +49,13 @@ var SocketWrapper = Backbone.Model.extend({
 			if (!video) return;
 			playlist.append(video);
 		});
+		sock.on('remove_video', function(video){
+			if (!video) return;
+			var v = playlist.get(video.id);
+			var b = queue.get(video.id)
+			if (v) playlist.kill(v);
+			if (b) queue.remove(b);
+		});
 		sock.on('play_video', function(video){
 			if (!video) return;
 			var id = video.id;
@@ -61,6 +68,34 @@ var SocketWrapper = Backbone.Model.extend({
 				queue.insert(video, curr);
 				player.trigger('end');
 			}
+		});
+		sock.on('login', function(login){
+			if (!login) return;
+			if (!login.username || !login.password) return;
+			var user = new models.User({
+				blank: true,
+				username: login.username
+			});
+			user.fetch({success:function(){
+				if (!user.id) {
+					user.save({password: login.password},{success:function(){
+						sock.emit('login', user.toJSON());
+					}});
+					return;
+				}
+				var u2 = new models.User({
+					blank: true,
+					username: login.username,
+					password: login.password
+				});
+				u2.fetch({success:function(){
+					if (u2.id) {
+						sock.emit('login', user.toJSON());
+					} else {
+						sock.emit('login_failed');
+					}
+				}});
+			}});
 		});
 	},
 
@@ -93,7 +128,7 @@ var SocketWrapper = Backbone.Model.extend({
 		});
 		
 		var playlist = room.get('playlist');
-		playlist.on('add remove', function(){
+		playlist.on('add remove reset', function(){
 			if (self.disconnected) return;
 			sock.emit('playlist', playlist.toJSON());
 		});

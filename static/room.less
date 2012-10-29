@@ -52,6 +52,9 @@ body {
 	margin-bottom: @total_margin;
 	text-align: right;
 	border-radius: 0 0 @rounding @rounding;
+	div#username {
+		font-size: 24px;
+	}
 }
 
 #main {
@@ -169,7 +172,7 @@ img { border-radius: 5px; }
 	}
 }
 
-@chat_height: 350px;
+@chat_height: 352px;
 @input_width: @chat_width - @avatar_size - 3*@small_margin - 20;
 @input_margin: (@avatar_size - 18px)/2;
 
@@ -210,7 +213,6 @@ img { border-radius: 5px; }
 		}
 	}
 	#users {
-		height: @chat_height - 100px;
 		position: absolute;
 		width: @chat_width;
 		background-color: grey;
@@ -313,6 +315,22 @@ img { border-radius: 5px; }
 		margin: @margin;
 		margin-left: 0;
 		width: @video_width - @thumb_width - @margin * 6;
+	}
+}
+
+#rules {
+	width: @chat_width;
+	height: 140px;
+	margin: @margin;
+	border-radius: @rounding;
+	background-color: white;
+	#header {
+		margin: @margin;
+		font-size: 18px;
+	}
+	#text {
+		margin: @margin;
+		margin-top: 0px;
 	}
 }
 

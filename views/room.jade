@@ -26,6 +26,7 @@ html
 		script(src='static/playlist.js')
 		script(src='static/player.js')
 		script(src='static/userlist.js')
+		script(src='static/login.js')
 
 	templates
 		script#avatar(type='template')
@@ -84,7 +85,7 @@ html
 			input#username
 			input#password
 			input#login_button(type='button', value='login')
-		
+			input#reg_button(type='button', value='register')
 		#main
 			#top
 				#theater
@@ -118,6 +119,9 @@ html
 							img
 						#input
 							input(type="text")
+				#rules
+					#header Room Rules
+					#text !{rules}
 			#catalog
 				#queue
 					.header Queue

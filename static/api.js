@@ -36,11 +36,17 @@ var ConnectionApi = Backbone.Model.extend({
 		room.on('play play_new', function(video){
 			sock.emit('play_video', video.toJSON());
 		});
+		room.on('delete', function(video){
+			sock.emit('remove_video', video.toJSON());
+		});
 		room.on('queue', function(video){
 			sock.emit('add_queue', video.toJSON())
 		});
 		room.on('playlist', function(video){
 			sock.emit('add_playlist', video.toJSON());
+		});
+		user.on('login', function(){
+			sock.emit('login', user.toJSON());
 		});
 	},
 	bind_sock_events: function() {
@@ -69,6 +75,9 @@ var ConnectionApi = Backbone.Model.extend({
 		});
 		sock.on('queue', function(q){
 			room.get('queue').reset(q);
+		});
+		sock.on('login', function(user_info){
+			user.set(user_info);
 		});
 	}
 });

@@ -2,16 +2,18 @@ window.UserListView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('add remove reset', this.render, this);
 		this.subviews = {};
-	},
-	render: function() {
 		var btn = this.$el.find('#header #button');
-		btn.html(this.model.length + ' Users');
-		var el = this.$el.find('#users').empty();
+		var el = this.$el.find('#users');
 		btn.click(function(){
 			if (el.css('display') == 'none')
 				el.css('display','block');
 			else el.css('display','none');
 		});
+	},
+	render: function() {
+		var btn = this.$el.find('#header #button');
+		btn.html(this.model.length + ' Users');
+		var el = this.$el.find('#users').empty();
 		var subv = this.subviews;
 		this.model.each(function(user){
 			var uv = subv[user.id];

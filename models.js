@@ -85,10 +85,14 @@ models.VideoList = Backbone.Collection.extend({
 		var self = this;
 		this.classname = 'video';
 	},
+	get_first: function(){
+		var idle = new models.Video({ url: 'Bq6WULV78Cw' });
+		return this.at(0) || idle;
+	},
 	after: function(video) {
-		var nextid = video.get('next');
-		if (nextid) return this.get(nextid);
-		else return this.at(0);
+		var nextid = this.get(video.id).get('next');
+		if (nextid) return this.get(nextid) || this.get_first();
+		else return this.at(0) || this.get_first();
 	},
 	append: function(video_info) {
 		var self = this;
@@ -97,6 +101,14 @@ models.VideoList = Backbone.Collection.extend({
 			time: video_info.time
 		};
 		if (this.id) {
+			if (this.length == 0) {
+				video_info.queue_id = this.id;
+				var video = new models.Video(video_info);
+				video.save({},{success:function(){
+					self.add(video);
+				}});
+				return;
+			}
 			var prev = this.last();
 			if (prev.id)
 				video_info.prev = prev.id;
@@ -126,6 +138,16 @@ models.VideoList = Backbone.Collection.extend({
 		if (after) after_id = after.id;
 		var pos = this.indexOf(this.get(after_id));
 		this.add(video, {at: pos+1});
+	},
+	kill: function(video) {
+		var prev = this.get(video.get('prev'));
+		var next = this.get(video.get('next'));
+		if (prev) prev.set('next', video.get('next'));
+		if (next) next.set('prev', video.get('prev'));
+		if (prev) prev.save();
+		if (next) next.save();
+		video.destroy();
+		this.remove(video);
 	}
 });
 
@@ -212,6 +234,11 @@ models.User = Backbone.Model.extend({
 	},
 	initialize: function(){
 		this.classname = 'user';
+		if (this.get('blank')) {
+			delete this.attributes['avatar_url'];
+			delete this.attributes['blank'];
+			return;
+		}
 		if (!this.id && serverside) {
 			var md5 = crypto.createHash('md5');
 			md5.update(''+Math.random());
@@ -274,7 +301,7 @@ models.Room = Backbone.Model.extend({
 		var player = this.get('player');
 		playlist.on('reset', function(){
 			if (player.get('current').get('time')) return;
-			player.set_vid(playlist.at(0));
+			player.set_vid(playlist.get_first());
 		});
 		playlist.id = this.get('queue_id');
 		playlist.query = 'queue_id='+playlist.id;

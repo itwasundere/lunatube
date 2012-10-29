@@ -42,12 +42,13 @@ app.get('/', function(req, res){
 	var room = roomlist.at(0);
 	var user = new models.User();
 	if (req.session.user_id)
-		user = new models.User({id: user.id});
-	else req.session.user_id = user.id;
-	userlist.add(user);
+		user = userlist.get(req.session.user_id)
+	else userlist.add(user);
+	req.session.user_id = user.id;
 	res.render('room.jade', {
 		room: JSON.stringify(room.json()),
-		user: JSON.stringify(user.toJSON())
+		user: JSON.stringify(user.toJSON()),
+		rules: room.get('rules')
 	});
 });
 
