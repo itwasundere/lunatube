@@ -90,7 +90,9 @@ models.VideoList = Backbone.Collection.extend({
 		return this.at(0) || idle;
 	},
 	after: function(video) {
-		var nextid = this.get(video.id).get('next');
+		var current = this.get(video.id);
+		if (!current) return this.at(0);
+		var nextid = current.get('next');
 		if (nextid) return this.get(nextid) || this.get_first();
 		else return this.at(0) || this.get_first();
 	},
