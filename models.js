@@ -90,7 +90,9 @@ models.VideoList = Backbone.Collection.extend({
 		return this.at(0) || idle;
 	},
 	after: function(video) {
-		var nextid = this.get(video.id).get('next');
+		var current = this.get(video.id);
+		if (!current) return this.at(0);
+		var nextid = current.get('next');
 		if (nextid) return this.get(nextid) || this.get_first();
 		else return this.at(0) || this.get_first();
 	},
@@ -235,8 +237,7 @@ models.User = Backbone.Model.extend({
 	initialize: function(){
 		this.classname = 'user';
 		if (this.get('blank')) {
-			delete this.attributes['avatar_url'];
-			delete this.attributes['blank'];
+			this.attributes = this.get('blank');
 			return;
 		}
 		if (!this.id && serverside) {
@@ -352,6 +353,8 @@ models.RoomList = Backbone.Collection.extend({
 		this.classname = 'room'
 	}
 });
+
+models.SessionStore = Backbone.Model.extend({});
 
 if (serverside) {
 	module.exports = models;

@@ -2,6 +2,7 @@ var models = require('./models.js');
 var utils = require('./sutils');
 var logger = require('./logger.js');
 var Backbone = require('backbone');
+var cookiep = require('cookie');
 
 var SocketWrapper = Backbone.Model.extend({
 	initialize: function() {
@@ -69,54 +70,55 @@ var SocketWrapper = Backbone.Model.extend({
 				player.trigger('end');
 			}
 		});
+		sock.on('logout', function(){
+			self.trigger('login', self.get('user'), (new models.User()));
+		});
 		sock.on('login', function(login){
-			if (!login) return;
-			if (!login.username || !login.password) return;
+			if (!login || !login.username || !login.password) return;
+
 			var user = new models.User({
-				blank: true,
-				username: login.username
+				blank: { username: login.username }
 			});
 			user.fetch({success:function(){
-				if (!user.id) {
-					user.save({password: login.password},{success:function(){
-						sock.emit('login', user.toJSON());
+				if (user.id) {
+					var user2 = new models.User({ blank: {
+						username: login.username,
+						password: login.password
 					}});
-					return;
+					user2.fetch({success:function(){
+						if (user2.id)
+							self.trigger('login', self.get('user'), user2);
+						else
+							console.log('password failed');
+					}})
+				} else {
+					user = new models.User({ blank: {
+						username: login.username,
+						password: login.password,
+						avatar_url: '/static/avatars/newfoal.png'
+					}});
+					user.save({},{success:function(){
+						self.trigger('login', self.get('user'), user);
+					}});
 				}
-				var u2 = new models.User({
-					blank: true,
-					username: login.username,
-					password: login.password
-				});
-				u2.fetch({success:function(){
-					if (u2.id) {
-						sock.emit('login', user.toJSON());
-					} else {
-						sock.emit('login_failed');
-					}
-				}});
-			}});
+			}})
 		});
 	},
-
 	bind_room_events: function() {
 		var self = this;
 		var room = this.get('room');
 		var user = this.get('user');
 		var sock = this.get('sock');
 		
-		// outgoing room userlist
 		var userlist = room.get('userlist');
 		userlist.bind('add remove', function(){
 			if (self.disconnected) return;
 			sock.emit('userlist', userlist.toJSON()); });
 
-		// outgoing messages
 		room.get('messages').bind('add', function(message){
 			if (self.disconnected) return;
 			sock.emit('message', message.toJSON()); });
 		
-		// playback changes
 		room.get('player').bind('change', function(){
 			if (self.disconnected) return;
 			sock.emit('player', room.get('player').toJSON()); });
@@ -151,44 +153,56 @@ var ConnectionApi = Backbone.Model.extend({
 		console.log('connection from '+sock.handshake.address.address);
 
 		var self = this;
+		var sessions = this.get('sessions');
+		var user = new models.User();
 		var users = this.get('userlist');
-
-		var wrapper = { sock: sock };
-		var set_user_room = function(params) {
-			if (params.user)
-				wrapper.user = params.user;
-			if (params.room)
-				wrapper.room = params.room;
-			if (wrapper.user && wrapper.room && wrapper.sock) {
-				var wrap = new SocketWrapper(wrapper);
-				self.get('connections').add(wrap);
-				wrapper.room.join(wrapper.user);
-			}
-		}
-		var new_user = function() {
-			var user = new models.User();
-			self.get('userlist').add(user);
-			return user;
-		}
-
 		var cookie = sock.handshake.headers.cookie;
-
-		if (!cookie) {
-			set_user_room({user: new_user()});
-		} else {
-			utils.get_session(this.get('store'), cookie, function(session){
-				var user;
-				if (session && session.user_id)
-					user = users.get(session.user_id);
-				else user = new_user();
-				set_user_room({user: user});
-			});
+		var session = {user_id: user.id}
+		
+		var new_user = function() {
+			var md5 = utils.hash();
+			sessions.set(md5, session);
+			// sock.handshake.headers.cookie = utils.cookie({session: md5}, 14);
+			users.add(user);
 		}
 
+		if (!cookie) new_user();
+		else {
+			var sid = cookiep.parse(cookie).session;
+			if (!sid) new_user();
+			else {
+				var csession = sessions.get(sid);
+				if (!csession) new_user();
+				else {
+					session = csession;
+					user = users.get(session.user_id);
+				}
+			} 
+		}
+
+		var wrap;
+		var room;
 		sock.on('join', function(room_id){
-			var room = self.get('roomlist').get(room_id);
-			set_user_room({room: room});
+			room = self.get('roomlist').get(room_id);
+			if (!room) return;
+			wrap = new SocketWrapper({
+				sock: sock,
+				user: user,
+				room: room
+			});
+			self.get('connections').add(wrap);
+			room.join(user);
 		});
+
+		this.get('connections').bind('login', function(old_user, new_user){
+			room.leave(old_user);
+			room.join(new_user);
+			users.remove(old_user);
+			users.add(new_user);
+			wrap.set('user', new_user);
+			sock.emit('login', new_user.toJSON());
+			sessions.set(sid,{user_id: new_user.id})
+		})
 	},
 });
 

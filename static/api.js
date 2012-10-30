@@ -48,6 +48,9 @@ var ConnectionApi = Backbone.Model.extend({
 		user.on('login', function(){
 			sock.emit('login', user.toJSON());
 		});
+		user.on('logout', function(){
+			sock.emit('logout');
+		});
 	},
 	bind_sock_events: function() {
 		var self = this;
@@ -77,6 +80,7 @@ var ConnectionApi = Backbone.Model.extend({
 			room.get('queue').reset(q);
 		});
 		sock.on('login', function(user_info){
+			console.log('login');
 			user.set(user_info);
 		});
 	}

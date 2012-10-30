@@ -237,8 +237,7 @@ models.User = Backbone.Model.extend({
 	initialize: function(){
 		this.classname = 'user';
 		if (this.get('blank')) {
-			delete this.attributes['avatar_url'];
-			delete this.attributes['blank'];
+			this.attributes = this.get('blank');
 			return;
 		}
 		if (!this.id && serverside) {
@@ -354,6 +353,8 @@ models.RoomList = Backbone.Collection.extend({
 		this.classname = 'room'
 	}
 });
+
+models.SessionStore = Backbone.Model.extend({});
 
 if (serverside) {
 	module.exports = models;
