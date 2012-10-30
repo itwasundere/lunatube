@@ -20,14 +20,16 @@ var SocketWrapper = Backbone.Model.extend({
 		var queue = room.get('queue');
 		var playlist = room.get('playlist');
 		var player = room.get('player');
-			
+		
+		// todo -- cached users may have changed, don't use references
+
 		sock.on('disconnect', function(){
 			self.disconnected = true;
-			room.leave(user);
+			room.leave(self.get('user'));
 		});
 		sock.on('message', function(content){
 			if (!content || !typeof(content)=='string') return;
-			room.message(user, content);
+			room.message(self.get('user'), content);
 		});
 		sock.on('player_prompt', function(){
 			sock.emit('player', player.toJSON());
