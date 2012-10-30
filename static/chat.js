@@ -125,11 +125,15 @@ var MessageView = Backbone.View.extend({
 				}));
 			}
 		} else {
-			el.html(_.template($('script#message').html(),{
-				avatar: avatar,
-				username: username,
-				content: content
-			}));
+			if (avatar == el.find('.avatar img').attr('src') && 
+				username == el.find('#username').html()) {
+				el.find('#content').html(content);
+			} else
+				el.html(_.template($('script#message').html(),{
+					avatar: avatar,
+					username: username,
+					content: content
+				}));
 		}
 
 		var img = el.find('img');

@@ -22,10 +22,12 @@ window.LoginView = Backbone.View.extend({
 		var el = this.$el;
 		if (this.model.id && (this.model.id + '').length < 32) {
 			el.find('#username').css('display', '');
+			el.find('#logout').css('display', '');
 			el.find('#fields').css('display', 'none');
 			el.find('#username').html(this.model.get('username'));
 		}
 		else {
+			el.find('#logout').css('display', 'none');
 			el.find('#username').css('display', 'none');
 			el.find('#fields').css('display', '');
 		}
