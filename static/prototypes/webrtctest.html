@@ -1,0 +1,15 @@
+<script src="/static/lib/webrtc.io.js"></script>
+<script src="/static/lib/jquery.js"></script>
+<video id="vid" autoplay></video>
+<video id="vid2" autoplay></video>
+<script type="text/javascript">
+rtc.createStream({video: true, audio: true}, function(stream){
+	window.s = stream
+	rtc.attachStream(s,'vid')
+});
+
+rtc.connect('ws://www.lunatube.tv:8081/', 'room1');
+rtc.on('add remote stream', function(stream, socketId) {
+  rtc.attachStream(stream, 'vid2');
+});
+</script>

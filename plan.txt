@@ -1,20 +1,15 @@
 +-----------------+
 |player / playlist|
 +-----------------+
-delete items from the playlist
 load items directly into the player w/o chat
 import youtube playlists
 inserting videos instead of appending
-prev / next vid
-copying youtube url from videos
 loading a playlist from account
-hiding the playlist
 looping and annotations on / off buttons
 
 +--------+
 |accounts|
 +--------+
-logging in and out
 user preferences
 user account pages
 clone a playlist
@@ -28,7 +23,6 @@ global messages for things happening
 tagged messages [nsfw, spoilers]
 modlist / mutelist
 chat log history
-viewing the userlist
 change <title> on new message
 
 +-------+
