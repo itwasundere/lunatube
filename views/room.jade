@@ -63,8 +63,7 @@ html
 				#thumbnail
 					img#thumb(src='[[thumb]]')
 				#info
-					#title
-						b [[title]]
+					#title [[title]]
 					#uploader [[uploader]]
 					#time [[time_text]]
 		script#message(type='template')
@@ -84,15 +83,14 @@ html
 		#login
 			#fields
 				input#unfield
-				input#password
-				input#login_button(type='button', value='login')
-				input#reg_button(type='button', value='register')
+				input#password(type="password")
+				#login_button.button login
+				#reg_button.button register
 			#logout.button log out
 			#username
 		#main
 			#top
 				#theater
-					#banner !{JSON.parse(room).owner.username}'s room
 					#player
 						#overlay
 						#youtube

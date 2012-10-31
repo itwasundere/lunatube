@@ -5,15 +5,25 @@
 @luna_white: white;
 
 @main_width: 1024px;
-@vid_width: 640px;
 @total_margin: 24px;
-@margin: @total_margin / 2;
+@margin2: @total_margin / 2;
 @small_margin: @margin * 0.75;
 @avatar_size: 32px;
 @font_size: 12px;
 @rounding: 8px;
 
+@clear: #668CDE;
+@background: #464997;
+
 @chat_width: @main_width - @vid_width - @total_margin * 1.5;
+
+@white: #dddddd;
+@width: 1280px;
+@dark: #0A0629;
+@light: #122E59;
+@clear: #668CDE;
+@background: #464997;
+@black: #222422;
 
 .no-select {
 	-webkit-touch-callout: none;
@@ -24,79 +34,78 @@
 	user-select: none;
 }
 
-div { overflow: auto; word-wrap: break-word;}
-.header { font-size: 18px; }
-input[type=text] {
+div { 
+	overflow: auto; 
+	word-wrap: break-word;
+}
+
+.defaults {
+	font-size: 14px;
+	font-family: helvetica neue;
+}
+
+input {
+	.defaults;
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font: arial;
-	font-size:  @font_size;
 	outline: none;
 }
 
 body {
-	background-color: @luna_dark;
-	font-family: arial;
-	font-size: @font_size;
+	.defaults;
+	background-color: @background;
 	cursor: default;
 	padding: 0px;
 	margin: 0px;
+	color: @black;
 }
 
+@margin: 12px;
+
 #login {
-	background-color: @luna_clear;
-	width: @main_width;
-	padding: @margin;
-	margin: 0 auto;
-	margin-bottom: @total_margin;
+	background-color: @clear;
+	width: @width;
+	margin: @margin*2 auto;
+	margin-top: 0;
 	text-align: right;
-	border-radius: 0 0 @rounding @rounding;
-	div#username {
-		float: right;
-		font-size: 18px;
+	#fields {
+		margin: 9px;
+	}
+	#fields input, #fields .button {
+		font-size: 16px;
 		margin-right: 10px;
+		padding: @margin/2 @margin;
+		height: 20px;
 	}
-	#logout {
-		float: right;
-	}
+	#fields input { padding: @margin / 2 }
 }
 
 #main {
-	background-color: @luna_clear;
-	width: @main_width;
-	padding: @margin;
+	width: @width;
 	margin: 0 auto;
-	border-radius: @rounding @rounding 0 0;
 }
+
+@vid_width: 853px;
+@vid_height: 480px;
 
 #theater {
 	.no-select;
 	width: @vid_width;
-	margin: 0 @margin;
 	float: left;
 }
 
-#banner {
-	background-color: @luna_white;
-	border-radius: @rounding @rounding 0 0;
-	font-size: 24px;
-	min-height: 12px;
-	margin: @margin 0;
-	margin-bottom: 0;
-	padding: @margin;
-}
-
 #player {
-	background-color: @luna_white;
+	background-color: @clear;
 	width: @vid_width;
-	height: @vid_width / 16 * 9;
+	height: @vid_height;
 	overflow: hidden;
 	#overlay {
 		width: @vid_width;
-		height: @vid_width / 16 * 9;
+		height: @vid_height;
 		opacity: 0;
 		position: absolute;
+		cursor: pointer;
 	}
 	#youtube {
 		width: 100%;
@@ -104,13 +113,13 @@ body {
 		#placeholder {
 			text-align: center;
 			margin: 100px auto;
-			font-size: 18px;
 		}
 	}
 }
 
 #controls {
-	background-color: @luna_white;
+	display: none;
+	background-color: @white;
 	margin: @margin 0px;
 	padding-left: 20px;
 	margin-top: 0px;
@@ -134,21 +143,15 @@ body {
 		#playhead {
 			width: 6px;
 			height: 100%;
-			background-color: @luna_white;
+			background-color: @white;
 			pointer-events: none;
 		}
 	}
 }
 
-@prevnext_video_width: 280px;
-img { border-radius: 5px; }
-
-#video {
-	border-radius: 5px;
-}
-
 #prevnext {
-	background-color: @luna_white;
+	display: none;
+	background-color: @white;
 	margin: @margin 0px;
 	padding: @margin;
 	border-radius: @rounding;
@@ -158,7 +161,7 @@ img { border-radius: 5px; }
 	}
 	#video {
 		float: left;
-		width: @prevnext_video_width - @margin / 2;
+		width: @width / 4;
 		height: @video_height - @margin / 22;
 		overflow: hidden;
 		margin: @margin / 2;
@@ -172,7 +175,7 @@ img { border-radius: 5px; }
 			float: left;
 			margin: @margin;
 			margin-left: 0;
-			width: @prevnext_video_width - @thumb_width - @margin * 6;
+			width: 280 - @thumb_width - @margin * 6;
 		}
 	}
 }
@@ -182,38 +185,39 @@ img { border-radius: 5px; }
 @input_margin: (@avatar_size - 18px)/2;
 
 .button {
-	background-color: #DDD;
+	background-color: @light;
+	color: white;
 	padding: 4px 10px;
-	float: left;
-	border: 1px solid #CCC;
-	margin-right: @small_margin;
+	display: inline-block;
 	cursor: pointer;
 }
 .button:hover {
-	background-color: #aaa;
+	background-color: @dark;
 }
+
+.avatar { 
+	overflow: hidden;
+	margin: @small_margin;
+	float: left;
+	width: @avatar_size;
+	height: @avatar_size;
+	background-color: @luna_clear;
+	img {
+		width: @avatar_size;
+		height: @avatar_size;
+	}
+}
+
+@chat_width: @width - @vid_width - @margin*2;
 
 #chatroom {
 	float: left;
-	margin: @margin 0px;
+	margin-left: @margin*2;
 	width: @chat_width;
 	position: relative;
-	.avatar { 
-		overflow: hidden;
-		margin: @small_margin;
-		float: left;
-		width: @avatar_size;
-		height: @avatar_size;
-		background-color: @luna_clear;
-		img {
-			width: @avatar_size;
-			height: @avatar_size;
-		}
-	}
 	#header {
+		display: none;
 		background-color: #888;
-		border-radius: 8px 8px 0 0;
-		font-size: 18px;
 		min-height: 16px;
 		#name {
 			padding: 16px;
@@ -250,15 +254,14 @@ img { border-radius: 5px; }
 			margin: @margin;
 			margin-left: 0;
 			padding-top: 5px;
-			font-size: 18px;
 			width: @chat_width - 32px - @margin*3;
 			overflow: hidden;
 		}
 	}
 	#messages {
-		height: @chat_height;
-		background-color: @luna_white;
-		padding-top: @small_margin;
+		height: @vid_height - 50px;
+		background-color: @clear;
+		.avatar { margin-top: 16px; }
 		#message {
 			padding-top: -@small_margin;
 			width: @chat_width - 20;
@@ -266,6 +269,9 @@ img { border-radius: 5px; }
 		#text {
 			margin: @small_margin;
 			margin-left: 0;
+			padding: 7px;
+			padding-bottom: 10px;
+			background-color: @white;
 		}
 		#image_thumb {
 			max-width: @input_width;
@@ -283,18 +289,19 @@ img { border-radius: 5px; }
 			float: left;
 			margin: @small_margin;
 			margin-left: 0px;
-			width: @input_width * 0.60 - @margin;
+			width: @input_width * 0.60 - @margin*1.5;
 		}
 	}
 	#mouth {
-		background-color: @luna_dark;
+		background-color: @dark;
 		#input {
 			margin: @small_margin;
-			width: @input_width;
+			margin-left: 0px;
+			width: @chat_width - 59px;
 			input[type=text] { 
-				width: @input_width - @input_margin * 2;
-				height: @avatar_size - @input_margin * 2;
-				padding: @input_margin;
+				height: 18px;
+				width: @chat_width - 59px - 14px;
+				padding: 7px;
 			}
 		}
 	}
@@ -308,11 +315,15 @@ img { border-radius: 5px; }
 .hover { background-color: @luna_clear; }
 
 #video {
+	font-size: 12px; 
+	color: @black;
 	float: left;
-	width: @video_width - @margin / 2;
+	width: @width / 4;
 	height: @video_height - @margin / 22;
 	overflow: hidden;
-	margin: @margin / 2;
+	background-color: @clear;
+	border-bottom: 1px solid @dark;
+	border-right: 1px solid @light;
 	#thumbnail {
 		float: left;
 		width: @thumb_width;
@@ -325,14 +336,21 @@ img { border-radius: 5px; }
 		margin-left: 0;
 		width: @video_width - @thumb_width - @margin * 6;
 	}
+	cursor: pointer;
+}
+
+#video.selected, #video:hover {
+	background-color: @light;
+	color: @white;
 }
 
 #rules {
+	display: none;
 	width: @chat_width;
 	height: 140px;
 	margin: @margin;
 	border-radius: @rounding;
-	background-color: white;
+	background-color: @white;
 	#header {
 		margin: @margin;
 		font-size: 18px;
@@ -344,29 +362,30 @@ img { border-radius: 5px; }
 }
 
 #catalog {
-	background-color: @luna_white;
-	margin: 0 @margin;
-	margin-top: 0px;
-	padding: @margin;
+	width: @width;
+	color: @white;
+	background-color: @dark;
+	margin: @margin*2 0;
 	float: default;
-	border-radius: @rounding;
 	.no-select;
+	#queue, #playlist { overflow: hidden; }
 	.header {
-		padding: 10px;
-		margin-left: 6px;
+		color: @white;
+		font-size: 18px;
+		padding: 14px;
 		cursor: pointer;
 	}
-	.header:hover {
-		background-color: @luna_clear;
-	}
 	#videos {
-		margin-top: 10px;
+		margin-right: -4px;
+		background-color: @clear; 
+		margin-bottom: -1px; 
 	}
 }
 
 #menu {
+	color: @black;
 	border: 1px solid #ccc;
-	background-color: white;
+	background-color: @white;
 	.menuitem {
 		width: 150px;
 		border: 1px solid #ccc;

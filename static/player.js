@@ -6,7 +6,7 @@ var PlayerView = Backbone.View.extend({
 	initialize: function(){
 		var self = this, el = this.$el;
 		if (!this.options.dimensions)
-			this.options.dimensions = { width: 640, height: 360 };
+			this.options.dimensions = { width: 853, height: 480 };
 		if (!this.options.tolerance)
 			this.options.tolerance = 2; // 2 seconds max lag
 		window.onYouTubePlayerReady = function() {
