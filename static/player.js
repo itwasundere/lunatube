@@ -96,9 +96,17 @@ var PlayerView = Backbone.View.extend({
 		playhead.css('margin-left', margin);
 
 		// volume contorls
-		var volume = el.find('#volume input');
-		volume.change(function(){
-			self.volume(parseInt(volume.val()));
+		var volume = el.find('#volume');
+		volume.hover(function(){
+			el.find('#mute,#max').css('display','block');
+		}, function() {
+			el.find('#mute,#max').css('display','none');
+		});
+
+		volume.mousedown(function(event){
+			var perc = event.offsetX / $(this).width() * 100;
+			self.volume(perc);
+			$(this).find('#volume_slider').width(event.offsetX);
 		});
 
 		if (this.model.get('current') && this.model.get('current').get('title'))

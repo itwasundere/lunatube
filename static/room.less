@@ -93,6 +93,7 @@ body {
 	.no-select;
 	width: @vid_width;
 	float: left;
+	position: relative;
 }
 
 #player {
@@ -117,29 +118,36 @@ body {
 	}
 }
 
+@ctrl_width: @vid_width*0.8;
+
+#invisible { opacity: 0 }
+#invisible:hover { opacity: 1 }
 #controls {
-	display: none;
-	background-color: @white;
-	margin: @margin 0px;
-	padding-left: 20px;
-	margin-top: 0px;
-	border-radius: 0 0 @rounding @rounding;
+	background-color: @dark;
+	position: absolute;
+	left: (@vid_width - @ctrl_width) / 2;
+	top: @vid_height - 80px;
+	width: @ctrl_width;
+	overflow: visible;
 	#volume, #play, #scrobbler {
 		float: left;
-		margin: 17px;
-		height: 18px;
+		background-color: @white;
+		padding: 8px 0px;
 		overflow: hidden;
+		cursor: pointer;
 		input { width: 100px; margin: 3px 0px 0px 0px; }
 		img { height: 18px; }
+		text-align: center;
+		position: relative;
+		overflow: visible;
 	}
-	#play, #scrobbler {
-		cursor: pointer;
-	}
+	#volume, #play { width: @ctrl_width * 0.1 }
+	#play:hover { background-color: red; }
 	#scrobbler {
-		background-color: @luna_black;
-		height: 18px;
-		width: 250px;
-		margin-left: 10px;
+		background-color: @dark;
+		width: @ctrl_width*0.8;
+		height: 32px;
+		padding: 0px;
 		#playhead {
 			width: 6px;
 			height: 100%;
@@ -147,6 +155,27 @@ body {
 			pointer-events: none;
 		}
 	}
+	#volume_slider {
+		position: absolute;
+		top: 0; left: 0;
+		width: 50%;
+		height: 100%;
+		background-color: black;
+		opacity: 0.25;
+	}
+	#mute, #max { 
+		position: absolute; 
+		display: none;
+		background-color: grey;
+		height: 20px;
+		width: 100%;
+		color: @white;
+	}
+	#mute:hover, #max:hover {
+		background-color: red;
+	}
+	#mute { top: 32px; }
+	#max { top: -20px; }
 }
 
 #prevnext {
