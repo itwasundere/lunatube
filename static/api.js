@@ -64,7 +64,7 @@ var ConnectionApi = Backbone.Model.extend({
 				state: data.state,
 				time: data.time
 			});
-			if (player.get('current').get('url') != data.current.url)
+			if (player.get('current').id != data.current.id)
 				player.set('current', new models.Video(data.current));
 		});
 		sock.on('userlist', function(userlist){

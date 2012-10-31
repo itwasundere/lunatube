@@ -73,19 +73,11 @@ var PlayerView = Backbone.View.extend({
 				this.player.pauseVideo();
 		}
 
-		/*
-		// play button
-		if (this.model.get('state') == 'playing' && !this.show_pause) {
-			el.find('#play').html('<img src="/static/img/pause.png">');
-			this.show_pause = true;
-			this.show_play = false;
+		if (this.model.get('state') == 'playing') {
+			el.find('#play').html('pause');
+		} else {
+			el.find('#play').html('play');
 		}
-		else if(this.model.get('state') == 'paused' && !this.show_play){
-			el.find('#play').html('<img src="/static/img/play.png">');
-			this.show_play = true;
-			this.show_pause = false;
-		}
-		*/
 		
 		// scrobbler
 		var playhead = el.find('#playhead');
@@ -97,16 +89,27 @@ var PlayerView = Backbone.View.extend({
 
 		// volume contorls
 		var volume = el.find('#volume');
+		var slider = volume.find('#volume_slider');
 		volume.hover(function(){
 			el.find('#mute,#max').css('display','block');
 		}, function() {
 			el.find('#mute,#max').css('display','none');
 		});
 
-		volume.mousedown(function(event){
+		el.find('#vol').mousedown(function(event){
 			var perc = event.offsetX / $(this).width() * 100;
 			self.volume(perc);
-			$(this).find('#volume_slider').width(event.offsetX);
+			slider.width(event.offsetX);
+		});
+
+		el.find('#max').click(function(){
+			self.volume(100);
+			slider.width('100%');
+		});
+
+		el.find('#mute').click(function(){
+			self.volume(0);
+			slider.width(0);
 		});
 
 		if (this.model.get('current') && this.model.get('current').get('title'))

@@ -52,7 +52,7 @@ models.Video = Backbone.Model.extend({
 	},
 	fetch_yt: function() {
 		var url = this.get('url');
-		var infourl = 'http://gdata.youtube.com/feeds/api/videos/'+url+'?v=2&alt=json';
+		var infourl = 'http://gdata.youtube.com/feeds/api/videos/'+url+'?v=2&alt=json&key=AI39si5Us3iYwmRdK0wa2Qf2P9eV-Z8tbjogUWw1B4JQUs191PgYNJChEKEooOq6ykQzhywLEBA9WxuKphpWUoCRA7S7jeLi5w';
 		var self = this;
 		$.get(infourl, function(data){
 			var seconds = parseInt(data.entry.media$group.yt$duration.seconds);
