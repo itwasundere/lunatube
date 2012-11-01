@@ -67,6 +67,9 @@ var ConnectionApi = Backbone.Model.extend({
 			if (player.get('current').id != data.current.id)
 				player.set('current', new models.Video(data.current));
 		});
+		sock.on('status', function(msg){
+			room.trigger('status',msg);
+		});
 		sock.on('userlist', function(userlist){
 			room.get('userlist').reset(userlist);
 		});
@@ -80,7 +83,7 @@ var ConnectionApi = Backbone.Model.extend({
 			room.get('queue').reset(q);
 		});
 		sock.on('login', function(user_info){
-			console.log('login');
+			if (!user_info) alert('bad password');
 			user.set(user_info);
 		});
 	}

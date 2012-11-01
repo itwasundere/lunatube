@@ -8,7 +8,7 @@ html
 		script(src='static/lib/underscore.js')
 		script(src='static/lib/backbone.js')
 		script(src='/socket.io/socket.io.js')
-		script(src='http://www.google.com/jsapi')
+		//script(src='http://www.google.com/jsapi')
 		script(type='text/javascript')
 			if (window.google)
 				google.load("swfobject", "2.1");
@@ -86,18 +86,24 @@ html
 				input#password(type="password")
 				#login_button.button login
 				#reg_button.button register
-			#logout.button log out
-			#username
+			#status
+				#avatar
+					img
+				#username.button
 		#main
 			#top
 				#theater
 					#player
 						#invisible
 							#overlay
+							#vid_title Now Playing: 
 							#controls
 								#play pause
 								#scrobbler
 									#playhead
+									#ph_time
+								#next next
+									#next_vid.next_vid
 								#volume
 									#vol vol
 									#volume_slider
@@ -105,13 +111,6 @@ html
 									#mute mute
 						#youtube
 							#placeholder Problem loading Youtube API player
-					#prevnext
-						#prev
-							.header Previously
-							#video
-						#next
-							.header Up next
-							#video
 				#chatroom
 					#header
 						#name Chat

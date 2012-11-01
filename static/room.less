@@ -25,6 +25,14 @@
 @background: #464997;
 @black: #222422;
 
+#ph_time {
+	position: absolute;
+	padding: 2px 5px;
+	color: @white;
+	background-color: @dark;
+	z-index: 1;
+}
+
 .no-select {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -69,15 +77,23 @@ body {
 	margin: @margin*2 auto;
 	margin-top: 0;
 	text-align: right;
-	#fields {
+	#fields, #status {
 		margin: 9px;
+		float: right;
+		position: relative;
 	}
-	#fields input, #fields .button {
+	#fields input, .button {
+		float: left;
 		font-size: 16px;
 		margin-right: 10px;
 		padding: @margin/2 @margin;
 		height: 20px;
 	}
+	#status {
+		overflow: visible;
+		#avatar { float: left; }
+	}
+	#username { background-color: @dark; }
 	#fields input { padding: @margin / 2 }
 }
 
@@ -122,6 +138,17 @@ body {
 
 #invisible { opacity: 0 }
 #invisible:hover { opacity: 1 }
+#vid_title {
+	background-color: @dark;
+	position: absolute;
+	left: (@vid_width - @ctrl_width) / 2;
+	top: 40px;
+	width: @ctrl_width;
+	overflow: visible;
+	color: @white;
+	padding: 8px;
+	a:visited, a:link { color: @white; text-decoration: none }
+}
 #controls {
 	background-color: @dark;
 	position: absolute;
@@ -129,23 +156,24 @@ body {
 	top: @vid_height - 80px;
 	width: @ctrl_width;
 	overflow: visible;
-	#volume, #play, #scrobbler {
+	#volume, #play, #scrobbler, #next {
+		color: @white;
 		float: left;
-		background-color: @white;
+		background-color: @light;
 		padding: 8px 0px;
 		overflow: hidden;
 		cursor: pointer;
 		input { width: 100px; margin: 3px 0px 0px 0px; }
-		img { height: 18px; }
 		text-align: center;
 		position: relative;
 		overflow: visible;
 	}
-	#volume, #play { width: @ctrl_width * 0.1 }
-	#play:hover { background-color: red; color: @white; }
+	#volume, #play, #next { 
+		width: @ctrl_width * 0.1;
+	}
 	#scrobbler {
 		background-color: @dark;
-		width: @ctrl_width*0.8;
+		width: @ctrl_width*0.7;
 		height: 32px;
 		padding: 0px;
 		#playhead {
@@ -167,47 +195,17 @@ body {
 	#mute, #max { 
 		position: absolute; 
 		display: none;
-		background-color: grey;
+		background-color: @dark;
 		height: 20px;
 		width: 100%;
 		color: @white;
 	}
-	#mute:hover, #max:hover {
+	#mute:hover, #max:hover, #next:hover, #play:hover {
 		background-color: red;
+		color: @white;
 	}
 	#mute { top: 32px; }
 	#max { top: -20px; }
-}
-
-#prevnext {
-	display: none;
-	background-color: @white;
-	margin: @margin 0px;
-	padding: @margin;
-	border-radius: @rounding;
-	#prev, #next {
-		float: left;
-		width: 50%;
-	}
-	#video {
-		float: left;
-		width: @width / 4;
-		height: @video_height - @margin / 22;
-		overflow: hidden;
-		margin: @margin / 2;
-		#thumbnail {
-			float: left;
-			width: @thumb_width;
-			margin: @margin;
-			img { width: 100%; }
-		}
-		#info {
-			float: left;
-			margin: @margin;
-			margin-left: 0;
-			width: 280 - @thumb_width - @margin * 6;
-		}
-	}
 }
 
 @chat_height: 352px;
@@ -322,6 +320,13 @@ body {
 			margin-left: 0px;
 			width: @input_width * 0.60 - @margin*1.5;
 		}
+		#status {
+			text-align: center;
+			padding: 10px;
+			background-color: @white;
+			color: @dark;
+			margin-bottom: 10px;
+		}
 	}
 	#mouth {
 		background-color: @dark;
@@ -370,7 +375,7 @@ body {
 	cursor: pointer;
 }
 
-#video.selected, #video:hover {
+#video.selected, #video:hover, #video.next_vid {
 	background-color: @light;
 	color: @white;
 }

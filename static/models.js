@@ -171,6 +171,7 @@ models.Player = Backbone.Model.extend({
 	initialize: function() {
 		var self = this;
 		this.start_ticker();
+		var c = this.get('current');
 	},
 	start_ticker: function() {
 		var self = this;
@@ -203,6 +204,13 @@ models.Player = Backbone.Model.extend({
 			this.set('time', time);
 		else this.set('time', vidlength);
 		this.trigger('action');
+	},
+	time: function() {
+		var s = this.get('time');
+		var m = ''+Math.floor(s/60);
+		s = ''+s%60;
+		if (s.length<2) s='0'+s;
+		return m+':'+s;
 	}
 });
 

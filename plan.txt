@@ -1,3 +1,13 @@
+when back -- 
+logging out
+userlist and rules
+permissions
+
+recent subscriptions
+my other brony sites tab
+provide feedback
+import playlist from synchtube
+
 +-----------------+
 |player / playlist|
 +-----------------+

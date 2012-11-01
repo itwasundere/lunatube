@@ -1,7 +1,7 @@
 var PlaylistView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('add remove', this.render, this);
-		room.get('player').bind('change:current', this.render, this);
+		room.get('player').bind('change:current', this.render_current, this);
 		this.model.bind('reset', this.render, this);
 		this.subviews = {};
 		var self = this;
@@ -17,17 +17,14 @@ var PlaylistView = Backbone.View.extend({
 		el.empty();
 		if (!self.options.hidden)
 		this.model.each(function(item){
-			var piv = self.subviews[item.cid];
+			var piv = self.subviews[item.id];
 			if (!piv) {
 				piv = new PlaylistItemView({
 					model: item,
 					removable: true
 				});
-				self.subviews[item.cid] = piv;
+				self.subviews[item.id] = piv;
 			}
-			if (room.get('player').get('current').id == item.id)
-				piv.options.selected = true;
-			else piv.options.selected = false;
 			piv.render();
 			el.append(piv.el);
 		});
@@ -41,6 +38,12 @@ var PlaylistView = Backbone.View.extend({
 			name = '> ' + name;
 		else name = 'v ' + name;
 		this.$el.find('.header').html(name);
+		this.render_current();
+	},
+	render_current: function() {
+		this.$el.find('#video.selected').removeClass('selected');
+		var v = this.subviews[room.get('player').get('current').id];
+		if (v) v.$el.addClass('selected');
 	}
 })
 
@@ -48,21 +51,7 @@ var PlaylistItemView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('change', this.render, this);
 		this.template = _.template($('script#video').html());
-	},
-	render: function() {
 		var el = this.$el, self = this;
-		el.hover(function(){
-			el.addClass('hover');
-		}, function(){
-			el.removeClass('hover');
-		});
-		if (this.options.selected)
-			el.addClass('selected');
-		else el.removeClass('selected');
-		var html = $(this.template(this.model.toJSON()));
-		el.attr('id', html.attr('id'))
-		el.html(html.html());
-
 		el.click(function(event){
 			if (self.model.get('url') == 'Bq6WULV78Cw') return;
 			if (event.which!=3) {
@@ -105,5 +94,11 @@ var PlaylistItemView = Backbone.View.extend({
 			el.append(menu);
 			event.preventDefault();
 		});
+	},
+	render: function() {
+		var el = this.$el, self = this;
+		var html = $(this.template(this.model.toJSON()));
+		el.attr('id', html.attr('id'))
+		el.html(html.html());
 	}
 });

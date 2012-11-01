@@ -13,9 +13,9 @@ var PlayerView = Backbone.View.extend({
 			self.ready() }
 		this.model.bind('change', this.render, this);
 
-		room.get('playlist').bind('reset add remove', this.render_prevnext, this);
-		room.get('queue').bind('reset add remove', this.render_prevnext, this);
-		room.get('player').bind('change:current', this.render_prevnext, this);
+		room.get('playlist').bind('reset add remove', this.render, this);
+		room.get('queue').bind('reset add remove', this.render, this);
+		room.get('player').bind('change:current', this.render, this);
 
 		this.$el.find('#play').click(function(){
 			if (self.model.get('state') == 'playing')
@@ -36,6 +36,66 @@ var PlayerView = Backbone.View.extend({
 			var percentage = event.offsetX / (scrobbler.width() - playhead.width());
 			var seek = Math.floor(percentage * current.get('time'));
 			self.model.seek(seek);
+		});
+
+		scrobbler.hover(function(event){
+			playhead.css('background-color','red');
+		}, function(){
+			playhead.css('background-color','white');
+		});
+
+		var next = el.find('#next');
+		var nextvid = el.find('#next_vid');
+		var pliv = new PlaylistItemView({
+			model: room.next_video(),
+			el: nextvid
+		});
+		pliv.render();
+		this.pliv = pliv;
+		nextvid.css({
+			display:'none',
+			position: 'absolute',
+			left: -nextvid.width() + next.width(),
+			top: -nextvid.height(),
+			'text-align': 'left',
+			'border': 'none'
+		});
+		next.hover(function(){
+			nextvid.css('display','block');
+		},function(){
+			nextvid.css('display','none');
+		});
+
+		next.click(function(){
+			if (room.next_video().get('url') == 'Bq6WULV78Cw') return;
+			if (event.which!=3) {
+				room.trigger('play', room.next_video());
+				return;
+			}
+		});
+
+		var volume = el.find('#volume');
+		var slider = volume.find('#volume_slider');
+		volume.hover(function(){
+			el.find('#mute,#max').css('display','block');
+		}, function() {
+			el.find('#mute,#max').css('display','none');
+		});
+
+		el.find('#vol').mousedown(function(event){
+			var perc = event.offsetX / $(this).width() * 100;
+			self.volume(perc);
+			slider.width(event.offsetX);
+		});
+
+		el.find('#max').click(function(){
+			self.volume(100);
+			slider.width('100%');
+		});
+
+		el.find('#mute').click(function(){
+			self.volume(0);
+			slider.width(0);
 		});
 	},
 	render: function() {
@@ -72,12 +132,21 @@ var PlayerView = Backbone.View.extend({
 			else if (mstate == 'paused' && (pstate == 1))
 				this.player.pauseVideo();
 		}
+		
+		this.pliv.model = room.next_video();
+		this.pliv.render();
 
 		if (this.model.get('state') == 'playing') {
 			el.find('#play').html('pause');
 		} else {
 			el.find('#play').html('play');
 		}
+
+		var title = this.$el.find('#vid_title');
+		var link = $('<a>').html('Now Playing: '+self.model.get('current').get('title'));
+		link.attr('href','http://youtube.com/watch?v='+self.model.get('current').get('url'));
+		link.attr('target','_blank');
+		title.empty().append(link);
 		
 		// scrobbler
 		var playhead = el.find('#playhead');
@@ -87,50 +156,16 @@ var PlayerView = Backbone.View.extend({
 		playhead.css('visibility','');
 		playhead.css('margin-left', margin);
 
-		// volume contorls
-		var volume = el.find('#volume');
-		var slider = volume.find('#volume_slider');
-		volume.hover(function(){
-			el.find('#mute,#max').css('display','block');
-		}, function() {
-			el.find('#mute,#max').css('display','none');
-		});
-
-		el.find('#vol').mousedown(function(event){
-			var perc = event.offsetX / $(this).width() * 100;
-			self.volume(perc);
-			slider.width(event.offsetX);
-		});
-
-		el.find('#max').click(function(){
-			self.volume(100);
-			slider.width('100%');
-		});
-
-		el.find('#mute').click(function(){
-			self.volume(0);
-			slider.width(0);
+		var ph_time = $('#ph_time');
+		ph_time.html(self.model.time());
+		ph_time.css({
+			left: margin - ph_time.width()/2,
+			top: -ph_time.height() - 8
 		});
 
 		if (this.model.get('current') && this.model.get('current').get('title'))
 			$('#banner').html(this.model.get('current').get('title'));
 
-	},
-	render_prevnext: function() {
-		// prevnext
-		var pliv = new PlaylistItemView({
-			model: room.next_video(),
-			el: $('#next #video')
-		});
-		pliv.render();
-		var prev = this.model.previous('current');
-		prev.initialize();
-		if (!prev || !prev.id) return;
-		var pliv = new PlaylistItemView({
-			model: prev,
-			el: $('#prev #video')
-		});
-		pliv.render();
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');

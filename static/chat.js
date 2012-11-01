@@ -12,11 +12,19 @@ var ChatView = Backbone.View.extend({
 				msg.set('rendered', true);
 			});
 		});
+		var log = this.$el.find('#messages');
+		room.bind('status', function(msg){
+			var status = $('<div id="status">');
+			status.html(msg);
+			log.append(status);
+			log.scrollTop(log[0].scrollHeight);
+			self.options.status = true;
+		});
 	},
 	message: function(msg) {
 		var log = this.$el.find('#messages');
 		var mv = this.last_message_view;
-		if (!mv || !mv.append(msg)) {
+		if (this.options.status || !mv || !mv.append(msg)) {
 			var mv = new MessageView({
 				model: msg });
 			mv.render();
@@ -25,6 +33,7 @@ var ChatView = Backbone.View.extend({
 		}
 		var log = $('#messages');
 		log.scrollTop(log[0].scrollHeight);
+		this.options.status = false;
 	},
 	render: function() {
 		var room = this.model, el = this.$el, self = this;
@@ -78,7 +87,7 @@ var MessageView = Backbone.View.extend({
 		var content = make_links(this.model.get('content'));
 
 		var el = this.$el, self = this;
-		var avatar = '', username = '';
+		var avatar = '/static/avatars/sleep.png', username = 'Offline User';
 		if (window.room) {
 			var user = room.get('userlist').get(this.model.get('author'));
 			if (user) {

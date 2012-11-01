@@ -42,8 +42,8 @@ $(document).ready(function(){
 		model: room.get('player'),
 		tolerance: 5
 	});
+	room.get('player').get('current').initialize();
 	plv.render();
-	plv.render_prevnext();
 	window.cv = new ChatView({
 		el: $('#chatroom'),
 		model: room
