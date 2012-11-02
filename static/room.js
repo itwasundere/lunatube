@@ -68,5 +68,4 @@ $(document).ready(function(){
 	$('#theater')[0].onselectstart = function(){ return false; }
 	$('#catalog')[0].onselectstart = function(){ return false; }
 	$('#header')[0].onselectstart = function(){ return false; }
-	$('#users')[0].onselectstart = function(){ return false; }
 });
