@@ -203,7 +203,7 @@ a:visited, a:link { color: @light; text-decoration: none }
 }
 
 @chat_height: 352px;
-@input_width: @chat_width - @avatar_size - 3*@small_margin - 20;
+@input_width: @chat_width - @avatar_size - 3*@small_margin - 40;
 @input_margin: (@avatar_size - 18px)/2;
 
 .button {
@@ -287,7 +287,7 @@ a:visited, a:link { color: @light; text-decoration: none }
 		.avatar { margin-top: 16px; }
 		#message {
 			border-top: 1px solid #bbb;
-			width: @chat_width - 20;
+			width: @chat_width - 40;
 			margin-left: 10px;
 			#content {
 				color: #444;
@@ -369,6 +369,7 @@ a:visited, a:link { color: @light; text-decoration: none }
 	cursor: pointer;
 }
 
+.selected { background-color: red }
 #video.selected, #video.next_vid {
 	background-color: @light;
 	color: @white;
