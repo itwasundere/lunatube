@@ -1,9 +1,3 @@
-@luna_dark: rgb(0, 19, 80);
-@luna_clear: rgba(82, 92, 167, 0.79);
-@luna_light: #497999;
-@luna_black: black;
-@luna_white: white;
-
 @main_width: 1024px;
 @total_margin: 24px;
 @margin2: @total_margin / 2;
@@ -12,17 +6,14 @@
 @font_size: 12px;
 @rounding: 8px;
 
-@clear: #668CDE;
-@background: #464997;
-
 @chat_width: @main_width - @vid_width - @total_margin * 1.5;
 
 @white: #dddddd;
 @width: 1280px;
-@dark: #0A0629;
+@dark: #030D22;
 @light: #122E59;
-@clear: #668CDE;
-@background: #464997;
+@clear: #7895D5;
+@background: #393C81;
 @black: #222422;
 
 #ph_time {
@@ -72,7 +63,7 @@ body {
 @margin: 12px;
 
 #login {
-	background-color: @clear;
+	background-color: @dark;
 	width: @width;
 	margin: @margin*2 auto;
 	margin-top: 0;
@@ -93,7 +84,6 @@ body {
 		overflow: visible;
 		#avatar { float: left; }
 	}
-	#username { background-color: @dark; }
 	#fields input { padding: @margin / 2 }
 }
 
@@ -113,7 +103,7 @@ body {
 }
 
 #player {
-	background-color: @clear;
+	background-color: white;
 	width: @vid_width;
 	height: @vid_height;
 	overflow: hidden;
@@ -149,6 +139,10 @@ body {
 	padding: 8px;
 	a:visited, a:link { color: @white; text-decoration: none }
 }
+#vid_title:hover { background-color: red }
+
+a:visited, a:link { color: @light; text-decoration: none }
+
 #controls {
 	background-color: @dark;
 	position: absolute;
@@ -213,14 +207,15 @@ body {
 @input_margin: (@avatar_size - 18px)/2;
 
 .button {
-	background-color: @light;
+	background-color: @dark;
 	color: white;
 	padding: 4px 10px;
+	padding-bottom: 6px;
 	display: inline-block;
 	cursor: pointer;
 }
 .button:hover {
-	background-color: @dark;
+	background-color: red;
 }
 
 .avatar { 
@@ -229,23 +224,22 @@ body {
 	float: left;
 	width: @avatar_size;
 	height: @avatar_size;
-	background-color: @luna_clear;
+	background-color: @clear;
 	img {
 		width: @avatar_size;
 		height: @avatar_size;
 	}
 }
 
-@chat_width: @width - @vid_width - @margin*2;
+@chat_width: @width - @vid_width;
 
 #chatroom {
 	float: left;
-	margin-left: @margin*2;
 	width: @chat_width;
 	position: relative;
 	#header {
-		display: none;
-		background-color: #888;
+		background-color: @dark;
+		color: @white;
 		min-height: 16px;
 		#name {
 			padding: 16px;
@@ -254,11 +248,11 @@ body {
 		#button {
 			padding: 16px;
 			float: right;
-			border-left: 1px solid #eee;
 			cursor: pointer;
 		}
 		#button:hover {
-			background-color: #aaa;
+			background-color: red;
+			color: white;
 		}
 	}
 	#users {
@@ -288,12 +282,16 @@ body {
 	}
 	#messages {
 		padding-top: 8px;
-		height: @vid_height - 50px - 8px;
-		background-color: @clear;
+		height: @vid_height - 50px - 8px - 48px;
+		background-color: @white;
 		.avatar { margin-top: 16px; }
 		#message {
-			padding-top: -@small_margin;
+			border-top: 1px solid #bbb;
 			width: @chat_width - 20;
+			margin-left: 10px;
+			#content {
+				color: #444;
+			}
 		}
 		#text {
 			margin: @small_margin;
@@ -322,10 +320,10 @@ body {
 		}
 		#status {
 			text-align: center;
-			padding: 10px;
-			background-color: @white;
-			color: @dark;
-			margin-bottom: 10px;
+			padding: 6px;
+			margin: 4px 10px;
+			border-top: 1px solid #bbb;
+			color: #888;
 		}
 	}
 	#mouth {
@@ -347,9 +345,6 @@ body {
 @thumb_width: 80px;
 @video_height: @thumb_width * 3 / 4 + @margin * 2;
 
-.selected { background-color: @luna_clear; }
-.hover { background-color: @luna_clear; }
-
 #video {
 	font-size: 12px; 
 	color: @black;
@@ -357,7 +352,6 @@ body {
 	width: @width / 4;
 	height: @video_height - @margin / 22;
 	overflow: hidden;
-	background-color: @clear;
 	border-bottom: 1px solid @dark;
 	border-right: 1px solid @light;
 	#thumbnail {
@@ -375,8 +369,12 @@ body {
 	cursor: pointer;
 }
 
-#video.selected, #video:hover, #video.next_vid {
+#video.selected, #video.next_vid {
 	background-color: @light;
+	color: @white;
+}
+#video:hover, #video.next_vid {
+	background-color: red;
 	color: @white;
 }
 
@@ -399,6 +397,9 @@ body {
 		font-size: 18px;
 		padding: 14px;
 		cursor: pointer;
+	}
+	.header:hover {
+		background-color: red;
 	}
 	#videos {
 		margin-right: -4px;
