@@ -20,8 +20,7 @@ $(document).ready(function(){
 	window.room.id = globals.room.id;
 	window.user = new models.User(globals.user);
 	window.api = new ConnectionApi({
-		// ip: 'ws://67.164.89.50:8080/',
-		ip: 'ws://localhost:8080/',
+		ip: 'ws://'+window.location.host,
 		room: window.room,
 		user: window.user,
 		refresh: 1000
