@@ -11,14 +11,20 @@ if (serverside) {
 	var names = require('./names.js');
 	Backbone.sync = function(method, model, options){
 		switch(method) {
-			case 'create': db.create(model, options); break;
+			case 'create': 
+				db.create(model, options); 
+				break;
 			case 'read': 
 				if (model.attributes)
 					db.read(model, options);
 				else db.read_all(model, options);
 				break;
-			case 'update': db.update(model, options); break;
-			case 'delete': db.delete(model, options); break;
+			case 'update': 
+				db.update(model, options); 
+				break;
+			case 'delete': 
+				db.ddelete(model, options); 
+				break;
 		}
 	}
 }

@@ -39,7 +39,7 @@ var sql = {
 		}
 		return 'insert into '+name+' ('+colnames.join(', ')+') values ('+values.join(',')+')';
 	},
-	delete: function(name, id) {
+	ddelete: function(name, id) {
 		return 'delete from '+name+' where id='+id;
 	},
 	trim: function(model) {
@@ -138,8 +138,8 @@ var db = {
 		this.sqlite.run(statement, function(){
 			options.success(model.toJSON()) });
 	},
-	delete: function(model, options){
-		this.sqlite.run(sql.delete(model.classname, model.id),
+	ddelete: function(model, options){
+		this.sqlite.run(sql.ddelete(model.classname, model.id),
 			function(){ options.success(model); });
 	}
 }

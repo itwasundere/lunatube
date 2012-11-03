@@ -53,7 +53,7 @@ var PlaylistView = Backbone.View.extend({
 			var piv = self.subviews[item.id];
 			if (!piv) {
 				piv = new PlaylistItemView({
-					model: item, removable: true,
+					model: item, removable: true
 				});
 				self.subviews[item.id] = piv;
 			}
@@ -74,16 +74,16 @@ var PlaylistItemView = Backbone.View.extend({
 		this.model.bind('change', this.render, this);
 		this.template = _.template($('script#video').html());
 		var el = this.$el, self = this;
-		el.find('#thumbnail, #info').click(function(event){
-			room.trigger('play', self.model);
-			return;
-		});
 	},
 	render: function() {
 		var el = this.$el, self = this;
 		var html = $(this.template(this.model.toJSON()));
 		el.html(html.html());
 		if (this.options.removable) {
+			el.find('#thumbnail, #info').click(function(event){
+				room.trigger('play', self.model);
+				return;
+			});
 			el.hover(function(){
 				el.find('#actions').css('display','block');
 			}, function(){
