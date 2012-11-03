@@ -25,17 +25,14 @@ $(document).ready(function(){
 		user: window.user,
 		refresh: 1000
 	});
-	window.pv = new PlaylistView({
-		model: room.get('playlist'), 
-		el: $('#playlist'),
-		hidden: true
+	window.cv = new CatalogView({
+		el: $('#catalog'),
+		playlists: {
+			'queue': room.get('queue'),
+			'playlist': room.get('playlist')
+		}
 	});
-	pv.render();
-	window.qv = new PlaylistView({
-		model: room.get('queue'), 
-		el: $('#queue')
-	});
-	qv.render();
+	cv.render();
 	window.plv = new PlayerView({
 		el: $('#theater'),
 		model: room.get('player'),
@@ -58,6 +55,9 @@ $(document).ready(function(){
 		model: window.user
 	});
 	liv.render();
+	window.cams = new CamsView({
+		el: $('#cams')
+	});
 
 	$('body').click(function(){
 		$('#menu').remove();

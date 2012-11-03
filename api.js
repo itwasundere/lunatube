@@ -212,10 +212,13 @@ var ConnectionApi = Backbone.Model.extend({
 		var sid = utils.hash();
 
 		var new_user = function() {
+			/*
 			var md5 = utils.hash();
 			sessions.set(md5, session);
 			// sock.handshake.headers.cookie = utils.cookie({session: md5}, 14);
 			users.add(user);
+			*/
+			sock.disconnect();
 		}
 
 		if (!cookie) new_user();

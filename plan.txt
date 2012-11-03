@@ -1,3 +1,20 @@
+optional timestamps
+features list
+feedback / bugs
+tabbed catalog
+playlist tabs
+logout button
+added videos don't have context menu
+move delete button elsewhere
+draggable
+clear queue button
+import
+load
+clone
+next button
+themes
+greynames, mods, userlist, mute
+playback quality
 when back -- 
 logging out
 userlist and rules

@@ -97,6 +97,11 @@ var PlayerView = Backbone.View.extend({
 			self.volume(0);
 			slider.width(0);
 		});
+		var title = this.$el.find('#vid_title');
+		title.click(function(){
+			var url = 'http://youtube.com/watch?v='+self.model.get('current').get('url')
+			window.open(url,'_blank');
+		});
 	},
 	render: function() {
 		var el = this.$el, self = this;
@@ -143,10 +148,7 @@ var PlayerView = Backbone.View.extend({
 		}
 
 		var title = this.$el.find('#vid_title');
-		var link = $('<a>').html('Now Playing: '+self.model.get('current').get('title'));
-		link.attr('href','http://youtube.com/watch?v='+self.model.get('current').get('url'));
-		link.attr('target','_blank');
-		title.empty().append(link);
+		title.html('Now Playing: '+self.model.get('current').get('title'));
 		
 		// scrobbler
 		var playhead = el.find('#playhead');

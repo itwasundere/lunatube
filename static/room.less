@@ -87,6 +87,21 @@ body {
 	#fields input { padding: @margin / 2 }
 }
 
+@cam_height: 120px;
+#cams {
+	width: @width;
+	height: @cam_height;
+	background-color: @clear;
+	display: none;
+	video {
+		height: @cam_height;
+		width: @cam_height/3*4;
+		background-color: black;
+		margin: 0px;
+		float: left;
+	}
+}
+
 #main {
 	width: @width;
 	margin: 0 auto;
@@ -245,12 +260,12 @@ a:visited, a:link { color: @light; text-decoration: none }
 			padding: 16px;
 			float: left;
 		}
-		#button {
+		.hbutton {
 			padding: 16px;
 			float: right;
 			cursor: pointer;
 		}
-		#button:hover {
+		.hbutton:hover {
 			background-color: red;
 			color: white;
 		}
@@ -301,7 +316,7 @@ a:visited, a:link { color: @light; text-decoration: none }
 			background-color: @white;
 		}
 		#image_thumb {
-			max-width: @input_width;
+			max-width: @input_width - 40;
 			margin-top: @small_margin;
 			max-height: @input_width;
 		}
@@ -342,11 +357,14 @@ a:visited, a:link { color: @light; text-decoration: none }
 	}
 }
 
-@video_width: 318px;
+@video_width: @width/4;
 @thumb_width: 80px;
-@video_height: @thumb_width * 3 / 4 + @margin * 2;
+@thumb_height: @thumb_width * 3 / 4;
+@video_height: @thumb_height + @margin * 2;
+@action_size: 25px;
 
 #video {
+	position: relative;
 	font-size: 12px; 
 	color: @black;
 	float: left;
@@ -358,14 +376,34 @@ a:visited, a:link { color: @light; text-decoration: none }
 	#thumbnail {
 		float: left;
 		width: @thumb_width;
+		height: @thumb_height;
 		margin: @margin;
-		img { width: 100%; }
+		overflow: hidden;
+		img { width: @thumb_width; height: @thumb_height; }
 	}
 	#info {
 		float: left;
-		margin: @margin;
-		margin-left: 0;
-		width: @video_width - @thumb_width - @margin * 6;
+		width: @video_width - @thumb_width - @margin*3;
+		height: @thumb_height;
+		padding: @margin;
+		padding-left: 0;
+	}
+	#actions {
+		overflow: visible;
+		position: absolute;
+		bottom: 0; right: 0;
+		display: none; 
+		color: @white;
+		div {
+			background-color: @dark;
+			padding: 5px 10px;
+			text-align: center;
+			float: right;
+			overflow: hidden;
+		}
+		div:hover {
+			background-color: red;
+		}
 	}
 	cursor: pointer;
 }
@@ -375,34 +413,34 @@ a:visited, a:link { color: @light; text-decoration: none }
 	background-color: @light;
 	color: @white;
 }
-#video:hover, #video.next_vid {
-	background-color: red;
-	color: @white;
+#static:hover, #video.next_vid {
+	
 }
 
 #catalog {
+	.no-select;
 	width: @width;
-	color: @white;
 	background-color: @dark;
 	margin: @margin*2 0;
-	margin-bottom: -1;
 	float: default;
-	.no-select;
 	overflow: hidden;
-	#playlist { margin-bottom: -1px; }
-	#queue, #playlist { 
-		overflow: hidden;
-		border-bottom: 1px solid @background;
-	}
-	.header {
+	#headers {
 		color: @white;
 		font-size: 18px;
-		padding: 14px;
-		cursor: pointer;
 	}
-	.header:hover {
+	#left {float: left }
+	#right { float: right }
+	.section {
+		float: left;
+		cursor: pointer;
+		padding: 14px;
+		#text { float: left; }
+		#count { float: left; margin-left: 10px;}
+	}
+	.section:hover {
 		background-color: red;
 	}
+	
 	#videos {
 		margin-right: -4px;
 		background-color: @clear; 

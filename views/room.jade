@@ -27,6 +27,9 @@ html
 		script(src='static/player.js')
 		script(src='static/userlist.js')
 		script(src='static/login.js')
+		
+		script(src='static/lib/webrtc.io.js')
+		script(src='static/cams.js')
 
 	templates
 		script#avatar(type='template')
@@ -60,12 +63,16 @@ html
 						#playlist.button + playlist
 		script#video(type='template')
 			#video
-				#thumbnail
-					img#thumb(src='[[thumb]]')
-				#info
-					#title [[title]]
-					#uploader [[uploader]]
-					#time [[time_text]]
+				#static
+					#thumbnail
+						img#thumb(src='[[thumb]]')
+					#info
+						#title [[title]]
+						#uploader [[uploader]]
+						#time [[time_text]]
+				#actions
+					#delete delete
+					#open goto
 		script#message(type='template')
 			#message
 				#avatar.avatar
@@ -78,7 +85,8 @@ html
 				#avatar
 					img(src="[[avatar]]")
 				#username [[username]]
-
+		script#cam(type='template')
+			video#cam(autoplay)
 	body
 		#login
 			#fields
@@ -91,6 +99,7 @@ html
 					img
 				#username.button
 		#main
+			#cams
 			#top
 				#theater
 					#player
@@ -114,7 +123,8 @@ html
 				#chatroom
 					#header
 						#name Chat
-						#button 0 Users
+						#user.hbutton 0 Users
+						#cam.hbutton Cams
 					#messages
 					#mouth
 						#avatar.avatar
@@ -122,14 +132,21 @@ html
 						#input
 							input(type="text")
 			#catalog
-				#queue
-					.header Queue
-					#videos
-						#placeholder No videos in queue.
-				#playlist
-					.header Playlist
-					#videos
-						#placeholder No videos in playlist.
+				#headers
+					#left
+						#queue.section 
+							#text Queue
+							#count
+						#playlist.section
+							#text Playlist
+							#count
+					#right
+						#add.section Add
+						#import.section Import
+						#clone.section Clone
+						#load.section Load
+						#clear.section Clear
+				#videos
 			#bottom
 				div Lunatube Copyright 
 					a(href="http://twitter.com/itwasundere") ItWasUnderE
