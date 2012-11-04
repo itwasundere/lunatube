@@ -71,12 +71,14 @@ var PlaylistView = Backbone.View.extend({
 
 var PlaylistItemView = Backbone.View.extend({
 	initialize: function() {
+		if (!this.model) return;
 		this.model.bind('change', this.render, this);
 		this.template = _.template($('script#video').html());
 		var el = this.$el, self = this;
 	},
 	render: function() {
 		var el = this.$el, self = this;
+		if (!this.model) return;
 		var html = $(this.template(this.model.toJSON()));
 		el.html(html.html());
 		if (this.options.removable) {
