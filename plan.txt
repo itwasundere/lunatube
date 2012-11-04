@@ -1,5 +1,6 @@
 java -jar compiler.jar --js ../static/models.js ../static/api.js ../static/chat.js ../static/room.js ../static/playlist.js ../static/player.js ../static/userlist.js ../static/login.js ../static/cams.js --js_output_file ../static/all.js
 
+ping on new message
 scroll lock
 spoilers imgs
 hide imgs

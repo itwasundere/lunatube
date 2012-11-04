@@ -11,7 +11,7 @@ var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
 io.set('log level', 1);
-http.listen(process.env.VCAP_APP_PORT || 8080);
+http.listen(process.env.PORT || 8080);
 
 // express setup
 app.locals.pretty = true;
