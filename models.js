@@ -250,7 +250,7 @@ models.User = Backbone.Model.extend({
 		avatar_url: '/static/avatars/newfoal.png'
 	},
 	initialize: function(){
-		this.classname = 'user';
+		this.classname = 'luser';
 		if (this.get('blank')) {
 			this.attributes = this.get('blank');
 			return;
@@ -268,7 +268,7 @@ models.User = Backbone.Model.extend({
 models.UserList = Backbone.Collection.extend({
 	model: models.User,
 	initialize: function() {
-		this.classname = 'user';
+		this.classname = 'luser';
 	}
 });
 

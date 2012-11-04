@@ -1,11 +1,10 @@
 var Underscore = require('underscore');
-var mysql = require('mysql');
 var pg = require('pg');
 
 var sql = {
 	table: function(name, cols) {
 		var pre = 'create table if not exists '+name;
-		var strs = ['id int primary key auto_increment'];
+		var strs = ['id serial primary key'];
 		for (colname in cols)
 			strs.push(colname+' '+cols[colname]);
 		return 'create table if not exists '+name+' ('+strs.join(', ')+')';
@@ -26,7 +25,7 @@ var sql = {
 		for (param in params) {
 			if (param == 'id') continue;
 			var value = params[param];
-			set.push(param+'="'+value+'"');
+			set.push(param+'=\''+value+'\'');
 		}
 		return 'update '+name+' set '+set.join(', ')+' where id='+id;
 	},
@@ -36,7 +35,7 @@ var sql = {
 		for (param in params) {
 			if (param == 'id') continue;
 			colnames.push(param);
-			values.push('"'+params[param]+'"');
+			values.push('\''+params[param]+'\'');
 		}
 		return 'insert into '+name+' ('+colnames.join(', ')+') values ('+values.join(',')+')';
 	},
@@ -68,23 +67,9 @@ var param_statement = function(params) {
 
 var db = {
 	initialize: function() {
-		var options = {
-			host: 'localhost',
-			user: 'root',
-			password: 'secret',
-			database: 'lunatube'
-		};
-		if (process.env.VCAP_SERVICES) {
-			var cred = JSON.parse(process.env.VCAP_SERVICES)['mysql-5.1'][0].credentials;
-			options = {
-				host: cred.host,
-				user: cred.name,
-				password: cred.password,
-				port: cred.port
-			}
-		}
-		var store = mysql.createConnection(options);
-		this.store = store;
+		var host = process.env.DATABASE_URL || {host:'localhost',port:'5432',database:'lunatube'};
+		this.store = new pg.Client(host);
+		this.store.connect();
 		this.init_tables();
 		return this;
 	},
@@ -95,7 +80,8 @@ var db = {
 			queue_id: 'int',
 			rules: 'text'
 		}));
-		store.query(sql.table('user',{
+		// named luser because postgres has user reserved
+		store.query(sql.table('luser',{
 			username: 'text',
 			password: 'text',
 			avatar_url: 'text'
@@ -119,24 +105,26 @@ var db = {
 		var attrs = sql.trim(model);
 		var statement = sql.insert(model.classname, attrs);
 		var self = this;
-		console.log(statement);
 		this.store.query(statement, function(err, result){
-			model.set('id', result.insertId);
-			options.success(model.toJSON());
+			self.store.query('select MAX(id) from '+model.classname, function(err, result){
+				model.set({id: result.rows[0].max})
+				options.success(model.toJSON());
+			});
 		});
 	},
 	read: function(model, options){
 		if (!model.id) {
 			var statement = sql.select(model.classname, param_statement(model.attributes));
-			this.store.query(statement, function(err, rows){
-				options.success(rows);
+			this.store.query(statement, function(err, result){
+				if (!result || !result.rowCount) return;
+				options.success(result.rows);
 			});
 			return;
 		}
 		var statement = sql.get(model.classname, model.id);
-		this.store.query(statement, function(err, rows){
-			if (!rows || !rows[0]) return;
-			var row = rows[0];
+		this.store.query(statement, function(err, result){
+			if (!result || !result.rowCount) return;
+			var row = result.rows[0];
 			if (row && row.password)
 				delete row.password;
 			options.success(row);
@@ -144,21 +132,19 @@ var db = {
 	},
 	read_all: function(model, options){
 		var statement = sql.select(model.classname, model.query);
-		this.store.query(statement, function(err, rows){
-			if (rows)
-				options.success(rows);
+		this.store.query(statement, function(err, result){
+			if (result && result.rowCount)
+				options.success(result.rows);
 		});
 	},
 	update: function(model, options){
 		var attrs = sql.trim(model);
 		var statement = sql.update(model.classname, model.id, attrs);
-		console.log(statement);
 		this.store.query(statement, function(){
 			options.success(model.toJSON()) });
 	},
 	ddelete: function(model, options){
 		var statement = sql.ddelete(model.classname, model.id);
-		console.log(statement);
 		this.store.query(statement,
 			function(){ options.success(model); });
 	}
