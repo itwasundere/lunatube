@@ -37,7 +37,6 @@ var api = new api.ConnectionApi({
 });
 
 app.get('/', function(req, res){
-	console.log(JSON.stringify(process.env));
 	var room = roomlist.at(0);
 	var user = new models.User();
 	var userlist = api.get('userlist');

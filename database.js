@@ -67,8 +67,7 @@ var param_statement = function(params) {
 
 var db = {
 	initialize: function() {
-		var host = process.env.DATABASE_URL || {host:'localhost',port:'5432',database:'lunatube'};
-		console.log(host);
+		var host = process.env.HEROKU_POSTGRESQL_ONYX_URL || {host:'localhost',port:'5432',database:'lunatube'};
 		this.store = new pg.Client(host);
 		this.store.connect();
 		this.init_tables();
