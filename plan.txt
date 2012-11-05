@@ -1,5 +1,22 @@
+really important tmrw
+1. chrome notifications
+2. get a news / features page up
+	bug reporting
+	feature suggestion
+	current implementation
+	blog
+
+minimize code
+get themes up and working
+permissions
+cache avatars
+upload avatars
+multiple rooms
+
 java -jar compiler.jar --js ../static/models.js ../static/api.js ../static/chat.js ../static/room.js ../static/playlist.js ../static/player.js ../static/userlist.js ../static/login.js ../static/cams.js --js_output_file ../static/all.js
 
+
+clientside pause
 ping on new message
 scroll lock
 spoilers imgs

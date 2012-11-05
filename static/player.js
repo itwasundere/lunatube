@@ -131,6 +131,7 @@ var PlayerView = Backbone.View.extend({
 			// state
 			var mstate = this.model.get('state');
 			var pstate = this.player.getPlayerState();
+			this.player.setPlaybackQuality('large')
 			// 1 = playing, 2 paused, 3 buffering
 			if (mstate == 'playing' && (pstate != 1 && pstate != 3))
 				this.player.playVideo();

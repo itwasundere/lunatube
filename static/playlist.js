@@ -8,6 +8,14 @@ var CatalogView = Backbone.View.extend({
 			});
 		});
 		room.get('player').bind('change:current',this.show_current, this);
+		el.find('#import').hover(function(){
+			var drop = $('<div id="dropdown">\
+					<input type="text" id="input" placeholder="Youtube Playlist URL"/>\
+				</div>');
+			$(this).append(drop);
+		},function(){
+			$(this).find('#dropdown').remove();
+		});
 	},
 	render: function() {
 		var el = this.$el.find('#videos').empty(), self = this;

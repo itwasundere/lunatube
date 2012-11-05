@@ -24,6 +24,7 @@ http.listen(80);
 // express setup
 app.locals.pretty = true;
 app.set('views', __dirname + '/views');
+app.use(express.staticCache());
 app.use('/static', express.static(__dirname + '/static'));
 app.use(express.cookieParser('jimmyrussels')); 
 app.use(express.bodyParser());

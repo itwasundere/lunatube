@@ -75,6 +75,10 @@ var ConnectionApi = Backbone.Model.extend({
 		});
 		sock.on('message', function(message){
 			room.get('messages').add(message);
+			if (document.hasFocus() && !window.blurred) return;
+			if (!window.msgcount) window.msgcount=0;
+			window.msgcount++;
+			document.title = '('+window.msgcount+') Lunatube';
 		});
 		sock.on('playlist', function(pl){
 			room.get('playlist').reset(pl);
@@ -87,4 +91,13 @@ var ConnectionApi = Backbone.Model.extend({
 			user.set(user_info);
 		});
 	}
+});
+
+window.onblur = function(){
+	window.blurred = true;
+}
+window.addEventListener('focus', function() {
+	window.blurred = false;
+	document.title='Lunatube';
+	window.msgcount=0;
 });
