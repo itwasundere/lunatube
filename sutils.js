@@ -6,17 +6,8 @@ function hash() {
 	return md5.digest('hex');
 }
 
-function purge(str) {
-	var ret = '';
-	for (var c=0;c<str.length;c++) {
-		var ch = str.charCodeAt(c);
-		if ((ch>=65 && ch<=90) ||
-			(ch>=97 && ch<=122) ||
-			(ch>=48 && ch<=57))
-			ret += str[c];
-		if (ret.length >= 32) return ret;
-	}
-	return ret;
+function purge(str, length) {
+	return str.substr(0, length);
 }
 
 function cookie(params, days_exp) {

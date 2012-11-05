@@ -52,6 +52,14 @@ function add_pretext(str) {
 		str = 'http://'+str;
 	return str;
 }
+function islink(str) {
+	return contains(str,'.com') || 
+			contains(str,'.net') || 
+			contains(str,'.org') ||
+			starts_with(str,'http://') ||
+			starts_with(str,'https://') ||
+			starts_with(str,'www.');
+}
 function make_links(str) {
 	var words = str.split(' ');
 	$.each(words, function(idx, str){

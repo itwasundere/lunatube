@@ -46,12 +46,14 @@ var PlayerView = Backbone.View.extend({
 
 		var next = el.find('#next');
 		var nextvid = el.find('#next_vid');
-		var pliv = new PlaylistItemView({
-			model: room.next_video(),
-			el: nextvid
-		});
-		pliv.render();
-		this.pliv = pliv;
+		if (!this.pliv || this.pliv.get('url') != room.next_video()) {
+			var pliv = new PlaylistItemView({
+				model: room.next_video(),
+				el: nextvid
+			});
+			pliv.render();
+			this.pliv = pliv;
+		}
 		nextvid.css({
 			display:'none',
 			position: 'absolute',

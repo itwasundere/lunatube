@@ -51,6 +51,8 @@ var ChatView = Backbone.View.extend({
 	}
 })
 
+window.imgcache = {};
+
 var MessageView = Backbone.View.extend({
 	initialize: function(){
 		if (!this.model) return;
@@ -84,7 +86,11 @@ var MessageView = Backbone.View.extend({
 		return true;
 	},
 	render: function(){
-		var content = make_links(this.model.get('content'));
+		var content = $('<div>');
+		var divline = $('<div>').text(this.model.get('content'));
+		if (islink(this.model.get('content')))
+			divline = $('<a target="_blank">').text(this.model.get('content')).attr('href',this.model.get('content'));
+		content.append(divline);
 
 		var el = this.$el, self = this;
 		var avatar = '/static/avatars/sleep.png', username = 'Offline User';
@@ -95,11 +101,19 @@ var MessageView = Backbone.View.extend({
 				username = user.get('username');
 			}
 		}
+		
+		// caching avatars
+		if (!window.imgcache[avatar]){
+			window.imgcache[avatar] = new Image();
+	 		window.imgcache[avatar].src= new Image()
+	 	}
 
 		if (this.options.appendum)
 			$.each(this.options.appendum, function(idx, msg){
-				content += '<br/>';
-				content += make_links(msg.get('content'));
+				var divline = $('<div>').text(msg.get('content'));
+				if (islink(msg.get('content')))
+					divline = $('<a target="_blank">').text(msg.get('content')).attr('href',msg.get('content'));
+				content.append(divline);
 			});
 
 		if (this.options.thumbnail && this.options.url) {
@@ -141,8 +155,9 @@ var MessageView = Backbone.View.extend({
 				el.html(_.template($('script#message').html(),{
 					avatar: avatar,
 					username: username,
-					content: content
+					content: ''
 				}));
+				el.find('#content').append(content);
 		}
 
 		var img = el.find('img');

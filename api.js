@@ -38,6 +38,7 @@ var SocketWrapper = Backbone.Model.extend({
 		});
 		sock.on('message', function(content){
 			if (!content || !typeof(content)=='string') return;
+			content = utils.purge(content, 512);
 			room.message(self.get('user'), content);
 		});
 		sock.on('player_prompt', function(){
@@ -105,6 +106,8 @@ var SocketWrapper = Backbone.Model.extend({
 			self.login(new models.User());
 		});
 		sock.on('login', function(login){
+			login.username = utils.purge(login.username, 32);
+			login.password = utils.purge(login.password, 32);
 			if (!login || !login.username || !login.password) return;
 
 			var user = new models.User({
