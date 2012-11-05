@@ -19,7 +19,7 @@ io.configure(function () {
 });
 */
 
-http.listen(8080);
+http.listen(80);
 
 // express setup
 app.locals.pretty = true;
