@@ -1,53 +1,36 @@
 really important tmrw
-1. chrome notifications
 2. get a news / features page up
 	bug reporting
 	feature suggestion
 	current implementation
 	blog
 
-minimize code
-get themes up and working
-permissions
-cache avatars
-upload avatars
-multiple rooms
-
-java -jar compiler.jar --js ../static/models.js ../static/api.js ../static/chat.js ../static/room.js ../static/playlist.js ../static/player.js ../static/userlist.js ../static/login.js ../static/cams.js --js_output_file ../static/all.js
-
-
-clientside pause
-ping on new message
-scroll lock
-spoilers imgs
-hide imgs
-
-optional timestamps
-features list
-feedback / bugs
-tabbed catalog
-playlist tabs
-logout button
-added videos don't have context menu
-move delete button elsewhere
 draggable
 clear queue button
 import
 load
 clone
-next button
-themes
-greynames, mods, userlist, mute
+next button fix
+greynames
 playback quality
-when back -- 
-logging out
-userlist and rules
+modpowers button
+clientside pause
+scroll lock
+spoilers imgs
+get themes up and working
 permissions
+cache avatars
+upload avatars
+multiple rooms
+optional timestamps
+logout button / preferences
+preference pannel
+desktop notifications
+sound notifications
+hide imgs
+news ticker from eqd
 
-recent subscriptions
-my other brony sites tab
-provide feedback
-import playlist from synchtube
+java -jar compiler.jar --js ../static/models.js ../static/api.js ../static/chat.js ../static/room.js ../static/playlist.js ../static/player.js ../static/userlist.js ../static/login.js ../static/cams.js --js_output_file ../static/all.js
 
 +-----------------+
 |player / playlist|

@@ -45,7 +45,25 @@ var api = new api.ConnectionApi({
 	roomlist: roomlist
 });
 
+var ips = {}
+
 app.get('/', function(req, res){
+	var ip = req.connection.remoteAddress;
+	console.log(ips);
+	if (!ips[ip]) {
+		var geoip = 'api.hostip.info';
+		var path = '/get_json.php?ip='+ip;
+		require('http').get({host: geoip, path: path}, function(res){
+			var str = '';
+			res.on('data', function(chunk){
+				str += chunk;
+			});
+			res.on('end', function(){
+				var city = JSON.parse(str).city;
+				ips[ip] = city;
+			});
+		})
+	} else if (ips[ip] == 'San Ramon, CA' || ips[ip] == 'San Jose, CA') return;
 	var room = roomlist.at(0);
 	var user = new models.User();
 	var userlist = api.get('userlist');
