@@ -79,7 +79,7 @@ var db = {
 			queue_id: 'integer',
 			rules: 'text'
 		}));
-		sqlite.run(sql.table('luser',{
+		sqlite.run(sql.table('user',{
 			username: 'text',
 			password: 'text',
 			avatar_url: 'text'

@@ -11,11 +11,15 @@ var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
 io.set('log level', 1);
+
+/*
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 
 });
-http.listen(process.env.PORT || 8080);
+*/
+
+http.listen(8080);
 
 // express setup
 app.locals.pretty = true;
