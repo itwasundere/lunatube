@@ -9,6 +9,18 @@ var SocketWrapper = Backbone.Model.extend({
 		if (!this.get('room') || 
 			!this.get('user') ||
 			!this.get('sock')) return;
+		//control flooding
+		this.get('sock').timed_on = function(event, fn){
+			var self = this;
+			this.on(event, function(data){
+				if (self.timer) return;
+				else {
+					self.timer = true;
+					setTimeout(function(){self.timer=false},300);
+					fn(data);
+				}
+			});
+		};
 		this.bind_sock_events();
 		this.bind_room_events();
 		this.send_messages();
@@ -36,7 +48,7 @@ var SocketWrapper = Backbone.Model.extend({
 			self.disconnected = true;
 			room.leave(self.get('user'));
 		});
-		sock.on('message', function(content){
+		sock.timed_on('message', function(content){
 			if (!content || !typeof(content)=='string') return;
 			content = utils.purge(content, 512);
 			room.message(self.get('user'), content);
@@ -139,10 +151,10 @@ var SocketWrapper = Backbone.Model.extend({
 			var username = self.get('user').get('username');
 			room.trigger('status', username+' played a new video');
 		});
-		sock.on('logout', function(){
+		sock.timed_on('logout', function(){
 			self.login(new models.User());
 		});
-		sock.on('login', function(login){
+		sock.timed_on('login', function(login){
 			login.username = utils.purge(login.username, 32);
 			login.password = utils.purge(login.password, 32);
 			if (!login || !login.username || !login.password) return;
