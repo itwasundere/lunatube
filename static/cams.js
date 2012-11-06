@@ -5,6 +5,11 @@ var CamsView = Backbone.View.extend({
 		var temp = _.template($('script#cam').html());
 		
 		var me = $(temp());
+		me.click(function(){
+			if ($(this).css('width')!='400px')
+				$(this).css({width: 400, height: 300});
+			else $(this).css({width: 160, height: 120});
+		})
 		el.append(me);
 		rtc.createStream({video: true, audio: true}, function(stream){
 			me.attr('src',URL.createObjectURL(stream));
@@ -17,6 +22,11 @@ var CamsView = Backbone.View.extend({
 				id: socketId,
 				src: URL.createObjectURL(stream)
 			});
+			peer.click(function(){
+				if ($(this).css('width')!='400px')
+					$(this).css({width: 400, height: 300});
+				else $(this).css({width: 160, height: 120});
+			})
 			el.append(peer);
 		});
 		rtc.on('disconnect stream', function(socketId) {

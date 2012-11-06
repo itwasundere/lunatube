@@ -1,3 +1,5 @@
+var plapi = 'https://gdata.youtube.com/feeds/api/playlists/';
+var plapi2 = '?v=2&alt=json&key=AI39si5Us3iYwmRdK0wa2Qf2P9eV-Z8tbjogUWw1B4JQUs191PgYNJChEKEooOq6ykQzhywLEBA9WxuKphpWUoCRA7S7jeLi5w';
 var CatalogView = Backbone.View.extend({
 	initialize: function() {
 		var el = this.$el, self = this;
@@ -16,6 +18,44 @@ var CatalogView = Backbone.View.extend({
 		},function(){
 			$(this).find('#dropdown').remove();
 		});
+		el.find('#import #btn').click(function(){
+			var url = el.find('#import input').val();
+			if (!url) return;
+			var plid = get_yt_plid(url);
+			if (!plid || plid.length != 34) return;
+			$.get(plapi+plid+plapi2, function(response){
+				if (!response || !response.feed || !response.feed.entry || !response.feed.entry.length) return;
+				$.each(response.feed.entry, function(idx, entry){
+					var video = new models.Video({
+						url: get_yt_vidid(entry.link[0].href),
+						ready: function() {
+							window.room.trigger('playlist', video);
+						}
+					});
+				});
+			});
+		});
+		el.find('#add').hover(function(){
+			var drop = $('<div id="dropdown">\
+					<input type="text" id="input" placeholder="Youtube Video URL"/>\
+				</div>');
+			$(this).append(drop);
+		},function(){
+			$(this).find('#dropdown').remove();
+		});
+		el.find('#add #btn').click(function(){
+			var url = get_yt_vidid(el.find('#add input').val());
+			if (!url) return;
+			var video = new models.Video({
+				url: url,
+				ready: function() {
+					window.room.trigger('playlist', video);
+				}
+			});
+		});
+		el.find('#clear').click(function(){
+			window.room.trigger('clear',self.showing);
+		});
 	},
 	render: function() {
 		var el = this.$el.find('#videos').empty(), self = this;
@@ -30,6 +70,7 @@ var CatalogView = Backbone.View.extend({
 		this.show_current();
 	},
 	show: function(name) {
+		this.showing = name;
 		$.each(this.subviews, function(svn, sv){
 			if (svn == name)
 				sv.$el.css('display','block');

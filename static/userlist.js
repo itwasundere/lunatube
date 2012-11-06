@@ -1,6 +1,8 @@
 window.UserListView = Backbone.View.extend({
 	initialize: function() {
 		this.model.bind('add remove reset', this.render, this);
+		room.get('modlist').bind('add remove reset', this.render, this);
+		room.get('mutelist').bind('add remove reset', this.render, this);
 		this.subviews = {};
 		var btn = this.$el.find('#header #user');
 		var el = this.$el.find('#users');
@@ -46,30 +48,21 @@ window.UserView = Backbone.View.extend({
 			avatar: this.model.get('avatar_url'),
 			username: this.model.get('username')
 		}));
-		el.bind('contextmenu', function(event){
-			$('#menu').remove();
-			var menu = $('<div id="menu">'+
-					'<div class="menuitem" id="mute">Mute</div>'+
-					'<div class="menuitem" id="hide">Hide</div>'+
-				'</div>');
-			menu.css({
-				position: 'absolute',
-				left: event.offsetX,
-				top: event.offsetY
+		if (ismod(model))
+			el.find('#mod.button').addClass('selected');
+		if (room.get('mutelist').get(model.id))
+			el.find('#mute.button').addClass('selected');
+		if (isowner(window.user))
+			el.find('#mod.button').hover(function(){
+				$(this).addClass('hovered');
+			},function(){
+				$(this).removeClass('hovered');
 			});
-			menu.find('.menuitem').hover(function(){
-				$(this).addClass('hover');
-			}, function(){
-				$(this).removeClass('hover');
-			});
-			menu.find('#mute').mousedown(function(event){
-				model.trigger('mute');
-				$('#menu').remove();
-				el.removeClass('hover');
-				event.preventDefault();
-			});
-			el.append(menu);
-			event.preventDefault();
+		el.find('#mod.button').click(function(){
+			room.trigger('mod', model);
+		});
+		el.find('#mute.button').click(function(){
+			room.trigger('mute', model);
 		});
 	}
 })

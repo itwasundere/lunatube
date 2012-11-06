@@ -73,6 +73,7 @@ models.Video = Backbone.Model.extend({
 				thumb: data.entry.media$group.media$thumbnail[0].url,
 				time_text: minutes+':'+mod_seconds
 			});
+			if (self.get('ready')) self.get('ready')();
 		});
 	},
 	verify: function() {
@@ -303,12 +304,7 @@ models.Room = Backbone.Model.extend({
 		modlist.fetch();
 		modlist.bind('reset', function(){
 			modlist.each(function(modlink){
-				// todo -- should i use userlist or make new user
-				var user = new models.User({
-					id: modlink.get('user_id')
-				});
-				user.fetch();
-				self.get('modlist').add(user);
+				self.get('modlist').add(modlink);
 			});
 		});
 

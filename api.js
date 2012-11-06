@@ -87,6 +87,43 @@ var SocketWrapper = Backbone.Model.extend({
 				room.trigger('status', username+' removed a video to queue');
 			}
 		});
+		sock.on('mod', function(uid){
+			if (!uid) return;
+			if (!room.get('userlist').get(uid)) return;
+			// todo -- can't mod guests
+			var modlink = room.get('modlist').where({user_id: uid});
+			if (modlink.length) {
+				modlink = modlink[0];
+				modlink.destroy();
+				room.get('modlist').remove(modlink);
+			}
+			else {
+				var modlink = new Backbone.Model({user_id: uid, room_id: room.id});
+				modlink.classname = 'mod';
+				modlink.save();
+				room.get('modlist').add(modlink);
+			}
+		});
+		sock.on('mute', function(uid){
+			if (!uid) return;
+			var user = room.get('userlist').get(uid);
+			if (!user) return;
+			var muted = room.get('mutelist').get(uid);
+			if (muted) {
+				room.get('mutelist').remove(muted);
+			} else {
+				room.get('mutelist').add(user);
+			}
+		});
+		sock.on('clear', function(list){
+			if (list == 'playlist') {
+				room.get('playlist').each(function(video){
+					video.destroy();
+				});
+				room.get('playlist').reset();
+			}
+			else if (list == 'queue') room.get('queue').reset();
+		});
 		sock.on('play_video', function(video){
 			if (!video) return;
 			var id = video.id;
@@ -171,6 +208,12 @@ var SocketWrapper = Backbone.Model.extend({
 		room.get('player').bind('change', function(){
 			if (self.disconnected) return;
 			sock.emit('player', room.get('player').toJSON()); });
+
+		room.get('modlist').bind('add remove reset', function(){
+			sock.emit('modlist', room.get('modlist').toJSON()); });
+
+		room.get('mutelist').bind('add remove reset', function(){
+			sock.emit('mutelist', room.get('mutelist').toJSON()); });
 
 		var queue = room.get('queue');
 		queue.on('add remove', function(){

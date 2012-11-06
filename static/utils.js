@@ -4,6 +4,14 @@ now = function() {
 	return (new Date()).getTime();
 }
 
+window.isowner = function(user) {
+	return room.get('owner').id == user.id;
+}
+
+window.ismod = function(user) {
+	return room.get('modlist').where({user_id: user.id}).length != 0;
+}
+
 window.verify_vidid = function(vidid){
 	if (vidid && vidid.length == 11)
 		return true;
@@ -88,6 +96,10 @@ function is_yt_link(str) {
 function get_yt_vidid(str) {
 	if (!is_yt_link(str)) return '';
 	return get_after(str, 'v=', 11);
+}
+function get_yt_plid(str) {
+	if (!contains(str, 'youtube.com') || !contains(str, 'list=')) return;
+	return get_after(str, 'list=', 34);
 }
 function get_yt_thumbnail(vidid) {
 	return 'http://img.youtube.com/vi/'+vidid+'/2.jpg';

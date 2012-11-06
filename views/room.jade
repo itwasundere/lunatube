@@ -9,7 +9,7 @@ html
 		script(src='static/lib/underscore.js')
 		script(src='static/lib/backbone.js')
 		script(src='/socket.io/socket.io.js')
-		script(src='http://www.google.com/jsapi')
+		//script(src='http://www.google.com/jsapi')
 		script(type='text/javascript')
 			if (window.google)
 				google.load("swfobject", "2.1");
@@ -85,14 +85,18 @@ html
 				#avatar
 					img(src="[[avatar]]")
 				#username [[username]]
+				#mute.button mute
+				#mod.button mod
 		script#cam(type='template')
 			video#cam(autoplay)
 	body
 		#login
-			#lunatube lunatube
+			#lunatube
+				div lunatube.tv
+				#subtitle beta
 			#fields
-				input#unfield
-				input#password(type="password")
+				input#unfield(maxlength="32")
+				input#password(type="password",maxlength="32")
 				#login_button.button login
 				#reg_button.button register
 			#status
@@ -126,12 +130,13 @@ html
 						#name Chat
 						#user.hbutton 0 Users
 						#cam.hbutton Cams
+					#users
 					#messages
 					#mouth
 						#avatar.avatar
 							img
 						#input
-							input(type="text")
+							input(type="text",maxlength="512")
 			#catalog
 				#headers
 					#left
@@ -142,9 +147,9 @@ html
 							#text Playlist
 							#count
 					#right
-						#add.section Add
-						#import.section Import
-						#clone.section Clone
-						#load.section Load
+						#add.section 
+							#btn Add
+						#import.section
+							#btn Import
 						#clear.section Clear
 				#videos

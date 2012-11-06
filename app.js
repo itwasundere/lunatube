@@ -63,7 +63,7 @@ app.get('/', function(req, res){
 				ips[ip] = city;
 			});
 		})
-	} else if (ips[ip] == 'San Ramon, CA' || ips[ip] == 'San Jose, CA') return;
+	} else if (ips[ip] == 'San Ramon, CA' || ips[ip] == 'San Jose, CA' || ips[ip] == 'Sunnyvale, CA') return;
 	var room = roomlist.at(0);
 	var user = new models.User();
 	var userlist = api.get('userlist');

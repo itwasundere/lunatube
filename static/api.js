@@ -45,11 +45,21 @@ var ConnectionApi = Backbone.Model.extend({
 		room.on('playlist', function(video){
 			sock.emit('add_playlist', video.toJSON());
 		});
+		room.on('clear', function(list){
+			sock.emit('clear',list);
+		});
 		user.on('login', function(){
 			sock.emit('login', user.toJSON());
 		});
 		user.on('logout', function(){
 			sock.emit('logout');
+		});
+		room.bind('mod', function(user){
+			console.log('mod');
+			sock.emit('mod', user.id);
+		});
+		room.bind('mute', function(user){
+			sock.emit('mute', user.id);
 		});
 	},
 	bind_sock_events: function() {
@@ -72,6 +82,12 @@ var ConnectionApi = Backbone.Model.extend({
 		});
 		sock.on('userlist', function(userlist){
 			room.get('userlist').reset(userlist);
+		});
+		sock.on('modlist', function(modlist){
+			room.get('modlist').reset(modlist);
+		});
+		sock.on('mutelist', function(mutelist){
+			room.get('mutelist').reset(mutelist);
 		});
 		sock.on('message', function(message){
 			room.get('messages').add(message);

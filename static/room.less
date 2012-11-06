@@ -16,6 +16,7 @@
 @background: #393C81;
 @black: #222422;
 @red: red;
+@green: green;
 
 #ph_time {
 	position: absolute;
@@ -70,6 +71,12 @@ body {
 	margin: 5px;
 	margin-left: 14px;
 	font-family: menlo, monaco, arial;
+	div {
+		float: left;
+	}
+	#subtitle {
+		font-size: 12px;
+	}
 }
 
 #login {
@@ -100,7 +107,6 @@ body {
 @cam_height: 120px;
 #cams {
 	width: @width;
-	height: @cam_height;
 	background-color: @clear;
 	display: none;
 	video {
@@ -283,10 +289,9 @@ a:visited, a:link { color: @light; text-decoration: none }
 	#users {
 		position: absolute;
 		width: @chat_width;
-		background-color: grey;
+		background-color: @light;
 		display: none;
 	}
-	#user:hover { background-color: #eee; }
 	#user {
 		#avatar {
 			width: 32px;
@@ -294,16 +299,21 @@ a:visited, a:link { color: @light; text-decoration: none }
 			img { width: 32px; height: 32px; }
 			float: left;
 			overflow: hidden;
-			margin: @margin;
+			margin: @margin / 2;
 		}
 		#username {
 			float: left;
-			margin: @margin;
+			margin: 9px;
 			margin-left: 0;
-			padding-top: 5px;
-			width: @chat_width - 32px - @margin*3;
+			padding-top: 2px;
+			font-size: 18px;
+			width: @chat_width - 32px - @margin*3 - 150px;
 			overflow: hidden;
+			color: @white;
 		}
+		.button { float: right; margin: 9px; margin-left: 0px; }
+		.button.selected { background-color: @green }
+		.button.hovered { background-color: @red }
 	}
 	#messages {
 		padding-top: 8px;

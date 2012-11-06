@@ -1,3 +1,17 @@
+1.
+blog
+feature status
+suggestions
+bug reporting
+
+userlist
+envelope
+avatar changing
+permission lists
+rest of the playlist buttons
+greynames
+playback quality
+
 really important tmrw
 2. get a news / features page up
 	bug reporting

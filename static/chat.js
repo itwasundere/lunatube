@@ -49,9 +49,7 @@ var ChatView = Backbone.View.extend({
 			input.val('');
 		})
 	}
-})
-
-window.imgcache = {};
+});
 
 var MessageView = Backbone.View.extend({
 	initialize: function(){
@@ -102,12 +100,6 @@ var MessageView = Backbone.View.extend({
 			}
 		}
 		
-		// caching avatars
-		if (!window.imgcache[avatar]){
-			window.imgcache[avatar] = new Image();
-	 		window.imgcache[avatar].src= new Image()
-	 	}
-
 		if (this.options.appendum)
 			$.each(this.options.appendum, function(idx, msg){
 				var divline = $('<div>').text(msg.get('content'));

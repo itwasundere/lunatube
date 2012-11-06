@@ -6,6 +6,8 @@ window.LoginView = Backbone.View.extend({
 		var pw = el.find('#password');
 		var model = this.model;
 		var login = function() {
+			if (!un.val() || !pw.val())
+				alert('Please enter your registration credentials in the textboxes to the top right.');
 			model.set({
 				username: un.val(),
 				password: pw.val()
