@@ -283,7 +283,7 @@ var ConnectionApi = Backbone.Model.extend({
 		if (!cookie) new_user();
 		else {
 			var csid = cookiep.parse(cookie).session;
-			if (!csid) new_user();
+			if (!csid) sock.disconnect();
 			else {
 				var csession = sessions.get(csid);
 				if (!csession) new_user();
