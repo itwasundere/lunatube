@@ -68,6 +68,7 @@ var SocketWrapper = Backbone.Model.extend({
 			var state = data.state;
 			if (state == 'playing' || state == 'paused')
 				if (state != player.get('state')) {
+					console.log(sock.handshake.address.address);
 					player.set('state', state);
 					room.trigger('status', username+' set video to '+state);
 				}
