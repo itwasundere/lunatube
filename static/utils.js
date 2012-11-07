@@ -99,7 +99,11 @@ function get_yt_vidid(str) {
 }
 function get_yt_plid(str) {
 	if (!contains(str, 'youtube.com') || !contains(str, 'list=')) return;
-	return get_after(str, 'list=', 34);
+	var amppos = str.indexOf('&');
+	var length = 100;
+	if (amppos > -1)
+		length = amppos - (str.indexOf('list=')+5);
+	return get_after(str, 'list=', length);
 }
 function get_yt_thumbnail(vidid) {
 	return 'http://img.youtube.com/vi/'+vidid+'/2.jpg';

@@ -86,6 +86,7 @@ var MessageView = Backbone.View.extend({
 	render: function(){
 		var content = $('<div>');
 		var divline = $('<div>').text(this.model.get('content'));
+		var log = $('#messages');
 		if (islink(this.model.get('content')))
 			divline = $('<a target="_blank">').text(this.model.get('content')).attr('href',this.model.get('content'));
 		content.append(divline);
@@ -146,6 +147,7 @@ var MessageView = Backbone.View.extend({
 					}
 					el.find('#content a').empty().append(image);
 					$(image).attr('id','image_thumb');
+					log.scrollTop(log[0].scrollHeight);
 				};
 				image.onerror = function(){ el.find('#content a').html(content); };
 				image.src = add_pretext(this.options.url);

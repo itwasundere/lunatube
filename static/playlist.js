@@ -22,7 +22,7 @@ var CatalogView = Backbone.View.extend({
 			var url = el.find('#import input').val();
 			if (!url) return;
 			var plid = get_yt_plid(url);
-			if (!plid || plid.length != 34) return;
+			if (!plid || !plid.length) return;
 			$.get(plapi+plid+plapi2, function(response){
 				if (!response || !response.feed || !response.feed.entry || !response.feed.entry.length) return;
 				$.each(response.feed.entry, function(idx, entry){
