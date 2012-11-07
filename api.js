@@ -156,8 +156,8 @@ var SocketWrapper = Backbone.Model.extend({
 			self.login(new models.User());
 		});
 		sock.timed_on('login', function(login){
-			login.username = utils.purge(login.username, 32);
-			login.password = utils.purge(login.password, 32);
+			login.username = utils.deep_purge(login.username, 32);
+			login.password = utils.deep_purge(login.password, 32);
 			if (!login || !login.username || !login.password) return;
 
 			var user = new models.User({

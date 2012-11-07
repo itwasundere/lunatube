@@ -6,6 +6,16 @@ function hash() {
 	return md5.digest('hex');
 }
 
+var valid = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 _';
+function deep_purge(a, len) {
+	var str = '';
+	for(c in a) {
+		if (valid.indexOf(a[c])>-1)
+			str += a[c];
+		if (c > len) return;
+	}
+	return str;
+}
 function purge(str, length) {
 	return str.substr(0, length);
 }
@@ -33,6 +43,7 @@ function now() {
 module.exports = {
 	hash: hash,
 	cookie: cookie,
+	deep_purge: deep_purge,
 	purge: purge,
 	now: now
 };
