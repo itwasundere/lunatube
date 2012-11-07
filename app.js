@@ -49,7 +49,16 @@ var ips = {}
 
 app.get('/', function(req, res){
 	var ip = req.connection.remoteAddress;
-	console.log(ips);
+	if (!ips[ip])
+		ips[ip] = {};
+	if(ips[ip].timing) return;
+	else {
+		console.log(ips);
+		ips[ip].timing = true;
+		setInterval(function(){ ips[ip].timing = false; }, 500);
+	}
+
+	/*
 	if (!ips[ip]) {
 		var geoip = 'api.hostip.info';
 		var path = '/get_json.php?ip='+ip;
@@ -62,8 +71,9 @@ app.get('/', function(req, res){
 				var city = JSON.parse(str).city;
 				ips[ip] = city;
 			});
-		})
+		}, function(){});
 	} else if (ips[ip] == 'San Ramon, CA' || ips[ip] == 'San Jose, CA' || ips[ip] == 'Sunnyvale, CA') return;
+	*/
 	var room = roomlist.at(0);
 	var user = new models.User();
 	var userlist = api.get('userlist');

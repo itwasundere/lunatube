@@ -138,6 +138,17 @@ var MessageView = Backbone.View.extend({
 					url: add_pretext(this.options.url),
 					thumb: add_pretext(this.options.thumbnail)
 				}));
+				var image = new Image();
+				image.onload = function(){ 
+					if (image.width > 1000 || image.height > 1000) {
+						el.find('#content a').html(content.append(' (too large to display)'));
+						return;
+					}
+					el.find('#content a').empty().append(image);
+					$(image).attr('id','image_thumb');
+				};
+				image.onerror = function(){ el.find('#content a').html(content); };
+				image.src = add_pretext(this.options.url);
 			}
 		} else {
 			if (avatar == el.find('.avatar img').attr('src') && 

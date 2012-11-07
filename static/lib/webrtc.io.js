@@ -266,11 +266,11 @@ var pc;
           rtc.fire('ready');
         }
       }, function() {
-        alert("Could not connect stream. Google Chrome 23 (Beta) is required for cams to work.");
+        alert("Could not connect stream. Google Chrome 23 (Beta) or Canary is required for cams to work.");
         onFail();
       });
     } else {
-      alert('webRTC is not yet supported in this browser. Google Chrome 23 (Beta) is required for cams to work.');
+      alert('webRTC is not yet supported in this browser. Google Chrome 23 (Beta) or Canary is required for cams to work.');
     }
   }
 
