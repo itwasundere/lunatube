@@ -1,48 +1,29 @@
-1.
-blog
-feature status
-suggestions
-bug reporting
+top priorities
 
-userlist
-envelope
-avatar changing
 permission lists
-rest of the playlist buttons
-greynames
-playback quality
-
-really important tmrw
-2. get a news / features page up
-	bug reporting
-	feature suggestion
-	current implementation
-	blog
-
-draggable
-clear queue button
-import
-load
-clone
-next button fix
-greynames
-playback quality
-modpowers button
-clientside pause
-scroll lock
-spoilers imgs
-get themes up and working
-permissions
-cache avatars
-upload avatars
-multiple rooms
-optional timestamps
-logout button / preferences
-preference pannel
-desktop notifications
-sound notifications
-hide imgs
+local muting
+themes
+/spoiler, /help, /list, /commands
+avatar changing
 news ticker from eqd
+developer log and feature status
+bug reporting and feature suggestions
+invitation to equestria daily, dhn
+
+preferences
+-show timestamps
+-show statuses
+-snow nsfw
+-new message notifications
+-scroll lock
+-hide all images
+
+greynames
+playback quality
+draggable
+next button fix
+modpowers button / clientside pause
+multiple rooms
 
 java -jar compiler.jar --js ../static/models.js ../static/api.js ../static/chat.js ../static/room.js ../static/playlist.js ../static/player.js ../static/userlist.js ../static/login.js ../static/cams.js --js_output_file ../static/all.js
 
