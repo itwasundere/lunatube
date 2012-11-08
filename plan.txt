@@ -1,9 +1,9 @@
 top priorities
 
-permission lists
-local muting
+salt passwords
 themes
 /spoiler, /help, /list, /commands
+save mutes, volume in cookies
 avatar changing
 news ticker from eqd
 developer log and feature status

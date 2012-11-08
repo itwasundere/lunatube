@@ -84,6 +84,7 @@ body {
 	div {
 		padding: @margin;
 		color: @white;
+		cursor: pointer;
 	}
 	div:hover {
 		background-color: @red;
@@ -331,7 +332,7 @@ a:visited, a:link { color: @light; text-decoration: none }
 		}
 		.button, .disabled_button { float: right; margin: 9px; margin-left: 0px; }
 		.button.selected, .disabled_button.selected { background-color: @green }
-		#mute.selected { background-color: @red }
+		#mute.selected, #hide.selected { background-color: @red }
 		.button.hovered { background-color: @red }
 	}
 	#messages {

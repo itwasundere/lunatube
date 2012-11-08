@@ -99,6 +99,7 @@ var ConnectionApi = Backbone.Model.extend({
 			room.get('mutelist').reset(mutelist);
 		});
 		sock.on('message', function(message){
+			if (room.get('hidelist').get(message.author)) return;
 			room.get('messages').add(message);
 			if (document.hasFocus() && !window.blurred) return;
 			if (!window.msgcount) window.msgcount=0;

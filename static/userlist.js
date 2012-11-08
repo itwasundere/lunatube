@@ -3,6 +3,7 @@ window.UserListView = Backbone.View.extend({
 		this.model.bind('add remove reset', this.render, this);
 		room.get('modlist').bind('add remove reset', this.render, this);
 		room.get('mutelist').bind('add remove reset', this.render, this);
+		room.get('hidelist').bind('add remove reset', this.render, this);
 		this.subviews = {};
 		var btn = this.$el.find('#header #user');
 		var el = this.$el.find('#users');
@@ -56,6 +57,8 @@ window.UserView = Backbone.View.extend({
 			el.find('#mute.button').addClass('selected');
 		else if (!ismod(window.user))
 			el.find('#mute.button').remove();
+		if (room.get('hidelist').get(model.id))
+			el.find('#hide.button').addClass('selected');
 		if (isowner(window.user))
 			el.find('#mod.button').hover(function(){
 				$(this).addClass('hovered');
@@ -74,8 +77,15 @@ window.UserView = Backbone.View.extend({
 			el.find('#mute').removeClass('button');
 			el.find('#mute').addClass('disabled_button');
 		}
-		el.find('#mute.button').click(function(){
-			room.trigger('mute', model);
+		else {
+			el.find('#mute.button').click(function(){
+				room.trigger('mute', model);
+			});
+		}
+		el.find('#hide.button').click(function(){
+			var prev = room.get('hidelist').get(model.id);
+			if (prev) room.get('hidelist').remove(prev);
+			else room.get('hidelist').add(model);
 		});
 	}
 })

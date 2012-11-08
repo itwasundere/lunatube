@@ -280,6 +280,7 @@ models.Room = Backbone.Model.extend({
 		playlist: new models.VideoList(),
 		player: new models.Player(),
 		mutelist: new models.UserList(),
+		hidelist: new models.UserList(),
 		modlist: new models.UserList(),
 		owner: new models.User,
 		messages: new models.MessageList()

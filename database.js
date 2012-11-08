@@ -111,7 +111,7 @@ var db = {
 		if (!model.id) {
 			var statement = sql.select(model.classname, param_statement(model.attributes));
 			this.sqlite.get(statement, function(err, row){
-				if (row) row.password = '';
+				if (row && !options.password) row.password = '';
 				options.success(row);
 			});
 			return;

@@ -3,6 +3,8 @@ var utils = require('./sutils');
 var logger = require('./logger.js');
 var Backbone = require('backbone');
 var cookiep = require('cookie');
+var bcrypt = require('bcrypt');
+var salt = bcrypt.genSaltSync(10);
 
 var SocketWrapper = Backbone.Model.extend({
 	initialize: function() {
@@ -167,34 +169,28 @@ var SocketWrapper = Backbone.Model.extend({
 			self.login(new models.User());
 		});
 		sock.timed_on('login', function(login){
-			login.username = utils.deep_purge(login.username, 32);
-			login.password = utils.deep_purge(login.password, 32);
 			if (!login || !login.username || !login.password) return;
-
+			login.username = utils.deep_purge(login.username, 32);
 			var user = new models.User({
 				blank: { username: login.username }
 			});
-			user.fetch({success:function(){
+			user.fetch({password: true, success:function(){
 				if (user.id) {
-					var user2 = new models.User({ blank: {
-						username: login.username,
-						password: login.password
-					}});
-					user2.fetch({success:function(){
-						if (user2.id)
-							self.login(user2);
-						else
-							sock.emit('login', false);
-					}})
+					bcrypt.compare(login.password, user.get('password'), function(err, res) {
+		    			if (res) self.login(user);
+		    			else sock.emit('login', false); 
+					});
 				} else {
-					user = new models.User({ blank: {
-						username: login.username,
-						password: login.password,
-						avatar_url: '/static/avatars/newfoal.png'
-					}});
-					user.save({},{success:function(){
-						self.login(user);
-					}});
+					bcrypt.hash(login.password, salt, function(err, hash) {
+						user = new models.User({ blank: {
+							username: login.username,
+							password: hash,
+							avatar_url: '/static/avatars/newfoal.png'
+						}});
+						user.save({},{success:function(){
+							self.login(user);
+						}});
+					});
 				}
 			}})
 		});
@@ -208,6 +204,7 @@ var SocketWrapper = Backbone.Model.extend({
 	},
 	login: function(new_user) {
 		var old_user = this.get('user');
+		delete new_user.attributes.password;
 		this.get('room').leave(old_user);
 		this.get('room').join(new_user);
 		this.set('user', new_user);
