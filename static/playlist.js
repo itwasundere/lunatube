@@ -59,6 +59,7 @@ var CatalogView = Backbone.View.extend({
 	},
 	render: function() {
 		var el = this.$el.find('#videos').empty(), self = this;
+		if (!ismod(window.user)) this.$el.find('#headers #right').css('visibility','hidden');
 		$.each(this.options.playlists, function(name, list){
 			var sel = $('<div>');
 			var cel = self.$el.find('.section#'+name+' #count');
@@ -144,6 +145,7 @@ var PlaylistItemView = Backbone.View.extend({
 				var str = 'http://youtube.com/watch?v='+self.model.get('url');
 				window.open(str,'_blank');
 			});
+			if (!ismod(window.user)) el.find('#delete').css('display','none');
 			el.find('#delete').click(function(){
 				window.room.trigger('delete', self.model);
 			});

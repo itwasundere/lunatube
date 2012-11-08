@@ -48,19 +48,32 @@ window.UserView = Backbone.View.extend({
 			avatar: this.model.get('avatar_url'),
 			username: this.model.get('username')
 		}));
-		if (ismod(model))
+		if (ismod(model)) {
 			el.find('#mod.button').addClass('selected');
+		} else if (!isowner(window.user))
+			el.find('#mod.button').remove();
 		if (room.get('mutelist').get(model.id))
 			el.find('#mute.button').addClass('selected');
+		else if (!ismod(window.user))
+			el.find('#mute.button').remove();
 		if (isowner(window.user))
 			el.find('#mod.button').hover(function(){
 				$(this).addClass('hovered');
 			},function(){
 				$(this).removeClass('hovered');
 			});
-		el.find('#mod.button').click(function(){
-			room.trigger('mod', model);
-		});
+		if (isowner(window.user))
+			el.find('#mod.button').click(function(){
+				room.trigger('mod', model);
+			});
+		else {
+			el.find('#mod').removeClass('button');
+			el.find('#mod').addClass('disabled_button');
+		}
+		if (!ismod(window.user)) {
+			el.find('#mute').removeClass('button');
+			el.find('#mute').addClass('disabled_button');
+		}
 		el.find('#mute.button').click(function(){
 			room.trigger('mute', model);
 		});

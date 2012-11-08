@@ -64,6 +64,7 @@ $(document).ready(function(){
 	});
 
 	// disable text drag select for non-chat elements
+	$('#login')[0].onselectstart = function(){ return false; }
 	$('#theater')[0].onselectstart = function(){ return false; }
 	$('#catalog')[0].onselectstart = function(){ return false; }
 	$('#header')[0].onselectstart = function(){ return false; }

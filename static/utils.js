@@ -9,7 +9,7 @@ window.isowner = function(user) {
 }
 
 window.ismod = function(user) {
-	return room.get('modlist').where({user_id: user.id}).length != 0;
+	return isowner(user) || room.get('modlist').where({user_id: user.id}).length != 0;
 }
 
 window.verify_vidid = function(vidid){

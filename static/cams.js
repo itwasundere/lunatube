@@ -3,7 +3,8 @@ var CamsView = Backbone.View.extend({
 		var el = this.$el;
 		this.$el.css('display','block');
 		var temp = _.template($('script#cam').html());
-		
+		if (!$.browser.chrome || parseInt($.browser.version) <23)
+				alert('for cams to work properly, you should use chrome v23');
 		var me = $(temp());
 		me.click(function(){
 			if ($(this).css('width')!='400px')

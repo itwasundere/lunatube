@@ -12,6 +12,7 @@ var ConnectionApi = Backbone.Model.extend({
 		this.start_player_loop();
 		this.bind_room_events();
 		this.bind_sock_events();
+		window.mod = ismod(window.user);
 	},
 	start_player_loop: function() {
 		var sock = this.get('sock');
@@ -30,22 +31,28 @@ var ConnectionApi = Backbone.Model.extend({
 		});
 		var player = room.get('player');
 		player.bind('action', function(){
+			if (!mod) return;
 			sock.emit('player_action', player.toJSON());
 			console.log('outputting player state');
 		});
 		room.on('play play_new', function(video){
+			if (!mod) return;
 			sock.emit('play_video', video.toJSON());
 		});
 		room.on('delete', function(video){
+			if (!mod) return;
 			sock.emit('remove_video', video.toJSON());
 		});
 		room.on('queue', function(video){
+			if (!mod) return;
 			sock.emit('add_queue', video.toJSON())
 		});
 		room.on('playlist', function(video){
+			if (!mod) return;
 			sock.emit('add_playlist', video.toJSON());
 		});
 		room.on('clear', function(list){
+			if (!mod) return;
 			sock.emit('clear',list);
 		});
 		user.on('login', function(){
@@ -55,10 +62,12 @@ var ConnectionApi = Backbone.Model.extend({
 			sock.emit('logout');
 		});
 		room.bind('mod', function(user){
+			if (!isowner) return;
 			console.log('mod');
 			sock.emit('mod', user.id);
 		});
 		room.bind('mute', function(user){
+			if (!mod) return;
 			sock.emit('mute', user.id);
 		});
 	},

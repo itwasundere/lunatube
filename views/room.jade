@@ -9,7 +9,7 @@ html
 		script(src='static/lib/underscore.js')
 		script(src='static/lib/backbone.js')
 		script(src='/socket.io/socket.io.js')
-		script(src='http://www.google.com/jsapi')
+		// script(src='http://www.google.com/jsapi')
 		script(type='text/javascript')
 			if (window.google)
 				google.load("swfobject", "2.1");
@@ -85,6 +85,7 @@ html
 				#avatar
 					img(src="[[avatar]]")
 				#username [[username]]
+				#hide.button hide
 				#mute.button mute
 				#mod.button mod
 		script#cam(type='template')
@@ -93,7 +94,7 @@ html
 		#login
 			#lunatube
 				div lunatube.tv
-				#subtitle beta
+				#subtitle pre-beta
 			#fields
 				input#unfield(maxlength="32")
 				input#password(type="password",maxlength="32")

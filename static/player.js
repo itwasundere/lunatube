@@ -17,32 +17,36 @@ var PlayerView = Backbone.View.extend({
 		room.get('queue').bind('reset add remove', this.render, this);
 		room.get('player').bind('change:current', this.render, this);
 
-		this.$el.find('#play').click(function(){
-			if (self.model.get('state') == 'playing')
-				self.model.pause();
-			else self.model.play();
-		});
-		this.$el.find('#overlay').click(function(){
-			if (self.model.get('state') == 'playing')
-				self.model.pause();
-			else self.model.play();
-		});
+		if (ismod(window.user)) {
+			this.$el.find('#play').click(function(){
+				if (self.model.get('state') == 'playing')
+					self.model.pause();
+				else self.model.play();
+			});
+			this.$el.find('#overlay').click(function(){
+				if (self.model.get('state') == 'playing')
+					self.model.pause();
+				else self.model.play();
+			});
+		}
 
 		var scrobbler = this.$el.find('#scrobbler');
 		var playhead = this.$el.find('#playhead');
-		scrobbler.click(function(event){
-			var current = self.model.get('current');
-			if (!current) return;
-			var percentage = event.offsetX / (scrobbler.width() - playhead.width());
-			var seek = Math.floor(percentage * current.get('time'));
-			self.model.seek(seek);
-		});
 
-		scrobbler.hover(function(event){
-			playhead.css('background-color','red');
-		}, function(){
-			playhead.css('background-color','white');
-		});
+		if (ismod(window.user)) {
+			scrobbler.click(function(event){
+				var current = self.model.get('current');
+				if (!current) return;
+				var percentage = event.offsetX / (scrobbler.width() - playhead.width());
+				var seek = Math.floor(percentage * current.get('time'));
+				self.model.seek(seek);
+			});
+			scrobbler.hover(function(event){
+				playhead.css('background-color','red');
+			}, function(){
+				playhead.css('background-color','white');
+			});
+		}
 
 		var next = el.find('#next');
 		var nextvid = el.find('#next_vid');
@@ -68,13 +72,14 @@ var PlayerView = Backbone.View.extend({
 			nextvid.css('display','none');
 		});
 
-		next.click(function(){
-			if (room.next_video().get('url') == 'Bq6WULV78Cw') return;
-			if (event.which!=3) {
-				room.trigger('play', room.next_video());
-				return;
-			}
-		});
+		if (ismod(window.user))
+			next.click(function(){
+				if (room.next_video().get('url') == 'Bq6WULV78Cw') return;
+				if (event.which!=3) {
+					room.trigger('play', room.next_video());
+					return;
+				}
+			});
 
 		var volume = el.find('#volume');
 		var slider = volume.find('#volume_slider');
@@ -145,9 +150,13 @@ var PlayerView = Backbone.View.extend({
 		this.pliv.render();
 
 		if (this.model.get('state') == 'playing') {
-			el.find('#play').html('pause');
+			if (ismod(window.user))
+				el.find('#play').html('pause');
+			else el.find('#play').html('playing');
 		} else {
-			el.find('#play').html('play');
+			if (ismod(window.user))
+				el.find('#play').html('play');
+			else el.find('#play').html('paused');
 		}
 
 		var title = this.$el.find('#vid_title');

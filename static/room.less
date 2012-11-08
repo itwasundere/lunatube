@@ -79,6 +79,17 @@ body {
 	}
 }
 
+#smenu {
+	background-color: @light;
+	div {
+		padding: @margin;
+		color: @white;
+	}
+	div:hover {
+		background-color: @red;
+	}
+}
+
 #login {
 	background-color: @dark;
 	width: @width;
@@ -86,7 +97,7 @@ body {
 	margin-top: 0;
 	text-align: right;
 	#fields, #status {
-		margin: 9px;
+		margin: 8px;
 		float: right;
 		position: relative;
 	}
@@ -97,9 +108,15 @@ body {
 		padding: @margin/2 @margin;
 		height: 20px;
 	}
+	#username {
+		background-color: @light;
+	}
+	#username:hover {
+		background-color: @red;
+	}
 	#status {
 		overflow: visible;
-		#avatar { float: left; }
+		#avatar { float: left; overflow: hidden; height: 32px; }
 	}
 	#fields input { padding: @margin / 2 }
 }
@@ -237,14 +254,14 @@ a:visited, a:link { color: @light; text-decoration: none }
 @input_width: @chat_width - @avatar_size - 3*@small_margin - 40;
 @input_margin: (@avatar_size - 18px)/2;
 
-.button {
+.disabled_button, .button {
 	background-color: @dark;
 	color: white;
 	padding: 4px 10px;
 	padding-bottom: 6px;
 	display: inline-block;
-	cursor: pointer;
 }
+.button { cursor: pointer; }
 .button:hover {
 	background-color: @red;
 }
@@ -307,13 +324,14 @@ a:visited, a:link { color: @light; text-decoration: none }
 			margin-left: 0;
 			padding-top: 2px;
 			font-size: 18px;
-			width: @chat_width - 32px - @margin*3 - 150px;
+			width: @chat_width - 32px - @margin*3 - 200px;
 			overflow: hidden;
 			height: 24px;
 			color: @white;
 		}
-		.button { float: right; margin: 9px; margin-left: 0px; }
-		.button.selected { background-color: @green }
+		.button, .disabled_button { float: right; margin: 9px; margin-left: 0px; }
+		.button.selected, .disabled_button.selected { background-color: @green }
+		#mute.selected { background-color: @red }
 		.button.hovered { background-color: @red }
 	}
 	#messages {

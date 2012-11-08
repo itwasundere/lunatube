@@ -25,26 +25,39 @@ window.LoginView = Backbone.View.extend({
 		el.find('#logout').click(function(){
 			model.trigger('logout');
 		});
-		el.find('#username').hover(function(event){
-			var div = $('<div id="smenu">');
+		el.find('#username').click(function(event){
+			if ($('#smenu').length) {
+				$('#smenu').remove();
+				return;
+			}
+			var div = $('<div id="smenu">\
+					<div id="prefs">preferences</div>\
+					<div id="logout">logout</div>\
+				</div>');
 			div.css({
-				width: 100,
-				height: 100,
-				'background-color': 'white',
 				position: 'absolute',
-				top: event.offsetY,
-				left: $(this).screenX
+				width: $(this).width()+12*2,
+				top: $(this).offset().top+32,
+				left: $(this).offset().left
+			});
+			div.find('#prefs').click(function(){
+
+			});
+			div.find('#logout').click(function(){
+				$('#smenu').remove();
+				model.trigger('logout');
 			});
 			var a = $(this);
 			$('body').append(div);
-		}, function(){
-			$('#smenu').remove();
+			div.click({
+
+			});
 		});
 	},
 	render: function() {
 		var el = this.$el;
 		if (this.model.id && (this.model.id + '').length < 32) {
-			el.find('#username').css('display', '');
+			el.find('#status').css('display', '');
 			el.find('#logout').css('display', '');
 			el.find('#fields').css('display', 'none');
 			el.find('#username').html(this.model.get('username'));
@@ -52,7 +65,7 @@ window.LoginView = Backbone.View.extend({
 		}
 		else {
 			el.find('#logout').css('display', 'none');
-			el.find('#username').css('display', 'none');
+			el.find('#status').css('display', 'none');
 			el.find('#fields').css('display', '');
 		}
 	}
