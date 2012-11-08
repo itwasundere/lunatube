@@ -20,6 +20,80 @@ window.LoginView = Backbone.View.extend({
 		pw.keydown(function(event){
 			if (event.keyCode == 13) login();
 		});
+		if (cookie('theme')) {
+			$('link').attr('href','static/themes/'+cookie('theme')+'.less');
+			less.refresh();
+		}
+		el.find('#themes').click(function(){
+			if ($('#tmenu').length) {
+				$('#tmenu').remove();
+				return;
+			}
+			var div = $('<div id="tmenu">\
+					<div id="luna">luna</div>\
+					<div id="twilight">twilight</div>\
+					<div id="applejack">applejack</div>\
+					<div id="pinkie">pinkie</div>\
+					<div id="rarity">rarity</div>\
+					<div id="fluttershy">fluttershy</div>\
+					<div id="rainbow">rainbow</div>\
+					<div id="simple">monoshy</div>\
+				</div>');
+			div.css({
+				position: 'absolute',
+				top: $(this).offset().top+32,
+				left: $(this).offset().left
+			});
+			div.find('#pinkie').click(function(){
+				cookie('theme', 'pinkie');
+				$('link').attr('href','static/themes/pinkie.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			div.find('#luna').click(function(){
+				cookie('theme', 'luna');
+				$('link').attr('href','static/themes/luna.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			div.find('#twilight').click(function(){
+				cookie('theme', 'twilight');
+				$('link').attr('href','static/themes/twilight.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			div.find('#applejack').click(function(){
+				cookie('theme', 'applejack');
+				$('link').attr('href','static/themes/applejack.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			div.find('#rarity').click(function(){
+				cookie('theme', 'rarity');
+				$('link').attr('href','static/themes/rarity.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			div.find('#rainbow').click(function(){
+				cookie('theme', 'rainbow');
+				$('link').attr('href','static/themes/rainbow.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			div.find('#fluttershy').click(function(){
+				cookie('theme', 'fluttershy');
+				$('link').attr('href','static/themes/fluttershy.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			div.find('#simple').click(function(){
+				cookie('theme', 'simple');
+				$('link').attr('href','static/themes/simple.less');
+				less.refresh();
+				$('#tmenu').remove();
+			});
+			$('body').append(div);
+		});
 		el.find('#login_button').click(login);
 		el.find('#reg_button').click(login);
 		el.find('#logout').click(function(){
@@ -47,11 +121,7 @@ window.LoginView = Backbone.View.extend({
 				$('#smenu').remove();
 				model.trigger('logout');
 			});
-			var a = $(this);
 			$('body').append(div);
-			div.click({
-
-			});
 		});
 	},
 	render: function() {

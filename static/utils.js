@@ -1,5 +1,18 @@
 _.templateSettings = { interpolate: /\[\[(.+?)\]\]/g };
 
+window.cookie = function(key, val){
+	if (!key) return;
+	if (val==null) {
+		var vals = document.cookie.split('; ');
+		for (idx in vals) {
+			var parts = vals[idx].split('=');
+			if (parts[0] == key) return parts[1];
+		}
+	} else {
+		document.cookie = key+'='+val;
+	}
+}
+
 now = function() {
 	return (new Date()).getTime();
 }

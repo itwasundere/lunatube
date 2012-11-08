@@ -79,16 +79,32 @@ body {
 	}
 }
 
-#smenu {
+#themes {
+	margin: @margin;
+	padding: 20px 5px;
+	background-color: @light;
+}
+#themes:hover { background-color: @red; }
+
+#smenu, #tmenu {
 	background-color: @light;
 	div {
 		padding: @margin;
 		color: @white;
 		cursor: pointer;
 	}
-	div:hover {
-		background-color: @red;
-	}
+	div:hover { background-color: @red; }
+}
+
+#tmenu {
+	width: 100px;
+	#luna { background-color: #393C81; color: #7895D5; }
+	#pinkie { background-color: #FF88CA; color: #FBFF93; }
+	#twilight { background-color: #D895E9; color: #2A3C97; }
+	#applejack { background-color: #FFBC66; color: red; }
+	#rarity { background-color: #5D29AC; color: white; }
+	#rainbow { background-color: #393C81; color: black; }
+	#fluttershy { background-color: #FFE799; color: #A973B6; }
 }
 
 #login {

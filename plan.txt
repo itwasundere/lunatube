@@ -1,6 +1,5 @@
 top priorities
 
-salt passwords
 themes
 /spoiler, /help, /list, /commands
 save mutes, volume in cookies

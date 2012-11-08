@@ -183,7 +183,9 @@ var PlayerView = Backbone.View.extend({
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');
-		this.volume(50);
+		if (cookie('volume'))
+			this.volume(parseInt(cookie('volume')));
+		else this.volume(50);
 		this.trigger('ready');
 	},
 	set_video: function(video){
@@ -213,7 +215,10 @@ var PlayerView = Backbone.View.extend({
 		this.player.pauseVideo();
 	},
 	volume: function(vol){
+		cookie('volume',vol)
 		if (!this.player) return;
 		this.player.setVolume(vol);
+		var size = this.$el.find('#vol').width()*vol/100;
+		this.$el.find('#volume_slider').width(size);
 	}
 });
