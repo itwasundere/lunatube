@@ -100,6 +100,10 @@ window.LoginView = Backbone.View.extend({
 		el.find('#logout').click(function(){
 			model.trigger('logout');
 		});
+		el.find('#username').css({
+			'min-width': '80px',
+			'text-align': 'left'
+		});
 		el.find('#username').click(function(event){
 			if ($('#smenu').length) {
 				$('#smenu').remove();
