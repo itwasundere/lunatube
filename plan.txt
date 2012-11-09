@@ -1,6 +1,5 @@
 top priorities
 
-news ticker from eqd
 developer log and feature status
 bug reporting and feature suggestions
 invitation to equestria daily, dhn

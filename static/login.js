@@ -24,7 +24,8 @@ window.LoginView = Backbone.View.extend({
 			$('link').attr('href','static/themes/'+cookie('theme')+'.less');
 			less.refresh();
 		}
-		el.find('#themes').click(function(){
+		el.find('a').css({ color: 'white' });
+		el.find('#themes.themes').click(function(){
 			if ($('#tmenu').length) {
 				$('#tmenu').remove();
 				return;
