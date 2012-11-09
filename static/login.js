@@ -115,7 +115,9 @@ window.LoginView = Backbone.View.extend({
 				left: $(this).offset().left
 			});
 			div.find('#prefs').click(function(){
-
+				if ($('#prefs').css('display')=='none')
+					$('#prefs').css('display','block')
+				else $('#prefs').css('display','none')
 			});
 			div.find('#logout').click(function(){
 				$('#smenu').remove();
@@ -131,7 +133,7 @@ window.LoginView = Backbone.View.extend({
 			el.find('#logout').css('display', '');
 			el.find('#fields').css('display', 'none');
 			el.find('#username').html(this.model.get('username'));
-			el.find('#avatar img').attr('src', this.model.get('avatar_url'));
+			el.find('#avatar img').attr('src', this.model.avatar());
 		}
 		else {
 			el.find('#logout').css('display', 'none');

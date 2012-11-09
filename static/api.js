@@ -70,6 +70,9 @@ var ConnectionApi = Backbone.Model.extend({
 			if (!mod) return;
 			sock.emit('mute', user.id);
 		});
+		room.bind('avatar', function(email){
+			sock.emit('avatar', email);
+		});
 	},
 	bind_sock_events: function() {
 		var self = this;

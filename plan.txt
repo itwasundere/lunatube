@@ -1,9 +1,5 @@
 top priorities
 
-themes
-/spoiler, /help, /list, /commands
-save mutes, volume in cookies
-avatar changing
 news ticker from eqd
 developer log and feature status
 bug reporting and feature suggestions
@@ -24,7 +20,7 @@ next button fix
 modpowers button / clientside pause
 multiple rooms
 
-java -jar compiler.jar --js ../static/models.js ../static/api.js ../static/chat.js ../static/room.js ../static/playlist.js ../static/player.js ../static/userlist.js ../static/login.js ../static/cams.js --js_output_file ../static/all.js
+java -jar compiler.jar --js ../static/models.js ../static/ticker.js ../static/api.js ../static/prefs.js ../static/chat.js ../static/room.js ../static/playlist.js ../static/player.js ../static/userlist.js ../static/login.js ../static/cams.js --js_output_file ../static/all.js
 
 +-----------------+
 |player / playlist|

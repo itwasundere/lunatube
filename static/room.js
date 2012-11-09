@@ -58,7 +58,14 @@ $(document).ready(function(){
 	window.cams = new CamsView({
 		el: $('#cams')
 	});
-
+	window.prefs = new PrefsView({
+		el: $('#prefs')
+	});
+	prefs.render();
+	window.ticker = new TickerView({
+		el: $('#ticker')
+	});
+	
 	$('body').click(function(){
 		$('#menu').remove();
 	});

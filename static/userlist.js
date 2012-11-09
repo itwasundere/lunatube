@@ -46,7 +46,7 @@ window.UserView = Backbone.View.extend({
 		var temp = _.template($('script#user').html());
 		var model = this.model, el = this.$el;
 		el.html(temp({
-			avatar: this.model.get('avatar_url'),
+			avatar: this.model.avatar(),
 			username: this.model.get('username')
 		}));
 		if (ismod(model)) {

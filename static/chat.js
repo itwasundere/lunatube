@@ -37,13 +37,18 @@ var ChatView = Backbone.View.extend({
 	},
 	render: function() {
 		var room = this.model, el = this.$el, self = this;
-		el.find('#mouth #avatar img').attr('src', window.user.get('avatar_url'));
+		el.find('#mouth #avatar img').attr('src', window.user.avatar());
 		var input = el.find('#mouth #input input');
 		input.keydown(function(event){
 			if (event.keyCode != 13) return;
 			if (input.val() == '/clear') {
 				self.last_message_view = null;
 				el.find('#messages').html('');
+			}
+			else if (input.val() == '/help' ||
+				input.val() == '/list' || 
+				input.val() == '/commands') {
+				room.trigger('status', '/clear to clear screen, > to greentext, ^ to spoilertext');
 			}
 			else room.trigger('message', input.val());
 			input.val('');
@@ -90,13 +95,23 @@ var MessageView = Backbone.View.extend({
 		if (islink(this.model.get('content')))
 			divline = $('<a target="_blank">').text(this.model.get('content')).attr('href',this.model.get('content'));
 		content.append(divline);
-
+		if (this.model.get('content')[0] == '>')
+			divline.css('color','green');
+		if (this.model.get('content')[0] == '^') {
+			divline.css('color','black');
+			divline.css('background-color','black');
+			divline.css('cursor','pointer');
+			divline.click(function(){
+				$(this).css('background-color','');
+			});
+		}
+		
 		var el = this.$el, self = this;
 		var avatar = '/static/avatars/sleep.png', username = 'Offline User';
 		if (window.room) {
 			var user = room.get('userlist').get(this.model.get('author'));
 			if (user) {
-				avatar = user.get('avatar_url');
+				avatar = user.avatar();
 				username = user.get('username');
 			}
 		}
@@ -106,6 +121,17 @@ var MessageView = Backbone.View.extend({
 				var divline = $('<div>').text(msg.get('content'));
 				if (islink(msg.get('content')))
 					divline = $('<a target="_blank">').text(msg.get('content')).attr('href',msg.get('content'));
+				if (msg.get('content')[0] == '>')
+					divline.css('color','green');
+				if (msg.get('content')[0] == '^') {
+					divline.css('color','black');
+					divline.css('background-color','black');
+					divline.css('cursor','pointer');
+					divline.click(function(){
+						$(this).css('background-color','');
+						$(this).css('cursor','');
+					});
+				}
 				content.append(divline);
 			});
 
@@ -121,15 +147,19 @@ var MessageView = Backbone.View.extend({
 					uploader: this.options.video.get('uploader'),
 					time_text: this.options.video.get('time_text')
 				}));
-				el.find('#play').click(function(){
-					window.room.trigger('play_new', self.options.video);
-				});
-				el.find('#queue').click(function(){
-					window.room.trigger('queue', self.options.video);
-				});
-				el.find('#playlist').click(function(){
-					window.room.trigger('playlist', self.options.video);
-				});
+				if (ismod(window.user)) {
+					el.find('#play').click(function(){
+						window.room.trigger('play_new', self.options.video);
+					});
+					el.find('#queue').click(function(){
+						window.room.trigger('queue', self.options.video);
+					});
+					el.find('#playlist').click(function(){
+						window.room.trigger('playlist', self.options.video);
+					});
+				} else {
+					el.find('#play, #queue, #playlist').remove();
+				}
 			}
 			else {
 				el.html(_.template($('script#image_msg').html(),{

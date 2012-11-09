@@ -248,7 +248,7 @@ models.MessageList = Backbone.Collection.extend({
 models.User = Backbone.Model.extend({
 	defaults: {
 		username: '', 
-		avatar_url: '/static/avatars/newfoal.png'
+		avatar_url: ''
 	},
 	initialize: function(){
 		this.classname = 'luser';
@@ -263,6 +263,11 @@ models.User = Backbone.Model.extend({
 		}
 		if (!this.get('username') && serverside)
 			this.set('username',names.gen_name());
+	},
+	avatar: function() {
+		if (this.get('avatar_url'))
+			return 'http://www.gravatar.com/avatar/'+this.get('avatar_url')+'?s=32';
+		else return '/static/avatars/newfoal.png';
 	}
 });
 

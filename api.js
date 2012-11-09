@@ -165,6 +165,14 @@ var SocketWrapper = Backbone.Model.extend({
 			var username = self.get('user').get('username');
 			room.trigger('status', username+' played a new video');
 		});
+		sock.timed_on('avatar', function(email){
+			if (email && typeof(email) == 'string' && email.length < 512) {
+				var hash = require('crypto').createHash('md5').update(email).digest('hex');
+				self.get('user').set('avatar_url',hash);
+				self.get('user').save();
+				self.get('sock').emit('login', self.get('user'));
+			}
+		});
 		sock.timed_on('logout', function(){
 			self.login(new models.User());
 		});
@@ -185,7 +193,7 @@ var SocketWrapper = Backbone.Model.extend({
 						user = new models.User({ blank: {
 							username: login.username,
 							password: hash,
-							avatar_url: '/static/avatars/newfoal.png'
+							avatar_url: ''
 						}});
 						user.save({},{success:function(){
 							self.login(user);
@@ -218,7 +226,7 @@ var SocketWrapper = Backbone.Model.extend({
 		var sock = this.get('sock');
 		
 		var userlist = room.get('userlist');
-		userlist.bind('add remove', function(){
+		userlist.bind('add remove change', function(){
 			if (self.disconnected) return;
 			sock.emit('userlist', userlist.toJSON()); });
 		userlist.bind('add', function(user){

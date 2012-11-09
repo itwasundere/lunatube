@@ -11,8 +11,11 @@ html
 		script(src='/socket.io/socket.io.js')
 		script(src='http://www.google.com/jsapi')
 		script(type='text/javascript')
-			if (window.google)
+			if (window.google) {
 				google.load("swfobject", "2.1");
+				google.load("feeds", "1");
+
+			}
 		
 		script(src='static/utils.js')
 		script(type='text/javascript')
@@ -27,9 +30,11 @@ html
 		script(src='static/room.js')
 		script(src='static/playlist.js')
 		script(src='static/player.js')
+		script(src='static/prefs.js')
 		script(src='static/userlist.js')
 		script(src='static/login.js')
 		script(src='static/cams.js')
+		script(src='static/ticker.js')
 
 	templates
 		script#avatar(type='template')
@@ -91,6 +96,7 @@ html
 		script#cam(type='template')
 			video#cam(autoplay)
 	body
+		#prefs(style="display:none")
 		#login
 			#lunatube
 				div lunatube.tv
@@ -105,6 +111,12 @@ html
 				#avatar
 					img
 				#username.button
+		#ticker
+			#ttitle Equestria Daily \\
+			#inner
+				a
+					#text
+			#hide hide
 		#main
 			#cams
 			#top
