@@ -48,7 +48,7 @@ var ChatView = Backbone.View.extend({
 			else if (input.val() == '/help' ||
 				input.val() == '/list' || 
 				input.val() == '/commands') {
-				room.trigger('status', '/clear to clear screen, > to greentext, ^ to spoilertext');
+				room.trigger('status', '/clear to clear screen, > to greentext, # to spoilertext');
 			}
 			else room.trigger('message', input.val());
 			input.val('');
@@ -97,7 +97,7 @@ var MessageView = Backbone.View.extend({
 		content.append(divline);
 		if (this.model.get('content')[0] == '>')
 			divline.css('color','green');
-		if (this.model.get('content')[0] == '^') {
+		if (this.model.get('content')[0] == '#') {
 			divline.css('color','black');
 			divline.css('background-color','black');
 			divline.css('cursor','pointer');
@@ -123,7 +123,7 @@ var MessageView = Backbone.View.extend({
 					divline = $('<a target="_blank">').text(msg.get('content')).attr('href',msg.get('content'));
 				if (msg.get('content')[0] == '>')
 					divline.css('color','green');
-				if (msg.get('content')[0] == '^') {
+				if (msg.get('content')[0] == '#') {
 					divline.css('color','black');
 					divline.css('background-color','black');
 					divline.css('cursor','pointer');
