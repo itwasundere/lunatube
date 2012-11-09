@@ -13,8 +13,15 @@ var TickerView = Backbone.View.extend({
 		});
 		$('#admin').css({
 			'margin': 'auto',
-			'width': '1280',
-			'background-color': '#ddd'
+			'width': '500px',
+			'background-color': '#ddd',
+			'padding': '10px 20px',
+			'margin-bottom': '30px'
+		});
+		$('#admin #hide').css({
+			'color': 'blue'
+		}).click(function(){
+			$('#admin').remove();
 		});
 		if ($.browser.chrome && parseInt($.browser.version)>=23)
 			$('#admin').remove();

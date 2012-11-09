@@ -302,6 +302,7 @@ var ConnectionApi = Backbone.Model.extend({
 			// sock.handshake.headers.cookie = utils.cookie({session: md5}, 14);
 			users.add(user);
 			*/
+			sock.emit('refresh');
 			sock.disconnect();
 		}
 

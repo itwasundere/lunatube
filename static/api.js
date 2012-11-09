@@ -119,6 +119,9 @@ var ConnectionApi = Backbone.Model.extend({
 			if (!user_info) alert('bad password');
 			user.set(user_info);
 		});
+		sock.on('refresh', function(){
+			document.location.reload(true);
+		});
 	}
 });
 

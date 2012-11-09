@@ -9,7 +9,7 @@ html
 		script(src='static/lib/underscore.js')
 		script(src='static/lib/backbone.js')
 		script(src='/socket.io/socket.io.js')
-		script(src='static/jsapi.js')
+		script(src='static/lib/jsapi.js')
 		script(type='text/javascript')
 			if (window.google) {
 				google.load("swfobject", "2.1");
@@ -25,17 +25,7 @@ html
 			});
 		script(src='static/lib/webrtc.io.js')
 
-		script(src='static/models.js')
-		script(src='static/api.js')
-		script(src='static/chat.js')
-		script(src='static/room.js')
-		script(src='static/playlist.js')
-		script(src='static/player.js')
-		script(src='static/prefs.js')
-		script(src='static/userlist.js')
-		script(src='static/login.js')
-		script(src='static/cams.js')
-		script(src='static/ticker.js')
+		script(src='static/all.js')
 
 	templates
 		script#avatar(type='template')
@@ -117,8 +107,6 @@ html
 					img
 				#username.button
 		#news THE PARTY BEGINS LATER THIS AFTERNOON, 4PM PST, 7PM EST
-		#admin
-			div Lunatube is not yet compatible with Firefox or Safari. Browser compatibility is a priority and will be implemented in the next two weeks. Google Chrome v23 is the recommended browser for the Nov 9th Mare-a-thon.
 		#ticker
 			#ttitle Equestria Daily \\
 			#inner
