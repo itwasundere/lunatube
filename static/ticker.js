@@ -18,6 +18,14 @@ var TickerView = Backbone.View.extend({
 		});
 		if ($.browser.chrome && parseInt($.browser.version)>=23)
 			$('#admin').remove();
+		$('#news').css({
+			'margin': 'auto',
+			'background-color': '#ddd',
+			'width': '500px',
+			'padding': '10px 20px',
+			'text-align': 'center',
+			'margin-bottom': '30px'
+		});
 	}, 
 	render: function(){
 		var el = this.$el;
