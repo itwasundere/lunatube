@@ -45,6 +45,7 @@ user account pages
 clone a playlist
 bookmarking
 save a queue as a playlist
+create an announcement ticker with Mod accessibility 
 
 +----+
 |chat|
