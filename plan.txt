@@ -1,13 +1,20 @@
-top priorities
++--------------+
+|top priorities|
++--------------+
+brower compatibility
+streaming in two days
+link the open source
+FULL SCEREN BUTTON
+quality 
+bpm button
 
-developer log and feature status
-bug reporting and feature suggestions
-invitation to equestria daily, dhn
+preference to hide status messages
+get a list of ips and the users that they are associated with
 
 preferences
 -show timestamps
 -show statuses
--snow nsfw
+-snow nsfw / spoilers
 -new message notifications
 -scroll lock
 -hide all images

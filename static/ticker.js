@@ -11,6 +11,13 @@ var TickerView = Backbone.View.extend({
 		this.$el.find('#hide').click(function(){
 			self.$el.remove();
 		});
+		$('#admin').css({
+			'margin': 'auto',
+			'width': '1280',
+			'background-color': '#ddd'
+		});
+		if ($.browser.chrome && parseInt($.browser.version)>=23)
+			$('#admin').remove();
 	}, 
 	render: function(){
 		var el = this.$el;

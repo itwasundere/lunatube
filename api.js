@@ -230,9 +230,11 @@ var SocketWrapper = Backbone.Model.extend({
 			if (self.disconnected) return;
 			sock.emit('userlist', userlist.toJSON()); });
 		userlist.bind('add', function(user){
-			sock.emit('status', user.get('username')+' has joined'); });
+			//sock.emit('status', user.get('username')+' has joined'); 
+		});
 		userlist.bind('remove', function(user){
-			sock.emit('status', user.get('username')+' has left'); });
+			//sock.emit('status', user.get('username')+' has left'); 
+		});
 		room.bind('status', function(msg){
 			sock.emit('status', msg);
 		});
