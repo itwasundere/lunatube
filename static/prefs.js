@@ -4,7 +4,7 @@ var PrefsView = Backbone.View.extend({
 		this.template=_.template('<div id="prefs">\
 			<div id="title">Preferences</div>\
 			<div id="avatar">\
-				<div><a href="http://gravatar.com">Gravatar</a> email</div>\
+				<div><a href="http://gravatar.com" target="_blank"><b>Gravatar</b></a> email</div>\
 				<img src="[[gravatar]]" />\
 				<input type="text"></input>\
 			</div>\
