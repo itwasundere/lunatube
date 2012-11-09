@@ -23,12 +23,16 @@ var PlayerView = Backbone.View.extend({
 					self.model.pause();
 				else self.model.play();
 			});
-			this.$el.find('#overlay').click(function(){
-				if (self.model.get('state') == 'playing')
-					self.model.pause();
-				else self.model.play();
-			});
 		}
+		this.$el.find('#overlay').click(function(){
+			$('#apiplayer')[0].webkitRequestFullscreen();
+		});
+		$(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',function(anything){
+			window.fullscreen = !window.fullscreen;
+			if (!window.fullscreen)
+				$('#apiplayer').css({width: '100%', height: '100%'});
+			else $('#apiplayer').css({width: window.screen.width, height: window.screen.height});
+		});
 
 		var scrobbler = this.$el.find('#scrobbler');
 		var playhead = this.$el.find('#playhead');
