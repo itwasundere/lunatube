@@ -1,6 +1,6 @@
 var ConnectionApi = Backbone.Model.extend({
 	defaults: {
-		refresh: 4000
+		refresh: 10000
 	},
 	initialize: function() {
 		var sock = io.connect(this.get('ip'));
