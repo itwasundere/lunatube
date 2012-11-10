@@ -24,6 +24,7 @@ window.UserListView = Backbone.View.extend({
 	render: function() {
 		var btn = this.$el.find('#header #user');
 		btn.html(this.model.length + ' Users');
+		if (this.$el.find('#users').css('display')=='none') return;
 		var el = this.$el.find('#users').empty();
 		var subv = this.subviews;
 		el.css({
