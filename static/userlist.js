@@ -27,7 +27,7 @@ window.UserListView = Backbone.View.extend({
 		var el = this.$el.find('#users').empty();
 		var subv = this.subviews;
 		el.css({
-			'max-height': '300px',
+			'max-height': '300px'
 		});
 		this.model.each(function(user){
 			var uv = subv[user.id];
