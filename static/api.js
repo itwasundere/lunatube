@@ -115,6 +115,11 @@ var ConnectionApi = Backbone.Model.extend({
 		sock.on('queue', function(q){
 			room.get('queue').reset(q);
 		});
+		sock.on('jtv', function(chan){
+			if (chan == 'none')
+				window.plv.nojtv();
+			else window.plv.jtv(chan);
+		});
 		sock.on('login', function(user_info){
 			if (!user_info) alert('bad password');
 			user.set(user_info);

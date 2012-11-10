@@ -18,6 +18,7 @@ $(document).ready(function(){
 		}
 	}
 	window.room.id = globals.room.id;
+	window.room.set({jtv: globals.room.jtv});
 	window.user = new models.User(globals.user);
 	window.api = new ConnectionApi({
 		ip: 'ws://'+window.location.host,

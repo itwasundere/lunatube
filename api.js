@@ -124,6 +124,11 @@ var SocketWrapper = Backbone.Model.extend({
 				room.get('modlist').add(modlink);
 			}
 		});
+		sock.on('jtv', function(cmd){
+			if (!self.am_owner()) return;
+			room.set('jtv',cmd);
+			room.trigger('jtv', cmd);
+		});
 		sock.on('mute', function(uid){
 			if (!self.am_mod()) return;
 			if (!uid) return;
@@ -237,6 +242,9 @@ var SocketWrapper = Backbone.Model.extend({
 		});
 		room.bind('status', function(msg){
 			sock.emit('status', msg);
+		});
+		room.bind('jtv', function(msg){
+			sock.emit('jtv',msg);
 		});
 
 		room.get('messages').bind('add', function(message){

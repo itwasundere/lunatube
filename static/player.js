@@ -1,5 +1,7 @@
 var chromeless = 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=player1';
 
+var jtv = '<object type="application/x-shockwave-flash" height="480" width="853" id="jtv_player_flash" data="http://www.justin.tv/widgets/jtv_player.swf?channel=[[chan]]" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowscriptaccess" value="always" /> <param name="movie" value="http://www.justin.tv/widgets/jtv_player.swf" /><param name="flashvars" value="channel=[[chan]]&auto_play=false&start_volume=50&watermark_position=top_right" /></object>';
+
 // todo -- make slider move on state change, not server change
 
 var PlayerView = Backbone.View.extend({
@@ -116,6 +118,15 @@ var PlayerView = Backbone.View.extend({
 	},
 	render: function() {
 		var el = this.$el, self = this;
+
+		if (room.get('jtv') && room.get('jtv')!='none' && !this.tv) {
+			setTimeout(function(){
+				self.jtv(room.get('jtv'));
+				return;
+			}, 2000);
+			return;
+		}
+
 		if (!this.player && window.swfobject) {
 			swfobject.embedSWF(
 				chromeless,
@@ -184,6 +195,21 @@ var PlayerView = Backbone.View.extend({
 		if (this.model.get('current') && this.model.get('current').get('title'))
 			$('#banner').html(this.model.get('current').get('title'));
 
+
+	},
+	jtv: function(chan) {
+		var html = _.template(jtv, {chan: chan});
+		this.tv = true;
+		$('#apiplayer').css('display','none');
+		$('#jtv_player_flash').remove();
+		$('#player').append(html);
+		$('#invisible').css('display','none');
+	},
+	nojtv: function() {
+		this.tv = false;
+		$('#jtv_player_flash').remove();
+		$('#invisible').css('display','block');	
+		$('#apiplayer').css('display','block');
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');
