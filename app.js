@@ -66,6 +66,9 @@ app.get('/', function(req, res){
 	} else if (ips[ip] == 'San Ramon, CA' || ips[ip] == 'San Jose, CA' || ips[ip] == 'Sunnyvale, CA') return;
 	*/
 	var room = roomlist.at(0);
+	if (room.get('userlist').length > 0) {
+		res.render('sorry.jade',{});
+	}
 	var user = new models.User();
 	var userlist = api.get('userlist');
 	var sessions = api.get('sessions');
