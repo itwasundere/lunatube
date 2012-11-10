@@ -9,7 +9,7 @@ var Logger = require('./logger.js');
 var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
-var io = require('socket.io').listen(http);
+// var io = require('socket.io').listen(http);
 
 http.listen(80);
 
@@ -30,24 +30,28 @@ roomlist.fetch({success: function(){
 
 // todo -- any more than 20 requests per second is prob ddos
 
-var api = new api.ConnectionApi({
-	io: io,
-	sessions: new models.SessionStore(),
-	userlist: new models.UserList(),
-	roomlist: roomlist
-});
+// var api = new api.ConnectionApi({
+// 	io: io,
+// 	sessions: new models.SessionStore(),
+// 	userlist: new models.UserList(),
+// 	roomlist: roomlist
+// });
 
 var ips = {}
 
 app.get('/', function(req, res){
-	var ip = req.connection.remoteAddress;
-	if (!ips[ip])
-		ips[ip] = {};
-	if(ips[ip].timing) return;
-	else {
-		ips[ip].timing = true;
-		setInterval(function(){ ips[ip].timing = false; }, 1000);
-	}
+	// var ip = req.connection.remoteAddress;
+	// if (!ips[ip])
+	// 	ips[ip] = {};
+	// if(ips[ip].timing) return;
+	// else {
+	// 	ips[ip].timing = true;
+	// 	setInterval(function(){ ips[ip].timing = false; }, 1000);
+	// }
+
+	res.send('please visit livestream.com/nirvashderpy');
+	res.end();
+	return;
 
 	/*
 	if (!ips[ip]) {
@@ -65,28 +69,28 @@ app.get('/', function(req, res){
 		}, function(){});
 	} else if (ips[ip] == 'San Ramon, CA' || ips[ip] == 'San Jose, CA' || ips[ip] == 'Sunnyvale, CA') return;
 	*/
-	var room = roomlist.at(0);
-	if (room.get('userlist').length > 150 && ip!='67.164.89.50') {
-		res.render('sorry.jade',{});
-		return;
-	}
-	var user = new models.User();
-	var userlist = api.get('userlist');
-	var sessions = api.get('sessions');
-	var session = sessions.get(req.cookies.session);
-	if (session && userlist.get(session.user_id))
-		user = userlist.get(session.user_id);
-	else {
-		userlist.add(user);
-		var md5 = utils.hash();
-		res.cookie('session', md5);
-		sessions.set(md5,{user_id: user.id});
-	}
-	res.render('room.jade', {
-		room: JSON.stringify(room.json()),
-		user: JSON.stringify(user.toJSON()),
-		rules: room.get('rules')
-	});
+	// var room = roomlist.at(0);
+	// if (room.get('userlist').length > 150 && ip!='67.164.89.50') {
+	// 	res.render('sorry.jade',{});
+	// 	return;
+	// }
+	// var user = new models.User();
+	// var userlist = api.get('userlist');
+	// var sessions = api.get('sessions');
+	// var session = sessions.get(req.cookies.session);
+	// if (session && userlist.get(session.user_id))
+	// 	user = userlist.get(session.user_id);
+	// else {
+	// 	userlist.add(user);
+	// 	var md5 = utils.hash();
+	// 	res.cookie('session', md5);
+	// 	sessions.set(md5,{user_id: user.id});
+	// }
+	// res.render('room.jade', {
+	// 	room: JSON.stringify(room.json()),
+	// 	user: JSON.stringify(user.toJSON()),
+	// 	rules: room.get('rules')
+	// });
 });
 
 
