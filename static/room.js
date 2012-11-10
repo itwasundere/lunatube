@@ -24,7 +24,7 @@ $(document).ready(function(){
 		ip: 'ws://'+window.location.host,
 		room: window.room,
 		user: window.user,
-		refresh: 1000
+		refresh: 4000
 	});
 	window.cv = new CatalogView({
 		el: $('#catalog'),

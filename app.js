@@ -46,7 +46,6 @@ app.get('/', function(req, res){
 		ips[ip] = {};
 	if(ips[ip].timing) return;
 	else {
-		console.log(ips);
 		ips[ip].timing = true;
 		setInterval(function(){ ips[ip].timing = false; }, 1000);
 	}
