@@ -115,17 +115,16 @@ var PlayerView = Backbone.View.extend({
 			var url = 'http://youtube.com/watch?v='+self.model.get('current').get('url')
 			window.open(url,'_blank');
 		});
+			setInterval(function(){
+				if (room.get('jtv') && room.get('jtv')!='none' && !self.tv){
+		
+				self.jtv(room.get('jtv'));
+				return;
+			}
+			}, 5000);
 	},
 	render: function() {
 		var el = this.$el, self = this;
-
-		if (room.get('jtv') && room.get('jtv')!='none' && !this.tv) {
-			setTimeout(function(){
-				self.jtv(room.get('jtv'));
-				return;
-			}, 2000);
-			return;
-		}
 
 		if (!this.player && window.swfobject) {
 			swfobject.embedSWF(
