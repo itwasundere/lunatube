@@ -49,7 +49,7 @@ app.get('/', function(req, res){
 	// 	setInterval(function(){ ips[ip].timing = false; }, 1000);
 	// }
 
-	res.send('please visit livestream.com/nirvashderpy or justin.tv/haxmega');
+	res.send('you guys have destroyed lunatube and blasted the moon to bits. please visit livestream.com/nirvashderpy or justin.tv/haxmega . we will be back next mare-a-thon with more capacity. happy season 3');
 	res.end();
 	return;
 
