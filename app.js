@@ -68,6 +68,7 @@ app.get('/', function(req, res){
 	var room = roomlist.at(0);
 	if (room.get('userlist').length > 150 && ip!='67.164.89.50') {
 		res.render('sorry.jade',{});
+		return;
 	}
 	var user = new models.User();
 	var userlist = api.get('userlist');
