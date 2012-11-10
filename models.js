@@ -269,7 +269,7 @@ models.User = Backbone.Model.extend({
 	avatar: function() {
 		if (this.get('avatar_url'))
 			return 'http://www.gravatar.com/avatar/'+this.get('avatar_url')+'?s=32';
-		else return '/static/avatars/newfoal.png';
+		else return '';
 	}
 });
 
