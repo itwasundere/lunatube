@@ -49,7 +49,7 @@ app.get('/', function(req, res){
 	// 	setInterval(function(){ ips[ip].timing = false; }, 1000);
 	// }
 
-	res.send('please visit livestream.com/nirvashderpy');
+	res.send('please visit livestream.com/nirvashderpy or justin.tv/haxmega');
 	res.end();
 	return;
 
