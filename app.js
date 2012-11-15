@@ -16,8 +16,6 @@ var io = require('socket.io').listen(http);
 io.set('log level', 1);
 
 var port = 8080;
-if (app.settings.env == 'production');
-	port = 80;
 http.listen(port);
 console.log("server listening on port %d in %s mode", http.address().port, app.settings.env);
 
