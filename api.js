@@ -1,6 +1,5 @@
 var models = require('./models.js');
 var utils = require('./sutils');
-var logger = require('./logger.js');
 var Backbone = require('backbone');
 var cookiep = require('cookie');
 var bcrypt = require('bcrypt');
@@ -26,6 +25,7 @@ var SocketWrapper = Backbone.Model.extend({
 		this.bind_sock_events();
 		this.bind_room_events();
 		this.send_messages();
+		this.get('room').join(this.get('user'));
 	},
 	send_messages: function(){
 		var msgs = this.get('room').get('messages').last(20);
@@ -276,9 +276,7 @@ var SocketWrapper = Backbone.Model.extend({
 	}
 });
 
-var SocketList = Backbone.Collection.extend({
-	model: SocketWrapper
-});
+var SocketList = Backbone.Collection.extend({ model: SocketWrapper });
 
 var ConnectionApi = Backbone.Model.extend({
 	defaults: { connections: new SocketList() },
@@ -289,57 +287,29 @@ var ConnectionApi = Backbone.Model.extend({
 		this.get('connections').bind('login', function(sid, old_user, new_user){
 			self.get('userlist').remove(old_user);
 			self.get('userlist').add(new_user);
-			self.get('sessions').set(sid,{user_id: new_user.id})
+			self.get('sessions').set(sid, {user_id: new_user.id})
 		});
 	},
 	connect: function(sock) {
-		console.log('connection from '+sock.handshake.address.address);
-
 		var self = this;
-		var sessions = this.get('sessions');
-		var user = new models.User();
-		var users = this.get('userlist');
-		var cookie = sock.handshake.headers.cookie;
-		var session = {user_id: user.id}
-		var sid = utils.hash();
-
-		var new_user = function() {
-			/*
-			var md5 = utils.hash();
-			sessions.set(md5, session);
-			// sock.handshake.headers.cookie = utils.cookie({session: md5}, 14);
-			users.add(user);
-			*/
+		console.log('connection from '+sock.handshake.address.address);
+		var cookie = sock.handshake.headers.cookie || '';
+		var session_id = cookiep.parse(cookie).session;
+		var session = this.get('sessions').get(session_id);
+		if (!session) { 
 			sock.emit('refresh');
 			sock.disconnect();
+			return; 
 		}
-
-		if (!cookie) new_user();
-		else {
-			var csid = cookiep.parse(cookie).session;
-			if (!csid) sock.disconnect();
-			else {
-				var csession = sessions.get(csid);
-				if (!csession) new_user();
-				else {
-					sid = csid;
-					session = csession;
-					user = users.get(session.user_id);
-				}
-			} 
-		}
-
+		
 		sock.on('join', function(room_id){
-			var room = self.get('roomlist').get(room_id);
-			if (!room) return;
 			var wrap = new SocketWrapper({
 				sock: sock,
-				user: user,
-				room: room,
-				sid: sid
+				room: self.get('roomlist').get(room_id),
+				user: self.get('userlist').get(session.user_id),
+				sid: session_id
 			});
 			self.get('connections').add(wrap);
-			room.join(user);
 		});
 	},
 });

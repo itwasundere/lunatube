@@ -1,6 +1,8 @@
 window.UserListView = Backbone.View.extend({
 	initialize: function() {
+		var self = this;
 		this.model.bind('add remove reset', this.render, this);
+		window.user.bind('change reset', function(){ self.render(true); });
 		room.get('modlist').bind('add remove reset', this.render, this);
 		room.get('mutelist').bind('add remove reset', this.render, this);
 		room.get('hidelist').bind('add remove reset', this.render, this);
@@ -21,10 +23,12 @@ window.UserListView = Backbone.View.extend({
 			}
 		});
 	},
-	render: function() {
+	render: function(force) {
 		var btn = this.$el.find('#header #user');
 		btn.html(this.model.length + ' Users');
-		if (this.$el.find('#users').css('display')=='none') return;
+		if (this.$el.find('#users').css('display')=='none') 
+			if (this.$el.find('#users').html()) 
+				if (!force) return;
 		var el = this.$el.find('#users').empty();
 		var subv = this.subviews;
 		el.css({

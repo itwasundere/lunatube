@@ -1,5 +1,16 @@
 var crypto = require('crypto');
 
+var denied_ips = {};
+
+function deny_ip(ip) {
+	if (denied_ips[ip])
+		return true;
+	denied_ips[ip] = true;
+	setInterval(function(){ 
+		denied_ips[ip] = false; }, 1000);
+	return false;
+}
+
 function hash() {
 	var md5 = crypto.createHash('md5');
 	md5.update(''+Math.random());
@@ -45,5 +56,6 @@ module.exports = {
 	cookie: cookie,
 	deep_purge: deep_purge,
 	purge: purge,
-	now: now
+	now: now,
+	deny_ip: deny_ip
 };

@@ -4,27 +4,22 @@ html
 		title Lunatube
 		script(src='static/colors.js')
 		link(rel='stylesheet/less', type='text/css', href='static/room.less')
-		script(src='static/lib/less.js')
-		script(src='static/lib/jquery.js')
-		script(src='static/lib/underscore.js')
-		script(src='static/lib/backbone.js')
-		script(src='/socket.io/socket.io.js')
-		script(src='static/lib/jsapi.js')
-		script(type='text/javascript')
-			if (window.google) {
-				google.load("swfobject", "2.1");
-				google.load("feeds", "1");
-
-			}
 		
+		- if (production)
+			include head-prod
+		- else
+			include head
+		
+		script(src='static/lib/webrtc.io.js')
 		script(src='static/utils.js')
+		
 		script(type='text/javascript')
 			add_globals({
-				room: !{room},
-				user: !{user}
+				room: !{JSON.stringify(room)},
+				user: !{JSON.stringify(user)}
 			});
-		script(src='static/lib/webrtc.io.js')
 
+		
 		script(src='static/models.js')
 		script(src='static/api.js')
 		script(src='static/chat.js')
