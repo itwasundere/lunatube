@@ -4,6 +4,7 @@ var Backbone = require('backbone');
 var cookiep = require('cookie');
 var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
+var $ = require('jquery');
 
 var SocketWrapper = Backbone.Model.extend({
 	initialize: function() {
@@ -90,6 +91,23 @@ var SocketWrapper = Backbone.Model.extend({
 			var username = self.get('user').get('username');
 			room.trigger('status', username+' added a video to playlist');
 		});
+		sock.on('import', function(plid){
+			if (!self.am_mod()) return;
+			if (!plid || typeof(plid) != 'string') return;
+			var plapi = 'https://gdata.youtube.com/feeds/api/playlists/';
+			var plapi2 = '?v=2&alt=json&key=AI39si5Us3iYwmRdK0wa2Qf2P9eV-Z8tbjogUWw1B4JQUs191PgYNJChEKEooOq6ykQzhywLEBA9WxuKphpWUoCRA7S7jeLi5w';
+			$.get(plapi+plid+plapi2, function(response){
+				if (!response || !response.feed || !response.feed.entry || !response.feed.entry.length) return;
+				var videos = [];
+				$.each(response.feed.entry, function(idx, entry){
+					playlist.append({ 
+						url: utils.get_yt_vidid(entry.link[0].href),
+						time: parseInt(entry['media$group']['yt$duration']['seconds'])
+					}, {silent: true});
+				});
+				playlist.trigger('reset');
+			});
+		});
 		sock.on('remove_video', function(video){
 			if (!self.am_mod()) return;
 			if (!video) return;
@@ -125,9 +143,18 @@ var SocketWrapper = Backbone.Model.extend({
 			}
 		});
 		sock.on('jtv', function(cmd){
-			if (!self.am_owner()) return;
+			// if (!self.am_mod()) return;
+			room.get('player').pause();
 			room.set('jtv',cmd);
+			room.set('livestream','');
 			room.trigger('jtv', cmd);
+		});
+		sock.on('livestream', function(cmd){
+			// if (!self.am_mod()) return;
+			room.get('player').pause();
+			room.set('livestream',cmd);
+			room.set('jtv','');
+			room.trigger('livestream', cmd);
 		});
 		sock.on('mute', function(uid){
 			if (!self.am_mod()) return;
@@ -245,6 +272,12 @@ var SocketWrapper = Backbone.Model.extend({
 		});
 		room.bind('jtv', function(msg){
 			sock.emit('jtv',msg);
+		});
+		room.bind('livestream', function(msg){
+			sock.emit('livestream',msg);
+		});
+		room.bind('import', function(plid){
+			sock.emit('import',plid);
 		});
 
 		room.get('messages').bind('add', function(message){

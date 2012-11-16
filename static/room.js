@@ -18,10 +18,13 @@ $(document).ready(function(){
 		}
 	}
 	window.room.id = globals.room.id;
-	window.room.set({jtv: globals.room.jtv});
+	window.room.set({
+		jtv: globals.room.jtv,
+		livestream: globals.room.livestream
+	});
 	window.user = new models.User(globals.user);
 	window.api = new ConnectionApi({
-		ip: 'ws://'+window.location.host,
+		ip: '//'+window.location.host,
 		room: window.room,
 		user: window.user,
 		refresh: 5000

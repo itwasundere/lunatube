@@ -2,6 +2,23 @@ var crypto = require('crypto');
 
 var denied_ips = {};
 
+function get_after(str, substr, len) {
+	var loc = str.indexOf(substr);
+	if (loc == -1) return;
+	return str.substring(loc + substr.length, loc + substr.length + len);
+}
+function contains(str, substr) {
+	return str.indexOf(substr) != -1;
+}
+function is_yt_link(str) {
+	return contains(str, 'youtube.com') && contains(str, 'v=');
+}
+
+function get_yt_vidid(str) {
+	if (!is_yt_link(str)) return '';
+	return get_after(str, 'v=', 11);
+}
+
 function deny_ip(ip) {
 	if (denied_ips[ip])
 		return true;
@@ -57,5 +74,6 @@ module.exports = {
 	deep_purge: deep_purge,
 	purge: purge,
 	now: now,
-	deny_ip: deny_ip
+	deny_ip: deny_ip,
+	get_yt_vidid: get_yt_vidid
 };

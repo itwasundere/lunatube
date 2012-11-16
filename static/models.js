@@ -105,7 +105,7 @@ models.VideoList = Backbone.Collection.extend({
 		if (nextid) return this.get(nextid) || this.get_first();
 		else return this.at(0) || this.get_first();
 	},
-	append: function(video_info) {
+	append: function(video_info, options) {
 		var self = this;
 		video_info = {
 			url: video_info.url,
@@ -116,7 +116,7 @@ models.VideoList = Backbone.Collection.extend({
 				video_info.queue_id = this.id;
 				var video = new models.Video(video_info);
 				video.save({},{success:function(){
-					self.add(video);
+					self.add(video, options);
 				}});
 				return;
 			}
@@ -127,7 +127,7 @@ models.VideoList = Backbone.Collection.extend({
 			var video = new models.Video(video_info);
 			video.save({},{success:function(){
 				prev.save({next:video.id},{success:function(){
-					self.add(video);
+					self.add(video, options);
 				}});
 			}});
 		}
@@ -135,7 +135,7 @@ models.VideoList = Backbone.Collection.extend({
 			video_info.hash = true;
 			var video = new models.Video(video_info);
 			if (video.verify())
-				this.add(video);
+				this.add(video, options);
 		}
 	},
 	insert: function(video_info, after) {
@@ -192,6 +192,7 @@ models.Player = Backbone.Model.extend({
 		var self = this;
 		if (this.get('state') == 'playing')
 			time += 1;
+		this.trigger('tick');
 		if (time <= this.get('current').get('time')) {
 			this.set({'time': time}, {silent: true});
 			return;

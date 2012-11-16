@@ -15,6 +15,7 @@
 		"socket.io":"0.9.11",
 		"sqlite3":"",
 		"ws":"0.4.22",
-		"less":""
+		"less":"",
+		"jquery":""
 	}
 }

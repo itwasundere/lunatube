@@ -55,6 +55,10 @@ var ConnectionApi = Backbone.Model.extend({
 			if (!mod) return;
 			sock.emit('clear',list);
 		});
+		room.on('import', function(plid){
+			if (!mod) return;
+			sock.emit('import',plid);
+		});
 		user.on('login', function(){
 			sock.emit('login', user.toJSON());
 		});
@@ -116,9 +120,16 @@ var ConnectionApi = Backbone.Model.extend({
 			room.get('queue').reset(q);
 		});
 		sock.on('jtv', function(chan){
-			if (chan == 'none')
+			room.set('jtv', chan);
+			if (chan == '')
 				window.plv.nojtv();
 			else window.plv.jtv(chan);
+		});
+		sock.on('livestream', function(chan){
+			room.set('livestream', chan);
+			if (chan == '')
+				window.plv.nojtv();
+			else window.plv.livestream(chan);
 		});
 		sock.on('login', function(user_info){
 			if (!user_info) alert('bad password');

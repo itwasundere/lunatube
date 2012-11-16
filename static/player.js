@@ -1,6 +1,7 @@
 var chromeless = 'http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=player1';
 
-var jtv = '<object type="application/x-shockwave-flash" height="480" width="853" id="jtv_player_flash" data="http://www.justin.tv/widgets/jtv_player.swf?channel=[[chan]]" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowscriptaccess" value="always" /> <param name="movie" value="http://www.justin.tv/widgets/jtv_player.swf" /><param name="flashvars" value="channel=[[chan]]&auto_play=false&start_volume=50&watermark_position=top_right" /></object>';
+var jtv = '<object type="application/x-shockwave-flash" height="480" width="853" id="jtv_player_flash" data="http://www.justin.tv/widgets/jtv_player.swf?channel=[[chan]]" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="allowscriptaccess" value="always" /> <param name="movie" value="http://www.justin.tv/widgets/jtv_player.swf" /><param name="flashvars" value="channel=[[chan]]&auto_play=false&start_volume=50&watermark_position=top_right&auto_play=true" /></object>';
+var livestream = '<iframe id="ls_player_flash" width="853" height="480" src="http://cdn.livestream.com/embed/[[chan]]?layout=4&amp;height=480&amp;width=853&amp;autoplay=true" style="border:0;outline:0" frameborder="0" scrolling="no"></iframe>';
 
 // todo -- make slider move on state change, not server change
 
@@ -14,6 +15,7 @@ var PlayerView = Backbone.View.extend({
 		window.onYouTubePlayerReady = function() {
 			self.ready() }
 		this.model.bind('change', this.render, this);
+		this.model.bind('tick', this.render, this);
 
 		room.get('playlist').bind('reset add remove', this.render, this);
 		room.get('queue').bind('reset add remove', this.render, this);
@@ -115,13 +117,6 @@ var PlayerView = Backbone.View.extend({
 			var url = 'http://youtube.com/watch?v='+self.model.get('current').get('url')
 			window.open(url,'_blank');
 		});
-			setInterval(function(){
-				if (room.get('jtv') && room.get('jtv')!='none' && !self.tv){
-		
-				self.jtv(room.get('jtv'));
-				return;
-			}
-			}, 5000);
 	},
 	render: function() {
 		var el = this.$el, self = this;
@@ -194,21 +189,38 @@ var PlayerView = Backbone.View.extend({
 		if (this.model.get('current') && this.model.get('current').get('title'))
 			$('#banner').html(this.model.get('current').get('title'));
 
+		var livestream = room.get('livestream');
+		var jtv = room.get('jtv');
+		if (livestream && !$('#ls_player_flash').length)
+			this.livestream(livestream);
+		else if (jtv && !$('#jtv_player_flash').length)
+			this.jtv(jtv);
 
+	},
+	livestream: function(chan) {
+		var html = _.template(livestream, {chan: chan});
+		this.tv = true;
+		$('#apiplayer').css('visibility','hidden');
+		$('#ls_player_flash').remove();
+		$('#jtv_player_flash').remove();
+		$('#player').prepend(html);
+		$('#invisible').css('display','none');
 	},
 	jtv: function(chan) {
 		var html = _.template(jtv, {chan: chan});
 		this.tv = true;
-		$('#apiplayer').css('display','none');
+		$('#apiplayer').css('visibility','hidden');
+		$('#ls_player_flash').remove();
 		$('#jtv_player_flash').remove();
-		$('#player').append(html);
+		$('#player').prepend(html);
 		$('#invisible').css('display','none');
 	},
 	nojtv: function() {
 		this.tv = false;
+		$('#ls_player_flash').remove();
 		$('#jtv_player_flash').remove();
 		$('#invisible').css('display','block');	
-		$('#apiplayer').css('display','block');
+		$('#apiplayer').css('visibility','');
 	},
 	ready: function() {
 		this.player = document.getElementById('apiplayer');
