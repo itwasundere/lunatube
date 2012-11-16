@@ -113,6 +113,7 @@ var db = {
 		var statement = sql.insert(model.classname, attrs);
 		var self = this;
 		this.store.query(statement, function(err, result){
+			if (!result) return;
 			model.set('id', result.insertId);
 			options.success(model.toJSON());
 		});
