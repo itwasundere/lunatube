@@ -16,6 +16,7 @@
 		"sqlite3":"",
 		"ws":"0.4.22",
 		"less":"",
-		"jquery":""
+		"jquery":"",
+		"mysql":""
 	}
 }

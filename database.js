@@ -1,10 +1,10 @@
 var Underscore = require('underscore');
-var sqlite3 = require('sqlite3').verbose();
+var mysql = require('mysql');
 
 var sql = {
 	table: function(name, cols) {
 		var pre = 'create table if not exists '+name;
-		var strs = ['id integer primary key autoincrement'];
+		var strs = ['id int primary key auto_increment'];
 		for (colname in cols)
 			strs.push(colname+' '+cols[colname]);
 		return 'create table if not exists '+name+' ('+strs.join(', ')+')';
@@ -58,66 +58,85 @@ var param_statement = function(params) {
 	for (key in params) {
 		var val = params[key];
 		if (typeof(val) == 'number')
-			statement.push(key+'=='+val);
+			statement.push(key+'='+val);
 		else if (typeof(val) == 'string')
-			statement.push(key+'=="'+val+'"');
+			statement.push(key+'="'+val+'"');
 	}
 	return statement.join(' and ');
 }
 
 var db = {
 	initialize: function() {
-		var sqlite = new sqlite3.Database('database.sqlite');
-		this.sqlite = sqlite;
+		var options = {
+			host: 'localhost',
+			user: 'root',
+			password: 'secret',
+			database: 'lunatube'
+		};
+		if (this.credentials) {
+			options = this.credentials;
+		}
+		var store = mysql.createConnection(options);
+		this.store = store;
 		this.init_tables();
 		return this;
 	},
 	init_tables: function() {
-		var sqlite = this.sqlite;
-		sqlite.run(sql.table('room',{
-			owner_id: 'integer',
-			queue_id: 'integer',
+		var store = this.store;
+		store.query(sql.table('room',{
+			owner_id: 'int',
+			queue_id: 'int',
 			rules: 'text'
 		}));
-		sqlite.run(sql.table('luser',{
+		store.query(sql.table('luser',{
 			username: 'text',
 			password: 'text',
 			avatar_url: 'text'
 		}));
-		sqlite.run(sql.table('queue',{
-			owner_id: 'integer'
+		store.query(sql.table('queue',{
+			owner_id: 'int'
 		}));
-		sqlite.run(sql.table('video',{
-			queue_id: 'integer',
-			prev: 'integer',
-			next: 'integer',
+		store.query(sql.table('video',{
+			queue_id: 'int',
+			prev: 'int',
+			next: 'int',
 			url: 'text',
-			time: 'integer'
+			time: 'int'
 		}));
-		sqlite.run(sql.table('mod',{
-			user_id: 'integer',
-			room_id: 'integer'
+		store.query(sql.table('moderator',{
+			user_id: 'int',
+			room_id: 'int'
 		}));
 	},
 	create: function(model, options){
 		var attrs = sql.trim(model);
-		var statement = this.sqlite.prepare(sql.insert(model.classname, attrs));
+		var statement = sql.insert(model.classname, attrs);
 		var self = this;
-		var insert = statement.run(function(){
-			model.set('id', this.lastID);
-			options.success(model.toJSON()); });
+		this.store.query(statement, function(err, result){
+			model.set('id', result.insertId);
+			options.success(model.toJSON());
+		});
 	},
 	read: function(model, options){
 		if (!model.id) {
 			var statement = sql.select(model.classname, param_statement(model.attributes));
-			this.sqlite.get(statement, function(err, row){
-				if (row && !options.password) row.password = '';
-				options.success(row);
+			console.log(statement);
+			this.store.query(statement, function(err, rows){
+				console.log(rows);
+				if (!rows || !rows[0]) {
+					options.success();
+					return;
+				}
+				for (rid in rows)
+					if (rows[rid] && !options.password) rows[rid].password = '';
+				options.success(rows[0]);
 			});
 			return;
 		}
 		var statement = sql.get(model.classname, model.id);
-		this.sqlite.get(statement, function(err, row){
+		this.store.query(statement, function(err, rows){
+			if (!rows || !rows[0]) return;
+			var row = rows[0];
 			if (row && row.password)
 				delete row.password;
 			options.success(row);
@@ -125,21 +144,22 @@ var db = {
 	},
 	read_all: function(model, options){
 		var statement = sql.select(model.classname, model.query);
-		var arr = [];
-		this.sqlite.each(statement, function(err, row){
-			arr.push(row);
-		}, function(){
-			options.success(arr);
+		this.store.query(statement, function(err, rows){
+			if (rows)
+				options.success(rows);
 		});
 	},
 	update: function(model, options){
 		var attrs = sql.trim(model);
 		var statement = sql.update(model.classname, model.id, attrs);
-		this.sqlite.run(statement, function(){
+		console.log(statement);
+		this.store.query(statement, function(){
 			options.success(model.toJSON()) });
 	},
 	ddelete: function(model, options){
-		this.sqlite.run(sql.ddelete(model.classname, model.id),
+		var statement = sql.ddelete(model.classname, model.id);
+		console.log(statement);
+		this.store.query(statement,
 			function(){ options.success(model); });
 	}
 }

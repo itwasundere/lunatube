@@ -2,7 +2,6 @@ var fs = require("fs");
 var less = require('less');
 var _u = require('underscore');
 
-var db = require('./database.js');
 var api = require('./api.js');
 var utils = require('./sutils.js');
 var names = require('./names.js');
@@ -13,7 +12,7 @@ var express = require('express');
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io').listen(http);
-io.set('log level', 1);
+io.set('log level', 0);
 io.set('transports', ['xhr-polling']);
 
 var port = 8080;

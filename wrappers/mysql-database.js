@@ -58,9 +58,9 @@ var param_statement = function(params) {
 	for (key in params) {
 		var val = params[key];
 		if (typeof(val) == 'number')
-			statement.push(key+'=='+val);
+			statement.push(key+'='+val);
 		else if (typeof(val) == 'string')
-			statement.push(key+'=="'+val+'"');
+			statement.push(key+'="'+val+'"');
 	}
 	return statement.join(' and ');
 }
@@ -94,7 +94,7 @@ var db = {
 			queue_id: 'int',
 			rules: 'text'
 		}));
-		store.query(sql.table('user',{
+		store.query(sql.table('luser',{
 			username: 'text',
 			password: 'text',
 			avatar_url: 'text'
@@ -118,7 +118,6 @@ var db = {
 		var attrs = sql.trim(model);
 		var statement = sql.insert(model.classname, attrs);
 		var self = this;
-		console.log(statement);
 		this.store.query(statement, function(err, result){
 			model.set('id', result.insertId);
 			options.success(model.toJSON());
@@ -127,8 +126,16 @@ var db = {
 	read: function(model, options){
 		if (!model.id) {
 			var statement = sql.select(model.classname, param_statement(model.attributes));
+			console.log(statement);
 			this.store.query(statement, function(err, rows){
-				options.success(rows);
+				console.log(rows);
+				if (!rows || !rows[0]) {
+					options.success();
+					return;
+				}
+				for (rid in rows)
+					if (rows[rid] && !options.password) rows[rid].password = '';
+				options.success(rows[0]);
 			});
 			return;
 		}

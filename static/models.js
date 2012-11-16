@@ -308,7 +308,7 @@ models.Room = Backbone.Model.extend({
 		
 		// modlist
 		var modlist = new Backbone.Collection();
-		modlist.classname = 'mod';
+		modlist.classname = 'moderator';
 		modlist.query = 'room_id='+this.id;
 		modlist.fetch();
 		modlist.bind('reset', function(){
