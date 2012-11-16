@@ -41,9 +41,35 @@ var CatalogView = Backbone.View.extend({
 				}
 			});
 		});
-		el.find('#clear').click(function(){
-			window.room.trigger('clear',self.showing);
+
+		el.find('#jtv').hover(function(){
+			var drop = $('<div id="dropdown">\
+					<input type="text" id="input" placeholder="Justin.tv username"/>\
+				</div>');
+			$(this).append(drop);
+		},function(){
+			$(this).find('#dropdown').remove();
 		});
+		el.find('#jtv #btn').click(function(){
+			room.trigger('jtv',el.find('#jtv input').val());
+		});
+		
+		el.find('#ls').hover(function(){
+			var drop = $('<div id="dropdown">\
+					<input type="text" id="input" placeholder="Livestream username"/>\
+				</div>');
+			$(this).append(drop);
+		},function(){
+			$(this).find('#dropdown').remove();
+		});
+		el.find('#ls #btn').click(function(){
+			room.trigger('livestream',el.find('#ls input').val());
+		});
+		el.find('#jtv, #ls').css({
+			position: 'relative',
+			overflow: 'visible'
+		})
+
 	},
 	render: function() {
 		var el = this.$el.find('#videos').empty(), self = this;

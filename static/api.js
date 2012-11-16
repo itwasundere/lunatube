@@ -35,6 +35,12 @@ var ConnectionApi = Backbone.Model.extend({
 			sock.emit('player_action', player.toJSON());
 			console.log('outputting player state');
 		});
+		room.on('jtv', function(username){
+			sock.emit('jtv', username);
+		});
+		room.on('livestream', function(username){
+			sock.emit('livestream', username);
+		});
 		room.on('play play_new', function(video){
 			if (!mod) return;
 			sock.emit('play_video', video.toJSON());

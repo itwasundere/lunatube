@@ -53,6 +53,10 @@ var SocketWrapper = Backbone.Model.extend({
 		});
 		sock.timed_on('message', function(content){
 			if (!content || !typeof(content)=='string') return;
+			if ((''+self.get('user').id).length>=32) {
+				sock.emit('status', 'You must have a chat account in order to participate.');
+				return;
+			}
 			content = utils.purge(content, 512);
 			room.message(self.get('user'), content);
 		});
@@ -143,14 +147,14 @@ var SocketWrapper = Backbone.Model.extend({
 			}
 		});
 		sock.on('jtv', function(cmd){
-			// if (!self.am_mod()) return;
+			if (!self.am_mod()) return;
 			room.get('player').pause();
 			room.set('jtv',cmd);
 			room.set('livestream','');
 			room.trigger('jtv', cmd);
 		});
 		sock.on('livestream', function(cmd){
-			// if (!self.am_mod()) return;
+			if (!self.am_mod()) return;
 			room.get('player').pause();
 			room.set('livestream',cmd);
 			room.set('jtv','');
