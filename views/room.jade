@@ -10,27 +10,11 @@ html
 		- else
 			include head
 		
-		script(src='static/lib/webrtc.io.js')
-		script(src='static/utils.js')
-		
 		script(type='text/javascript')
 			add_globals({
 				room: !{JSON.stringify(room)},
 				user: !{JSON.stringify(user)}
 			});
-
-		
-		script(src='static/models.js')
-		script(src='static/api.js')
-		script(src='static/chat.js')
-		script(src='static/room.js')
-		script(src='static/playlist.js')
-		script(src='static/player.js')
-		script(src='static/prefs.js')
-		script(src='static/userlist.js')
-		script(src='static/login.js')
-		script(src='static/cams.js')
-		script(src='static/ticker.js')
 
 	templates
 		script#avatar(type='template')
