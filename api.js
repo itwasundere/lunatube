@@ -141,7 +141,7 @@ var SocketWrapper = Backbone.Model.extend({
 			}
 			else {
 				var modlink = new Backbone.Model({user_id: uid, room_id: room.id});
-				modlink.classname = 'mod';
+				modlink.classname = 'moderator';
 				modlink.save();
 				room.get('modlist').add(modlink);
 			}
